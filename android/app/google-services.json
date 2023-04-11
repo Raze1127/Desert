@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "216645812461",
+    "firebase_url": "https://kolesofortune-c5723-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "kolesofortune-c5723",
+    "storage_bucket": "kolesofortune-c5723.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216645812461:android:968a5a26b757e4f5464ce4",
+        "android_client_info": {
+          "package_name": "com.example.koleso_fortune"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "216645812461-ct9309cic8kru5l1ktev46pgk8nj4eom.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVXcaamy5DQZyKUsK73nIZGROKMOq525c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "216645812461-ct9309cic8kru5l1ktev46pgk8nj4eom.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
