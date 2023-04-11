@@ -10,10 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:koleso_fortune/CreateGame.dart';
 
 import 'package:path/path.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -28,12 +30,6 @@ class _HomeState extends State<Home> {
   var iop = 0;
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-
-
-
-
-
-
 
   Future<String> GetName() async {
     final ref = FirebaseDatabase.instance.ref();
@@ -85,10 +81,8 @@ class _HomeState extends State<Home> {
         friends[uids[i]] = p;
       }
 
-
-      final friendsSorted = SplayTreeMap<String, int>.from(
-          friends, (keys1, keys2) =>
-          friends[keys2]!.compareTo(friends[keys1]!));
+      final friendsSorted = SplayTreeMap<String, int>.from(friends,
+          (keys1, keys2) => friends[keys2]!.compareTo(friends[keys1]!));
 
       print(friendsSorted);
 
@@ -100,8 +94,7 @@ class _HomeState extends State<Home> {
         final point = await ref.child('Users/$uid/Points').get();
         if (name.value.toString() != "null") {
           friend +=
-          "|${name.value.toString()}|${photo.value.toString()}|${point.value
-              .toString()}";
+              "|${name.value.toString()}|${photo.value.toString()}|${point.value.toString()}";
         }
       }
       if (friend.toString() == "|null|null|null" || friend.toString() == "") {
@@ -114,8 +107,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-
-
   Future<String> GetCode() async {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
@@ -123,61 +114,56 @@ class _HomeState extends State<Home> {
     final snapshot = await ref.child('Users/$uid/code').get();
 
     DatabaseReference starCountRef =
-    FirebaseDatabase.instance.ref('Users/$uid/request');
-
-
-
-
+        FirebaseDatabase.instance.ref('Users/$uid/request');
 
     starCountRef.onValue.listen((DatabaseEvent event) async {
       final data = event.snapshot.value;
       if (data != "null") {
-        final uidNick = (await ref.child('Games/$data/admin').get()).value
-            .toString();
-        final nick = (await ref.child('Users/$uidNick/Name').get()).value
-            .toString();
-        var players = (await ref.child('Games/$data/players').get()).value
-            .toString();
+        final uidNick =
+            (await ref.child('Games/$data/admin').get()).value.toString();
+        final nick =
+            (await ref.child('Users/$uidNick/Name').get()).value.toString();
+        var players =
+            (await ref.child('Games/$data/players').get()).value.toString();
         if (nick != "null") {
-
-
-        if (players == "null") {
-          players = "";
-        }
-        showDialog(
-            context: this.context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text("Request for a game"),
-                content: Text("$nick wants to play with you"),
-                actions: [
-                  TextButton(
+          if (players == "null") {
+            players = "";
+          }
+          showDialog(
+              context: this.context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Request for a game"),
+                  content: Text("$nick wants to play with you"),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          database.ref("Users/$uid/").update({
+                            "answer": "no",
+                          });
+                          database.ref("Users/$uid/").update({
+                            "request": "",
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Отклонить")),
+                    TextButton(
+                      child: const Text("Принять"),
                       onPressed: () {
                         database.ref("Users/$uid/").update({
-                          "answer": "no",
+                          "answer": "yes",
                         });
                         database.ref("Users/$uid/").update({
                           "request": "",
                         });
-                        Navigator.pop(context);
                       },
-                      child: Text("Отклонить")),
-                  TextButton(
-                      onPressed: () {
-
-
-              database.ref("Users/$uid/").update({
-              "answer": "yes",
+                    ),
+                  ],
+                );
               });
-              database.ref("Users/$uid/").update({
-              "request": "",
-              });
-              }
-
-
-
-
-
+        }
+      }
+    });
     return snapshot.value.toString();
   }
 
@@ -186,7 +172,7 @@ class _HomeState extends State<Home> {
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
     final snapshot =
-    await ref.child("Users/").orderByChild("code").equalTo(code).get();
+        await ref.child("Users/").orderByChild("code").equalTo(code).get();
     String fullCode = snapshot.value.toString();
     FirebaseDatabase database = FirebaseDatabase.instance;
 
@@ -200,9 +186,9 @@ class _HomeState extends State<Home> {
         .value
         .toString();
     final snapshotFriend =
-    (await ref.child("Users/$uidFriend/friends/friendsUID").get())
-        .value
-        .toString();
+        (await ref.child("Users/$uidFriend/friends/friendsUID").get())
+            .value
+            .toString();
     if (uidFriend != uid) {
       if (snapshotFriend == "null") {
         codeController.clear();
@@ -236,28 +222,24 @@ class _HomeState extends State<Home> {
           print("already");
         } else {
           print(uid! + " " + uidFriend);
-          if(snapshot23 ==  ""){
+          if (snapshot23 == "") {
             database.ref("Users/$uid/friends").update({
               "friendsUID": "|$uidFriend",
             });
             codeController.clear();
-          }else{
+          } else {
             database.ref("Users/$uid/friends").update({
               "friendsUID": "$snapshot23|$uidFriend",
             });
             codeController.clear();
           }
-
         }
       }
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Future<void> _removeItem(int index) async {
-
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     var friends = {};
@@ -273,19 +255,17 @@ class _HomeState extends State<Home> {
       ..sort((e1, e2) => e1.value.compareTo(e2.value)));
     var delfr = friendsSorted.keys.elementAt(index);
 
-    for(var i = 0; i < friendsSorted.length; i++){
-      if(friendsSorted.keys.elementAt(i) == delfr){
-
-      }
-      else{
-        if(friendsSorted.keys.elementAt(i) == ""){
+    for (var i = 0; i < friendsSorted.length; i++) {
+      if (friendsSorted.keys.elementAt(i) == delfr) {
+      } else {
+        if (friendsSorted.keys.elementAt(i) == "") {
           uids2 += "";
-        }else{
+        } else {
           uids2 += "${friendsSorted.keys.elementAt(i)}|";
         }
-
       }
-    };
+    }
+    ;
     if (uids2.isNotEmpty) {
       uids2 = uids2.substring(0, uids2.length - 1);
     }
@@ -305,21 +285,14 @@ class _HomeState extends State<Home> {
           ),
         ),
       );
-
     }, duration: const Duration(milliseconds: 500));
-
   }
-
-
 
   final codeController = TextEditingController();
   FirebaseDatabase database = FirebaseDatabase.instance;
   final ref = FirebaseDatabase.instance.ref();
   final User? user = FirebaseAuth.instance.currentUser;
   final GlobalKey<AnimatedListState> _key = GlobalKey();
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -330,282 +303,493 @@ class _HomeState extends State<Home> {
             future: Future.wait([
               GetName(),
               GetCode(),
-              GetPhoto(),
-              GetPoints(),
               GetFriends(),
             ]),
             builder:
                 (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-              print("${snapshot.data}ПРИВЕЕЕт");
               if (snapshot.hasData) {
+                return Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("assets/images/background.png"),
+                          fit: BoxFit.fill),
+                    ),
+                    child: SingleChildScrollView(
 
-
-                return SafeArea(
-                  child: GestureDetector(
-                    onTap: () => FocusScope.of(context).unfocus(),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-
-                                Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                          style: const TextStyle(
-                                            fontSize: 40,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          snapshot.data![0].toString()),
-                                      GestureDetector(
-                                        child: Text(
-                                          'Invite code: ${snapshot.data![1].toString()}',
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                        onLongPress: () {
-                                          Clipboard.setData(ClipboardData(
-                                              text: snapshot.data![1]
-                                                  .toString()));
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                            content: Text("Скопировано"),
-                                          ));
-                                        },
-                                      ),
-                                    ])
-                              ],
-                            ),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
+                      child: Column(children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 43, left: 20),
+                              child: Column(
                                 children: [
+                                  Text(snapshot.data![0],
+                                      style: GoogleFonts.pressStart2p(
+                                          textStyle: const TextStyle(
+                                        shadows: [
+                                          Shadow(
+                                              // bottomLeft
+                                              offset: Offset(-1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // bottomRight
+                                              offset: Offset(1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // topRight
+                                              offset: Offset(1.5, 1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // topLeft
+                                              offset: Offset(-1.5, 1.5),
+                                              color: Colors.black),
+                                        ],
+                                        color: Colors.white,
+                                        fontSize: 25,
+                                      ))),
                                   Padding(
-                                    padding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        0, 50, 200, 0),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        style: const TextStyle(
-                                          fontSize: 26,
-                                        ),
-                                        "Points: ${snapshot.data![3].toString()}",
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        0, 10, 230, 20),
-                                    child: Align(
-                                      alignment:
-                                      AlignmentDirectional.centerStart,
-                                      child: Text(
-                                        style: const TextStyle(
-                                          fontSize: 26,
-                                        ),
-                                        "Top: ${snapshot.data![3].toString()}",
-                                      ),
-                                    ),
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(snapshot.data![1],
+                                        style: GoogleFonts.pressStart2p(
+                                            textStyle: const TextStyle(
+                                          shadows: [
+                                            Shadow(
+                                                // bottomLeft
+                                                offset: Offset(-1.5, -1.5),
+                                                color: Colors.black),
+                                            Shadow(
+                                                // bottomRight
+                                                offset: Offset(1.5, -1.5),
+                                                color: Colors.black),
+                                            Shadow(
+                                                // topRight
+                                                offset: Offset(1.5, 1.5),
+                                                color: Colors.black),
+                                            Shadow(
+                                                // topLeft
+                                                offset: Offset(-1.5, 1.5),
+                                                color: Colors.black),
+                                          ],
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ))),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                          Row(
+                            ),
+                          ],
+                        ),
+                        // Никнейм и код
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: Text("LVL",
+                              style: GoogleFonts.pressStart2p(
+                                  textStyle: const TextStyle(
+                                shadows: [
+                                  Shadow(
+                                      // bottomLeft
+                                      offset: Offset(-1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                      // bottomRight
+                                      offset: Offset(1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                      // topRight
+                                      offset: Offset(1.5, 1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                      // topLeft
+                                      offset: Offset(-1.5, 1.5),
+                                      color: Colors.black),
+                                ],
+                                color: Colors.white,
+                                fontSize: 10,
+                              ))),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    0, 2, 210, 0),
-                                child: Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Text(
-                                    style: TextStyle(
-                                      fontSize: 26,
-                                    ),
-                                    "Friends",
-                                  ),
+                            children: [
+                              Opacity(
+                                opacity: 0.75,
+                                child: LinearPercentIndicator(
+                                  width: MediaQuery.of(context).size.width - 30,
+                                  animation: true,
+                                  lineHeight: 14.0,
+                                  percent: 0.5,
+                                  barRadius: const Radius.circular(10),
+                                  linearStrokeCap: LinearStrokeCap.roundAll,
+                                  backgroundColor: Colors.grey,
+                                  progressColor: const Color(0xff4A2BA3),
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 350,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        0, 20, 20, 0),
-                                    child: Container(
-                                      width: 220,
-                                      child: TextField(
-                                        controller: codeController,
-                                        decoration: const InputDecoration(
-                                          hintText: 'Invite code',
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(25.0),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: Text("STATS",
+                              style: GoogleFonts.pressStart2p(
+                                  textStyle: const TextStyle(
+                                shadows: [
+                                  Shadow(
+                                      // bottomLeft
+                                      offset: Offset(-1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                      // bottomRight
+                                      offset: Offset(1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                      // topRight
+                                      offset: Offset(1.5, 1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                      // topLeft
+                                      offset: Offset(-1.5, 1.5),
+                                      color: Colors.black),
+                                ],
+                                color: Colors.white,
+                                fontSize: 22,
+                              ))),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+                          child: Opacity(
+                            opacity: 0.75,
+                            child: Container(
+                              color: Colors.grey[400],
+                              child: Card(
+                                elevation: 0,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 30, left: 5),
+                                            child: Text("KILLS:",
+                                                style: GoogleFonts.pressStart2p(
+                                                    textStyle: const TextStyle(
+                                                  shadows: [
+                                                    Shadow(
+                                                        // bottomLeft
+                                                        offset:
+                                                            Offset(-1.5, -1.5),
+                                                        color: Colors.black),
+                                                    Shadow(
+                                                        // bottomRight
+                                                        offset: Offset(1.5, -1.5),
+                                                        color: Colors.black),
+                                                    Shadow(
+                                                        // topRight
+                                                        offset: Offset(1.5, 1.5),
+                                                        color: Colors.black),
+                                                    Shadow(
+                                                        // topLeft
+                                                        offset: Offset(-1.5, 1.5),
+                                                        color: Colors.black),
+                                                  ],
+                                                  color: Colors.white,
+                                                  fontSize: 15,
+                                                ))),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 15, left: 10, bottom: 30),
+                                            child: Text("DEATHS:",
+                                                style: GoogleFonts.pressStart2p(
+                                                    textStyle: const TextStyle(
+                                                  shadows: [
+                                                    Shadow(
+                                                        // bottomLeft
+                                                        offset:
+                                                            Offset(-1.5, -1.5),
+                                                        color: Colors.black),
+                                                    Shadow(
+                                                        // bottomRight
+                                                        offset: Offset(1.5, -1.5),
+                                                        color: Colors.black),
+                                                    Shadow(
+                                                        // topRight
+                                                        offset: Offset(1.5, 1.5),
+                                                        color: Colors.black),
+                                                    Shadow(
+                                                        // topLeft
+                                                        offset: Offset(-1.5, 1.5),
+                                                        color: Colors.black),
+                                                  ],
+                                                  color: Colors.white,
+                                                  fontSize: 15,
+                                                ))),
+                                          )
+                                        ])
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        //Статистика
+                        Padding(
+                          padding: const EdgeInsets.only(top: 25),
+                          child: Column(
+                            children: [
+                              Text("FRIENDS",
+                                  style: GoogleFonts.pressStart2p(
+                                      textStyle: const TextStyle(
+                                    shadows: [
+                                      Shadow(
+                                          // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ))),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 20, right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsetsDirectional.fromSTEB(
+                                                0, 20, 20, 0),
+                                        child: Container(
+                                          width: 200,
+                                          child: TextField(
+                                            controller: codeController,
+                                            decoration: const InputDecoration(
+                                              hintText: 'Invite code',
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(25.0),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        0, 20, 0, 0),
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25)),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          if (codeController.text.isNotEmpty) {
-                                            addFriend(codeController.text);
-                                            print(snapshot.data![4]);
-                                            setState(() {});
-                                          }
-                                        },
-                                        child: const Text(
-                                          "Add",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                        )),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 7, 0, 0),
-                            child: SizedBox(
-                              width: 350,
-                              height: 200,
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsetsDirectional.fromSTEB(
+                                                0, 20, 0, 0),
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(25)),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              if (codeController
+                                                  .text.isNotEmpty) {
+                                                addFriend(codeController.text);
 
-                              child: AnimatedList(
-                                key: _key,
-                                initialItemCount: iop,
-                                padding: const EdgeInsets.all(10),
-                                itemBuilder: (_, index, animation) {
-                                  print(snapshot.data![4].toString());
-                                  List<String> friend = snapshot.data![4].toString().split("|");
-                                  if(friend[(2 + index * 3)] == "null"){
-                                    return const Text("");
-                                  }else {
-                                    print(friend);
-                                    return SizeTransition(
-                                      key: UniqueKey(),
-                                      sizeFactor: animation,
-                                      child: SizedBox(
-                                        height: 80,
-                                        child: Card(
-                                          margin: const EdgeInsets.all(
-                                              10),
-                                          elevation: 10,
-                                          color: Colors.white,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(
-                                                4.0),
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .all(4.0),
-                                                  child:
+                                                setState(() {});
+                                              }
+                                            },
+                                            child: Text("ADD",
+                                                style: GoogleFonts.pressStart2p(
+                                                    textStyle: const TextStyle(
+                                                      shadows: [
+                                                        Shadow(
+                                                          // bottomLeft
+                                                            offset: Offset(-1.5, -1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // bottomRight
+                                                            offset: Offset(1.5, -1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // topRight
+                                                            offset: Offset(1.5, 1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // topLeft
+                                                            offset: Offset(-1.5, 1.5),
+                                                            color: Colors.black),
+                                                      ],
+                                                      color: Colors.white,
+
+                                                      fontSize: 12,
+
+                                                    ))
+                                      ),
+                                    )
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(
+                                    top: 20, left: 20, right: 20),
+                                height: 200,
+                                child: AnimatedList(
+                                  key: _key,
+                                  initialItemCount: iop,
+                                  padding: const EdgeInsets.all(10),
+                                  itemBuilder: (_, index, animation) {
+                                    List<String> friend =
+                                        snapshot.data![2].toString().split("|");
+                                    if (friend[(2 + index * 3)] == "null") {
+                                      return const Text("");
+                                    } else {
+                                      print(friend);
+                                      return SizeTransition(
+                                        key: UniqueKey(),
+                                        sizeFactor: animation,
+                                        child: SizedBox(
+                                          height: 80,
+                                          child: Card(
+                                            margin: const EdgeInsets.all(10),
+                                            elevation: 10,
+                                            color: Colors.white,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(4.0),
+                                              child: Row(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(4.0),
+                                                    child: Text(
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                      ),
+                                                      "${index + 1}.",
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.fromLTRB(
+                                                            0, 4, 10, 4),
+                                                    child: CircleAvatar(
+                                                      backgroundImage:
+                                                          NetworkImage(friend[
+                                                              (2 + index * 3)]),
+                                                      radius: 25,
+                                                    ),
+                                                  ),
                                                   Text(
                                                     style: const TextStyle(
                                                       fontSize: 20,
                                                     ),
-                                                    "${index + 1}.",
+                                                    friend[(1 + index * 3)],
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .fromLTRB(
-                                                      0, 4, 10, 4),
-                                                  child: CircleAvatar(
-                                                    backgroundImage: NetworkImage(
-                                                        friend[(2 +
-                                                            index * 3)]),
-                                                    radius: 25,
-                                                  ),
-                                                ),
-
-                                                Text(
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                  ),
-                                                  friend[(1 + index * 3)],
-                                                ),
-
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .fromLTRB(
-                                                      14, 0, 0, 0),
-                                                  child: Text(
-                                                    style: const TextStyle(
-                                                      fontSize: 20,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.fromLTRB(
+                                                            14, 0, 0, 0),
+                                                    child: Text(
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                      ),
+                                                      friend[(3 + index * 3)],
                                                     ),
-                                                    friend[(3 +
-                                                        index * 3)],
                                                   ),
-                                                ),
-
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  children: [
-                                                    IconButton(
-                                                      onPressed: () {
-                                                        _removeItem(index);
-                                                        setState(() {});
-                                                      },
-                                                      icon: const Icon(
-                                                          Icons.delete),
-                                                    ),
-                                                  ],
-                                                ),
-
-
-                                              ],
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          _removeItem(index);
+                                                          setState(() {});
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.delete),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                },
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
-                            ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 10),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xff848080),
+                                    //add radius to button
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CreateGame()),
+                                    );
+                                  },
+                                  child: Text("CREATE GAME",
+                                      style: GoogleFonts.pressStart2p(
+                                          textStyle: const TextStyle(
+                                        shadows: [
+                                          Shadow(
+                                              // bottomLeft
+                                              offset: Offset(-1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // bottomRight
+                                              offset: Offset(1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // topRight
+                                              offset: Offset(1.5, 1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // topLeft
+                                              offset: Offset(-1.5, 1.5),
+                                              color: Colors.black),
+                                        ],
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                      ))),
+                                ),
+                              )
+                            ],
                           ),
-
-                        ],
-                      ),
-
-                    ),
-                  ),
-                );
+                        ),
+                      ]),
+                    ));
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
-            })
-    );
+            }));
   }
 }

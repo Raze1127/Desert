@@ -51,6 +51,8 @@ dependencies:
   ffi: ^2.0.1
   cached_network_image: ^3.2.2
   bonfire: ^2.12.0
+  google_fonts: ^4.0.3
+  percent_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +79,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/background.png
     - assets/images/player.png
     - assets/images/player/knight_idle.png
     - assets/images/player/knight_idle_left.png
