@@ -70,9 +70,9 @@ class SimpleExampleGame extends StatelessWidget {
           ),
           cameraConfig: CameraConfig(moveOnlyMapArea: true, zoom: 0.83),
 
-          player: MyPlayer(Vector2(120, 400), 'Vova', 2),
+          player: MyPlayer(Vector2(850, 200), 'Vova', 2),
 
-          enemies: snapshot.data![0],
+          //enemies: snapshot.data![0],
           lightingColorGame: Colors.transparent,
           backgroundColor: const Color.fromARGB(255,132,101,77),
         );
@@ -83,7 +83,7 @@ class SimpleExampleGame extends StatelessWidget {
     );
   }
 
-
+// 120:400    20:140   500,800      850,600   850,200
 
 }
 

@@ -582,10 +582,14 @@ class _HomeState extends State<Home> {
                                         child: Container(
                                           width: 200,
                                           child: TextField(
+
                                             controller: codeController,
                                             decoration: const InputDecoration(
+                                              fillColor: Colors.grey,
+                                              filled: true,
                                               hintText: 'Invite code',
                                               border: OutlineInputBorder(
+
                                                 borderRadius: BorderRadius.all(
                                                   Radius.circular(25.0),
                                                 ),
@@ -660,9 +664,10 @@ class _HomeState extends State<Home> {
                                   itemBuilder: (_, index, animation) {
                                     List<String> friend =
                                         snapshot.data![2].toString().split("|");
-                                    if (friend[(2 + index * 3)] == "null") {
+                                    print(friend);
+                                    if (friend[(2 + index * 3)] == "null") {  //Если друга нет
                                       return const Text("");
-                                    } else {
+                                    } else {  //Если друг есть
                                       print(friend);
                                       return SizeTransition(
                                         key: UniqueKey(),
@@ -672,7 +677,7 @@ class _HomeState extends State<Home> {
                                           child: Card(
                                             margin: const EdgeInsets.all(10),
                                             elevation: 10,
-                                            color: Colors.white,
+                                            color: Colors.grey[800],
                                             child: Padding(
                                               padding: const EdgeInsets.all(4.0),
                                               child: Row(
@@ -681,38 +686,95 @@ class _HomeState extends State<Home> {
                                                     padding:
                                                         const EdgeInsets.all(4.0),
                                                     child: Text(
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                      ),
+                                                      style: GoogleFonts.pressStart2p(
+                                                          textStyle: const TextStyle(
+                                                            shadows: [
+                                                              Shadow(
+                                                                // bottomLeft
+                                                                  offset: Offset(-1.5, -1.5),
+                                                                  color: Colors.black),
+                                                              Shadow(
+                                                                // bottomRight
+                                                                  offset: Offset(1.5, -1.5),
+                                                                  color: Colors.black),
+                                                              Shadow(
+                                                                // topRight
+                                                                  offset: Offset(1.5, 1.5),
+                                                                  color: Colors.black),
+                                                              Shadow(
+                                                                // topLeft
+                                                                  offset: Offset(-1.5, 1.5),
+                                                                  color: Colors.black),
+                                                            ],
+                                                            color: Colors.white,
+
+                                                            fontSize: 15,
+
+                                                          )),
                                                       "${index + 1}.",
                                                     ),
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.fromLTRB(
-                                                            0, 4, 10, 4),
-                                                    child: CircleAvatar(
-                                                      backgroundImage:
-                                                          NetworkImage(friend[
-                                                              (2 + index * 3)]),
-                                                      radius: 25,
-                                                    ),
-                                                  ),
+
                                                   Text(
-                                                    style: const TextStyle(
-                                                      fontSize: 20,
-                                                    ),
+                                                    style: GoogleFonts.pressStart2p(
+                                                        textStyle: const TextStyle(
+                                                          shadows: [
+                                                            Shadow(
+                                                              // bottomLeft
+                                                                offset: Offset(-1.5, -1.5),
+                                                                color: Colors.black),
+                                                            Shadow(
+                                                              // bottomRight
+                                                                offset: Offset(1.5, -1.5),
+                                                                color: Colors.black),
+                                                            Shadow(
+                                                              // topRight
+                                                                offset: Offset(1.5, 1.5),
+                                                                color: Colors.black),
+                                                            Shadow(
+                                                              // topLeft
+                                                                offset: Offset(-1.5, 1.5),
+                                                                color: Colors.black),
+                                                          ],
+                                                          color: Colors.white,
+
+                                                          fontSize: 15,
+
+                                                        )),
                                                     friend[(1 + index * 3)],
                                                   ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.fromLTRB(
-                                                            14, 0, 0, 0),
+                                                            30, 0, 0, 0),
                                                     child: Text(
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                      ),
-                                                      friend[(3 + index * 3)],
+                                                      style: GoogleFonts.pressStart2p(
+                                                          textStyle: const TextStyle(
+                                                            shadows: [
+                                                              Shadow(
+                                                                // bottomLeft
+                                                                  offset: Offset(-1.5, -1.5),
+                                                                  color: Colors.black),
+                                                              Shadow(
+                                                                // bottomRight
+                                                                  offset: Offset(1.5, -1.5),
+                                                                  color: Colors.black),
+                                                              Shadow(
+                                                                // topRight
+                                                                  offset: Offset(1.5, 1.5),
+                                                                  color: Colors.black),
+                                                              Shadow(
+                                                                // topLeft
+                                                                  offset: Offset(-1.5, 1.5),
+                                                                  color: Colors.black),
+                                                            ],
+                                                            color: Colors.white,
+
+                                                            fontSize: 15,
+
+                                                          )),
+
+                                                      'LVL: ${friend[(3 + index * 3)]}',
                                                     ),
                                                   ),
                                                   Row(

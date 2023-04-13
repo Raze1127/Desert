@@ -42,11 +42,11 @@ class mainPage extends StatelessWidget{
     StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if (snapshot.hasData){
-            return const Home();
-          }else{
-            return const Login();
-          }
+          // if (snapshot.hasData){
+          //   return const Home();
+          // }else{
+          //   return const Login();
+          // }
           return  const SimpleExampleGame();
         }
     ),
