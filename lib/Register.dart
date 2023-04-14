@@ -34,7 +34,7 @@ class _RegisterState extends State<Register>{
         "photo": "https://upload.wikimedia.org/wikipedia/commons/9/9a/%D0%9D%D0%B5%D1%82_%D1%84%D0%BE%D1%82%D0%BE.png",
         "Points": 0
       }
-      );
+      ).then((value) => Navigator.pushNamed(context, 'home'));
 
   }
 
@@ -68,6 +68,7 @@ class _RegisterState extends State<Register>{
                     ),
                     TextField(
                       controller: nameController,
+                      maxLength: 8,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -143,7 +144,7 @@ class _RegisterState extends State<Register>{
                               onPressed: () {
                                 if(emailController.text.trim() != "" && passwordController.text.trim() != "" && nameController.text.trim() != "" ) {
                                   LogIn();
-                                  Navigator.pushNamed(context, 'home');
+
                                 }
                               },
                               icon: const Icon(Icons.arrow_forward),
