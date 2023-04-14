@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nanoid/nanoid.dart';
 
 import 'GamePageOld.dart';
+import 'GameTanks.dart';
 
 class CreateGame extends StatefulWidget {
   const CreateGame({Key? key}) : super(key: key);
@@ -95,7 +96,7 @@ class _CreateGameState extends State<CreateGame> {
 
       database.ref("Users/$olik/").update({
         "answer": "",
-        "request": GameCode,
+        "request": "$GameCode/$uid",
       });
       DatabaseReference starCountRef =
           FirebaseDatabase.instance.ref('Users/$olik/answer');
@@ -600,8 +601,9 @@ class _CreateGameState extends State<CreateGame> {
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.grey[800]),
                                     onPressed: () {
+                                      print(players)  ;
                                       List<String> uids = players.split("|");
-                                      gameCreation(uids);
+                                      gameCreation(players);
                                     },
                                     child:  Text(
                                       'Start Game',
@@ -642,32 +644,63 @@ class _CreateGameState extends State<CreateGame> {
               }
             }));
   }
-  void gameCreation(List<String> players){
+  void gameCreation(String players2){
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    players.add(uid.toString());
+    if (players2 == "") {
+      players2 = uid!;
+    } else {
+      players2 += "|$uid";
+    }
+
+    List<String> players = players2.split("|");
+
+
     print(players.length);
     print(players); //Список игроков
-    List<String> coordinates = ['120400'    '20:140'   500,800      850,600   850,200];
+    List<String> coordinates = ['120/400','20/140','500/800','850/600', '850/200'];
+    var last = players.length;
     players.forEachIndexed((i, element) async {
       final nick =
       (await ref.child('Users/$element/Name').get()).value.toString();
 
-      ref.child('Games/$GameCode/Players/${i+1}').update({
-        'uid': element,
-        'life': 200,
-        'name': nick,
-        'x': 10,
-        'y': 120,
+      var cords = coordinates[i];
+      List<String> xy = cords.split("/");
+      print("$nick $xy");
+      if (nick == 'null') {
+        print('null');
+      }else {
+        ref.child('Games/$GameCode/Players/${i + 1}').update({
+          'uid': element,
+          'life': 200,
+          'name': nick,
+          'x': xy[0],
+          'y': xy[1],
+          'isFire': 0,
+          'speed': 0,
+          'angle': 0
+        }
+        );
+
+        ref.child('Users/$element').update({
+          'player': i + 1,
+          'CurGame': GameCode,
+        }
+        );
+
+        if(last == i+1){
+          ref.child('Games/$GameCode').update({
+            'isStart': 1,
+          }
+          ).then((value) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SimpleExampleGame())) );
+        }
       }
-      );
     });
 
 
-
-
-    
-    
   }
 }

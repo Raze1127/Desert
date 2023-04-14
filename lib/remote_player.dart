@@ -1,7 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:bonfire/bonfire.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 
@@ -13,8 +15,9 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
   final String nick;
   late TextPaint textConfig;
   Vector2 sizeTextNick = Vector2.zero();
+  final String gameId;
 
-  RemotePlayer(Vector2 position, this.nick, this.id)
+  RemotePlayer(Vector2 position, this.nick, this.id, this.gameId )
       : super(
     animIdle: _getSoldierSprite(),
     animRun: _getSoldierSprite(),
@@ -110,7 +113,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       size: Vector2(12, 8),
       centerOffset: centerOffset,
       marginFromOrigin: 8,
-      speed: 120,
+      speed: 210,
       animation: Sprite.load('bullet.png').toAnimation(),
       damage: 30,
     );
@@ -132,33 +135,21 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
   }
 
   void movement() {
-    final User? user = FirebaseAuth.instance.currentUser;
-    DatabaseReference angleRef =
-    FirebaseDatabase.instance.ref('Games/gay228/players/$id/angle');
-    DatabaseReference YRef =
-    FirebaseDatabase.instance.ref('Games/gay228/players/$id/YCheck');
+
     DatabaseReference XRef =
-    FirebaseDatabase.instance.ref('Games/gay228/players/$id/XCheck');
+    FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/data');
     XRef.onValue.listen((DatabaseEvent event) async {
-      final data = event.snapshot.value as num?;
-      if (data != null) {
+      final encodedData = event.snapshot.value as String;
+      final decodedBytes = base64.decode(encodedData);
+      final numbers = <double>[];
+      for (var i = 0; i < decodedBytes.length; i += 8) {
+        numbers.add(ByteData.view(decodedBytes.buffer).getFloat64(i, Endian.big));
+      }
+      position.x = numbers[0];
+      position.y = numbers[1];
+      angle = numbers[2];
+    });
 
-        position.x = data.toDouble();
-
-      }
-    });
-    YRef.onValue.listen((DatabaseEvent event) {
-      final data = event.snapshot.value as num?;
-      if (data != null) {
-        position.y = data.toDouble();
-      }
-    });
-    angleRef.onValue.listen((DatabaseEvent event) {
-      final data = event.snapshot.value as num?;
-      if (data != null) {
-        angle = data.toDouble();
-      }
-    });
 
 
   }
@@ -167,7 +158,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
 
     DatabaseReference angleRef =
-    FirebaseDatabase.instance.ref('Games/gay228/players/$id/isFire');
+    FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/isFire');
     angleRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as int;
 
@@ -182,7 +173,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
 
     DatabaseReference angleRef =
-    FirebaseDatabase.instance.ref('Games/gay228/players/$id/life');
+    FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/life');
     angleRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as num?;
       print('LOOOL');

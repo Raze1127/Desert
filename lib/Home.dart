@@ -17,6 +17,8 @@ import 'package:koleso_fortune/CreateGame.dart';
 import 'package:path/path.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+import 'GameTanks.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -118,23 +120,16 @@ class _HomeState extends State<Home> {
 
     starCountRef.onValue.listen((DatabaseEvent event) async {
       final data = event.snapshot.value;
-      if (data != "null") {
-        final uidNick =
-            (await ref.child('Games/$data/admin').get()).value.toString();
-        final nick =
-            (await ref.child('Users/$uidNick/Name').get()).value.toString();
-        var players =
-            (await ref.child('Games/$data/players').get()).value.toString();
-        if (nick != "null") {
-          if (players == "null") {
-            players = "";
-          }
+      if (data != null) {
+        List<String> pringls = data.toString().split("/");
+        if (pringls[1] != "null") {
+
           showDialog(
               context: this.context,
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text("Request for a game"),
-                  content: Text("$nick wants to play with you"),
+                  content: Text("${pringls[1]} wants to play with you"),
                   actions: [
                     TextButton(
                         onPressed: () {
@@ -150,6 +145,19 @@ class _HomeState extends State<Home> {
                     TextButton(
                       child: const Text("Принять"),
                       onPressed: () {
+                        DatabaseReference start =
+                        FirebaseDatabase.instance.ref('Games/${pringls[0]}/isStart');
+                        start.onValue.listen((DatabaseEvent event)  {
+                          final data = event.snapshot.value;
+                          if (data != null) {
+                            if (data == 1) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const SimpleExampleGame()));
+                            }
+                          }
+                        });
                         database.ref("Users/$uid/").update({
                           "answer": "yes",
                         });
@@ -190,7 +198,7 @@ class _HomeState extends State<Home> {
             .value
             .toString();
     if (uidFriend != uid) {
-      if (snapshotFriend == "null") {
+      if (snapshotFriend == "") {
         codeController.clear();
         database.ref("Users/$uidFriend/friends").update({
           "friendsUID": "$uid",

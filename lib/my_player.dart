@@ -1,9 +1,20 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:bonfire/bonfire.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:typed_data/typed_buffers.dart';
 
+extension DoubleExtensions on double {
+  List<int> toBytes() {
+    final byteData = ByteData(8);
+    byteData.setFloat64(0, this);
+    return byteData.buffer.asUint8List();
+  }
+}
 
 Future<String> GetFriends() async {
   final ref = FirebaseDatabase.instance.ref();
@@ -22,10 +33,11 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   late TextPaint textConfig;
   Vector2 sizeTextNick = Vector2.zero();
   DatabaseReference ref = FirebaseDatabase.instance.ref();
+  final String gameId;
 
 
 
-  MyPlayer(Vector2 position, this.nick, this.id)
+  MyPlayer(Vector2 position, this.nick, this.id, this.gameId)
       : super(
     animIdle: _getSoldierSprite(),
     animRun: _getSoldierSprite(),
@@ -134,7 +146,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       damage: 30,
       attackFrom: AttackFromEnum.PLAYER_OR_ALLY
     );
-    ref.child("Games/gay228/players/$id/isFire").set(fire);
+    ref.child("Games/$gameId/Players/$id/isFire").set(fire);
     fire++;
   }
 
@@ -156,7 +168,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
   @override
   void die() {
-    ref.child("Games/gay228/players/$id/life").set(life.toDouble());
+    ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     removeFromParent();
     super.die();
   }
@@ -175,23 +187,31 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       YCheck = position.y;
       XCheck = position.x;
       angleCheck = angle;
-      ref.child("Games/gay228/players/$id/angle").set(angle);
-      ref.child("Games/gay228/players/$id/YCheck").set(position.y);
-      ref.child("Games/gay228/players/$id/XCheck").set(position.x);
+      final List<double> numbers = [position.x, position.y, angle];
+      final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
+      final encodedData = base64.encode(bytes);
+      final User? user = FirebaseAuth.instance.currentUser;
+      final uid = user?.uid;
+      ref.child("Games/$gameId/Players/$id/data").set(encodedData);
       io++;
     }
 
-    if(YCheck != position.y || XCheck != position.x || angle != angleCheck || life != healthCheck){
+    if(YCheck != position.y || XCheck != position.x || angle != angleCheck){
+      final List<double> numbers = [position.x, position.y, angle];
+      final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
+      final encodedData = base64.encode(bytes);
       final User? user = FirebaseAuth.instance.currentUser;
       final uid = user?.uid;
-      ref.child("Games/gay228/players/$id/life").set(life.toDouble());
-      ref.child("Games/gay228/players/$id/angle").set(angle);
-      ref.child("Games/gay228/players/$id/YCheck").set(position.y);
-      ref.child("Games/gay228/players/$id/XCheck").set(position.x);
+      ref.child("Games/$gameId/Players/$id/data").set(encodedData);
+      ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
       healthCheck = life;
       YCheck = position.y;
       angleCheck = angle;
       XCheck = position.x;
+    }
+    if(life != healthCheck){
+      ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
+      healthCheck = life;
     }
 
 
@@ -200,3 +220,4 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
 
 }
+
