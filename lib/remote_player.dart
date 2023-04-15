@@ -133,21 +133,40 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
     super.receiveDamage(attacker, damage, identify);
 
   }
+  var angle1 = 0.0;
+  var speed1 = 0.0;
 
   void movement() {
 
-    DatabaseReference XRef =
+    DatabaseReference XYRef =
     FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/data');
-    XRef.onValue.listen((DatabaseEvent event) async {
+
+    DatabaseReference SPEEDandleRef =
+    FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/dataMain');
+
+    XYRef.onValue.listen((DatabaseEvent event) async {
       final encodedData = event.snapshot.value as String;
       final decodedBytes = base64.decode(encodedData);
       final numbers = <double>[];
       for (var i = 0; i < decodedBytes.length; i += 8) {
         numbers.add(ByteData.view(decodedBytes.buffer).getFloat64(i, Endian.big));
       }
+      print(numbers[0]);
       position.x = numbers[0];
       position.y = numbers[1];
-      angle = numbers[2];
+    });
+
+    SPEEDandleRef.onValue.listen((DatabaseEvent event) async {
+      final encodedData = event.snapshot.value as String;
+      final decodedBytes = base64.decode(encodedData);
+      final numbers = <double>[];
+      for (var i = 0; i < decodedBytes.length; i += 8) {
+        numbers.add(ByteData.view(decodedBytes.buffer).getFloat64(i, Endian.big));
+      }
+      print(numbers[1]);
+      angle1 = numbers[1];
+      speed1 = numbers[0];
+      angle = angle1;
     });
 
 
@@ -210,9 +229,9 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       movement();
       fire();
     }
-    // else{
-    //   moveFromAngle(speed, angle);
-    // }
+    else{
+      moveFromAngle(speed1, angle1);
+    }
 
     //
     super.update(dt);

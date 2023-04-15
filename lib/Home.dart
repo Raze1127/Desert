@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var value = 1;
   var iop = 0;
+
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
@@ -40,6 +41,13 @@ class _HomeState extends State<Home> {
     final name = await ref.child('Users/$uid/Name').get();
 
     return name.value.toString();
+  }
+  Future<List<String>> getFriendData(String uid) async {
+
+    final name = await ref.child('Users/$uid/Name').get();
+    final xp = await ref.child('Users/$uid/Points').get();
+
+    return [name.value.toString(), xp.value.toString()];
   }
 
   Future<String> GetPoints() async {
@@ -64,49 +72,14 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<String> GetFriends() async {
+  Future<List> GetFriends() async {
+
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
-    Map<String, int> friends = {};
     final uid = user?.uid;
     final snapshot = await ref.child('Users/$uid/friends/friendsUID').get();
-    var str = snapshot.value.toString();
-    if (str == 'null' || str == '') {
-      print(str);
-      return '';
-    } else {
-      List<String> uids = str.split("|");
-      var friend = "";
-      for (var i = 0; i < uids.length; i++) {
-        final point = await ref.child('Users/${uids[i]}/Points').get();
-        int p = int.parse(point.value.toString());
-        friends[uids[i]] = p;
-      }
-
-      final friendsSorted = SplayTreeMap<String, int>.from(friends,
-          (keys1, keys2) => friends[keys2]!.compareTo(friends[keys1]!));
-
-      print(friendsSorted);
-
-      print("$friends 1ФФФФФФФФФФФФФФФФФ");
-      for (var i = 0; i < friendsSorted.length; i++) {
-        var uid = friendsSorted.keys.elementAt(i);
-        final name = await ref.child('Users/$uid/Name').get();
-        final photo = await ref.child('Users/$uid/photo').get();
-        final point = await ref.child('Users/$uid/Points').get();
-        if (name.value.toString() != "null") {
-          friend +=
-              "|${name.value.toString()}|${photo.value.toString()}|${point.value.toString()}";
-        }
-      }
-      if (friend.toString() == "|null|null|null" || friend.toString() == "") {
-        iop = friendsSorted.length - 1;
-      } else {
-        iop = friendsSorted.length;
-      }
-      print(friend);
-      return friend.toString();
-    }
+    final friends = snapshot.value.toString().split("//");
+    return friends;
   }
 
   Future<String> GetCode() async {
@@ -175,76 +148,51 @@ class _HomeState extends State<Home> {
     return snapshot.value.toString();
   }
 
-  Future<void> addFriend(String code) async {
+  void addFriend(String code) async {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    final snapshot =
+    final equal =
         await ref.child("Users/").orderByChild("code").equalTo(code).get();
-    String fullCode = snapshot.value.toString();
-    FirebaseDatabase database = FirebaseDatabase.instance;
 
-    var uidFriend = fullCode.substring(
-        1, fullCode.length - (fullCode.length - fullCode.indexOf(":")));
+    final Frienduid = equal.children.first.key;
 
-    // final name = await ref.child('Users/$uidFriend/Name').get();
-    // final points = await ref.child('Users/$uidFriend/Points').get();
-    // final photo = await ref.child('Users/$uidFriend/photo').get();
-    final snapshot23 = (await ref.child("Users/$uid/friends/friendsUID").get())
-        .value
-        .toString();
-    final snapshotFriend =
-        (await ref.child("Users/$uidFriend/friends/friendsUID").get())
-            .value
-            .toString();
-    if (uidFriend != uid) {
-      if (snapshotFriend == "") {
-        codeController.clear();
-        database.ref("Users/$uidFriend/friends").update({
-          "friendsUID": "$uid",
-        });
+    final FriendsFriends =
+        await ref.child("Users/$Frienduid/friends/friendsUID").get();
+    final MyFriends = await ref.child("Users/$uid/friends/friendsUID").get();
+
+    List<String> MyFriendsList = MyFriends.value.toString().split("//");
+    List<String> FriendsFriendsList = FriendsFriends.value.toString().split("//");
+    if (FriendsFriendsList.contains(uid)) {
+      print("Уже друзья");
+    } else {
+      if (MyFriendsList.contains(Frienduid)) {
+        print("Уже друзья");
       } else {
-        List<String> mylist = snapshotFriend.split("|");
-
-        if (mylist.contains(uid)) {
-          print("already");
-        } else {
-          database.ref("Users/$uidFriend/friends").update({
-            "friendsUID": "|$snapshotFriend$uid",
+        if(FriendsFriends.value.toString() != "null") {
+          database.ref("Users/$Frienduid/friends/").update({
+            "friendsUID": "${FriendsFriends.value}//$uid",
           });
-          codeController.clear();
+        }else{
+          database.ref("Users/$Frienduid/friends/").update({
+            "friendsUID": "$uid",
+          });
         }
-      }
 
-      if (snapshot23 == "null" || snapshot23 == "") {
-        database.ref("Users/$uid/friends").update({
-          "friendsUID": "$uidFriend",
-        });
-        codeController.clear();
-      } else {
-        print(snapshot23);
-        List<String> mylist = snapshot23.split("|");
-
-        if (mylist.contains(uidFriend)) {
-          codeController.clear();
-          print("already");
-        } else {
-          print(uid! + " " + uidFriend);
-          if (snapshot23 == "") {
-            database.ref("Users/$uid/friends").update({
-              "friendsUID": "|$uidFriend",
-            });
-            codeController.clear();
-          } else {
-            database.ref("Users/$uid/friends").update({
-              "friendsUID": "$snapshot23|$uidFriend",
-            });
-            codeController.clear();
-          }
+        if(MyFriends.value.toString() != "null") {
+          database.ref("Users/$uid/friends/").update({
+            "friendsUID": "${MyFriends.value}//$Frienduid",
+          });
+        }else{
+          database.ref("Users/$uid/friends/").update({
+            "friendsUID": "$Frienduid",
+          });
         }
+
+
       }
     }
-    setState(() {});
+
   }
 
   Future<void> _removeItem(int index) async {
@@ -314,7 +262,7 @@ class _HomeState extends State<Home> {
               GetFriends(),
             ]),
             builder:
-                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                (BuildContext context,  snapshot) {
               if (snapshot.hasData) {
                 return Container(
                     height: double.infinity,
@@ -333,7 +281,7 @@ class _HomeState extends State<Home> {
                               padding: const EdgeInsets.only(top: 43, left: 20),
                               child: Column(
                                 children: [
-                                  Text(snapshot.data![0],
+                                  Text(snapshot.data![0] as String,
                                       style: GoogleFonts.pressStart2p(
                                           textStyle: const TextStyle(
                                         shadows: [
@@ -359,7 +307,7 @@ class _HomeState extends State<Home> {
                                       ))),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(snapshot.data![1],
+                                    child: Text(snapshot.data![1] as String,
                                         style: GoogleFonts.pressStart2p(
                                             textStyle: const TextStyle(
                                           shadows: [
@@ -667,52 +615,62 @@ class _HomeState extends State<Home> {
                                 height: 200,
                                 child: AnimatedList(
                                   key: _key,
-                                  initialItemCount: iop,
-                                  padding: const EdgeInsets.all(10),
-                                  itemBuilder: (_, index, animation) {
-                                    List<String> friend =
-                                        snapshot.data![2].toString().split("|");
-                                    print(friend);
-                                    if (friend[(2 + index * 3)] == "null") {  //Если друга нет
-                                      return const Text("");
-                                    } else {  //Если друг есть
-                                      print(friend);
-                                      return SizeTransition(
-                                        key: UniqueKey(),
-                                        sizeFactor: animation,
-                                        child: SizedBox(
-                                          height: 80,
-                                          child: Card(
+                                  initialItemCount: (snapshot.data![2] as List).length,
+                                  itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                                    final item = (snapshot.data![2] as List)[index];
+
+                                    return FutureBuilder(
+                                      future: getFriendData(item),
+                                      builder: (context, snapshot) {
+
+                                         if (snapshot.hasData) {
+                                           final userData = snapshot.data as List;
+                                           var name = userData[0];
+                                           var xp = userData[1];
+                                           return Card(
                                             margin: const EdgeInsets.all(10),
                                             elevation: 10,
                                             color: Colors.grey[800],
                                             child: Padding(
-                                              padding: const EdgeInsets.all(4.0),
+                                              padding: const EdgeInsets.all(
+                                                  4.0),
                                               child: Row(
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                        const EdgeInsets.all(4.0),
+                                                    const EdgeInsets.all(4.0),
                                                     child: Text(
-                                                      style: GoogleFonts.pressStart2p(
+                                                      style: GoogleFonts
+                                                          .pressStart2p(
                                                           textStyle: const TextStyle(
                                                             shadows: [
                                                               Shadow(
                                                                 // bottomLeft
-                                                                  offset: Offset(-1.5, -1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      -1.5,
+                                                                      -1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                               Shadow(
                                                                 // bottomRight
-                                                                  offset: Offset(1.5, -1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      1.5,
+                                                                      -1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                               Shadow(
                                                                 // topRight
-                                                                  offset: Offset(1.5, 1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      1.5, 1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                               Shadow(
                                                                 // topLeft
-                                                                  offset: Offset(-1.5, 1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      -1.5,
+                                                                      1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                             ],
                                                             color: Colors.white,
 
@@ -724,57 +682,78 @@ class _HomeState extends State<Home> {
                                                   ),
 
                                                   Text(
-                                                    style: GoogleFonts.pressStart2p(
+                                                    style: GoogleFonts
+                                                        .pressStart2p(
                                                         textStyle: const TextStyle(
                                                           shadows: [
                                                             Shadow(
                                                               // bottomLeft
-                                                                offset: Offset(-1.5, -1.5),
-                                                                color: Colors.black),
+                                                                offset: Offset(
+                                                                    -1.5, -1.5),
+                                                                color: Colors
+                                                                    .black),
                                                             Shadow(
                                                               // bottomRight
-                                                                offset: Offset(1.5, -1.5),
-                                                                color: Colors.black),
+                                                                offset: Offset(
+                                                                    1.5, -1.5),
+                                                                color: Colors
+                                                                    .black),
                                                             Shadow(
                                                               // topRight
-                                                                offset: Offset(1.5, 1.5),
-                                                                color: Colors.black),
+                                                                offset: Offset(
+                                                                    1.5, 1.5),
+                                                                color: Colors
+                                                                    .black),
                                                             Shadow(
                                                               // topLeft
-                                                                offset: Offset(-1.5, 1.5),
-                                                                color: Colors.black),
+                                                                offset: Offset(
+                                                                    -1.5, 1.5),
+                                                                color: Colors
+                                                                    .black),
                                                           ],
                                                           color: Colors.white,
 
                                                           fontSize: 15,
 
                                                         )),
-                                                    friend[(1 + index * 3)],
+                                                    name.toString(),
                                                   ),
                                                   Padding(
                                                     padding:
-                                                        const EdgeInsets.fromLTRB(
-                                                            30, 0, 0, 0),
+                                                    const EdgeInsets.fromLTRB(
+                                                        9, 0, 0, 0),
                                                     child: Text(
-                                                      style: GoogleFonts.pressStart2p(
+                                                      style: GoogleFonts
+                                                          .pressStart2p(
                                                           textStyle: const TextStyle(
                                                             shadows: [
                                                               Shadow(
                                                                 // bottomLeft
-                                                                  offset: Offset(-1.5, -1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      -1.5,
+                                                                      -1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                               Shadow(
                                                                 // bottomRight
-                                                                  offset: Offset(1.5, -1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      1.5,
+                                                                      -1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                               Shadow(
                                                                 // topRight
-                                                                  offset: Offset(1.5, 1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      1.5, 1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                               Shadow(
                                                                 // topLeft
-                                                                  offset: Offset(-1.5, 1.5),
-                                                                  color: Colors.black),
+                                                                  offset: Offset(
+                                                                      -1.5,
+                                                                      1.5),
+                                                                  color: Colors
+                                                                      .black),
                                                             ],
                                                             color: Colors.white,
 
@@ -782,12 +761,12 @@ class _HomeState extends State<Home> {
 
                                                           )),
 
-                                                      'LVL: ${friend[(3 + index * 3)]}',
+                                                      'LVL: ${xp.toString()}',
                                                     ),
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                    MainAxisAlignment.end,
                                                     children: [
                                                       IconButton(
                                                         onPressed: () {
@@ -802,10 +781,14 @@ class _HomeState extends State<Home> {
                                                 ],
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    }
+                                          );
+                                        } else {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      }
+                                    );
                                   },
                                 ),
                               ),

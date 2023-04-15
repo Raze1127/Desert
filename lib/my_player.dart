@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'dart:async';
 import 'package:bonfire/bonfire.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -16,13 +16,9 @@ extension DoubleExtensions on double {
   }
 }
 
-Future<String> GetFriends() async {
-  final ref = FirebaseDatabase.instance.ref();
-  final User? user = FirebaseAuth.instance.currentUser;
-  final uid = user?.uid;
-  FirebaseDatabase database = FirebaseDatabase.instance;
 
-  return "lol";
+  void GetFriends() async {
+
 
 }
 
@@ -45,6 +41,8 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     position: position,
     life: 200,
   ) {
+
+
     textConfig = TextPaint(
       style: const TextStyle(
         fontSize: 10,
@@ -173,42 +171,48 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     super.die();
   }
   var angleCheck = 0.0;
-  var YCheck = 0.0;
-  var XCheck = 0.0;
+  var speedCheck = 0.0;
   var healthCheck = 200.0;
-
+  DateTime now = DateTime.now();
+  var time = DateTime.now().millisecondsSinceEpoch;
   @override
   void update(double dt) {
+    now = DateTime.now();
+    int timestamp = now.millisecondsSinceEpoch;
 
-
-    if(io == 0){
-      speed = 0;
-      angle = 0;
-      YCheck = position.y;
-      XCheck = position.x;
-      angleCheck = angle;
-      final List<double> numbers = [position.x, position.y, angle];
+    if((timestamp - time) >= 1500){
+      time = timestamp;
+      final List<double> numbers = [position.x, position.y];
       final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
       final encodedData = base64.encode(bytes);
-      final User? user = FirebaseAuth.instance.currentUser;
-      final uid = user?.uid;
       ref.child("Games/$gameId/Players/$id/data").set(encodedData);
+    }
+
+    if(io == 0){
+
+
+      speed = 0;
+      angle = 0;
+      speedCheck = speed;
+      angleCheck = angle;
+      final List<double> numbers = [speed, angle];
+      final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
+      final encodedData = base64.encode(bytes);
+      ref.child("Games/$gameId/Players/$id/dataMain").set(encodedData);
       io++;
     }
 
-    if(YCheck != position.y || XCheck != position.x || angle != angleCheck){
-      final List<double> numbers = [position.x, position.y, angle];
+    if(angle != angleCheck || speed != speedCheck){
+      final List<double> numbers = [speed, angle];
       final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
       final encodedData = base64.encode(bytes);
-      final User? user = FirebaseAuth.instance.currentUser;
-      final uid = user?.uid;
-      ref.child("Games/$gameId/Players/$id/data").set(encodedData);
+      ref.child("Games/$gameId/Players/$id/dataMain").set(encodedData);
       ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
       healthCheck = life;
-      YCheck = position.y;
+      speedCheck = speed;
       angleCheck = angle;
-      XCheck = position.x;
     }
+
     if(life != healthCheck){
       ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
       healthCheck = life;
