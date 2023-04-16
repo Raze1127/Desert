@@ -126,40 +126,7 @@ class SimpleExampleGame extends StatelessWidget {
         List<double>? Cords = snapshot.data![1] as List<double>?;
 
         var id = snapshot.data![2] as int;
-        return Stack(
-
-          children: [
-
-            Text(
-              "KD: $id",
-              style: GoogleFonts.pressStart2p(
-                  textStyle: const TextStyle(
-                    shadows: [
-                      Shadow(
-                        // bottomLeft
-                          offset: Offset(-1.5, -1.5),
-                          color: Colors.black),
-                      Shadow(
-                        // bottomRight
-                          offset: Offset(1.5, -1.5),
-                          color: Colors.black),
-                      Shadow(
-                        // topRight
-                          offset: Offset(1.5, 1.5),
-                          color: Colors.black),
-                      Shadow(
-                        // topLeft
-                          offset: Offset(-1.5, 1.5),
-                          color: Colors.black),
-                    ],
-                    color: Colors.white,
-
-                    fontSize: 20,
-
-                  )),
-            ),
-
-            BonfireWidget(
+        return  BonfireWidget(
             map: WorldMapByTiled(
               'tiled/tanki2023.json',
               forceTileSize: Vector2(32, 32),
@@ -178,15 +145,62 @@ class SimpleExampleGame extends StatelessWidget {
               ],
             ),
             cameraConfig: CameraConfig(moveOnlyMapArea: true, zoom: 0.83),
+              overlayBuilderMap: {
+                'buttons': (BuildContext context, snapshot) {
+                  return  Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 20),
+                    child: Text(
+                      'Kills:\nDeaths:',
+                      style: GoogleFonts
+                          .pressStart2p(
+                          textStyle: const TextStyle(
+                            shadows: [
+                              Shadow(
+                                // bottomLeft
+                                  offset: Offset(
+                                      -1.5,
+                                      -1.5),
+                                  color: Colors
+                                      .black),
+                              Shadow(
+                                // bottomRight
+                                  offset: Offset(
+                                      1.5,
+                                      -1.5),
+                                  color: Colors
+                                      .black),
+                              Shadow(
+                                // topRight
+                                  offset: Offset(
+                                      1.5, 1.5),
+                                  color: Colors
+                                      .black),
+                              Shadow(
+                                // topLeft
+                                  offset: Offset(
+                                      -1.5,
+                                      1.5),
+                                  color: Colors
+                                      .black),
+                            ],
+                            color: Colors.white,
+
+                            fontSize: 15,
+
+                          )),
+                    ),
+                  );
+                }
+              },
+          initialActiveOverlays: ['buttons'],
 
             player: MyPlayer(Vector2(Cords![0], Cords[1]), (snapshot.data![3] as String), id, snapshot.data![4] as String),
 
             enemies: snapshot.data![0] as List<RemotePlayer>,
             lightingColorGame: Colors.transparent,
             backgroundColor: const Color.fromARGB(255,132,101,77),
-          ),
-      ],
-        );
+          );
+
       }else {
         return const Center(child: CircularProgressIndicator());
       }
