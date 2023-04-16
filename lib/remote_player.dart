@@ -108,6 +108,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
         break;
     }
     simpleAttackRangeByAngle(
+      id: id,
       attackFrom: AttackFromEnum.ENEMY,
       angle: angle,
       size: Vector2(12, 8),

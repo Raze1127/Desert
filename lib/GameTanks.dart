@@ -151,9 +151,47 @@ class SimpleExampleGame extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 35, left: 20),
                     child: Column(
                       children: [
-                        Text(
-                          'Kills:',
-                          style: GoogleFonts
+                        DefaultTextStyle(style: GoogleFonts
+                            .pressStart2p(
+                            textStyle: const TextStyle(
+                              shadows: [
+                                Shadow(
+                                  // bottomLeft
+                                    offset: Offset(
+                                        -1.5,
+                                        -1.5),
+                                    color: Colors
+                                        .black),
+                                Shadow(
+                                  // bottomRight
+                                    offset: Offset(
+                                        1.5,
+                                        -1.5),
+                                    color: Colors
+                                        .black),
+                                Shadow(
+                                  // topRight
+                                    offset: Offset(
+                                        1.5, 1.5),
+                                    color: Colors
+                                        .black),
+                                Shadow(
+                                  // topLeft
+                                    offset: Offset(
+                                        -1.5,
+                                        1.5),
+                                    color: Colors
+                                        .black),
+                              ],
+                              color: Colors.white,
+
+                              fontSize: 10,
+
+                            )), child: const Text('Kills: 10',),),
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: DefaultTextStyle(style: GoogleFonts
                               .pressStart2p(
                               textStyle: const TextStyle(
                                 shadows: [
@@ -189,50 +227,7 @@ class SimpleExampleGame extends StatelessWidget {
 
                                 fontSize: 10,
 
-                              )),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text(
-                            'Deaths:',
-                            style: GoogleFonts
-                                .pressStart2p(
-                                textStyle: const TextStyle(
-                                  shadows: [
-                                    Shadow(
-                                      // bottomLeft
-                                        offset: Offset(
-                                            -1.5,
-                                            -1.5),
-                                        color: Colors
-                                            .black),
-                                    Shadow(
-                                      // bottomRight
-                                        offset: Offset(
-                                            1.5,
-                                            -1.5),
-                                        color: Colors
-                                            .black),
-                                    Shadow(
-                                      // topRight
-                                        offset: Offset(
-                                            1.5, 1.5),
-                                        color: Colors
-                                            .black),
-                                    Shadow(
-                                      // topLeft
-                                        offset: Offset(
-                                            -1.5,
-                                            1.5),
-                                        color: Colors
-                                            .black),
-                                  ],
-                                  color: Colors.white,
-
-                                  fontSize: 10,
-
-                                )),
-                          ),
+                              )), child: const Text('Deaths: 10',),),
                         ),
                       ],
                     ),

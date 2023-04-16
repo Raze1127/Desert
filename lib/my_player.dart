@@ -142,7 +142,8 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       speed: 210,
       animation: Sprite.load('bullet.png').toAnimation(),
       damage: 30,
-      attackFrom: AttackFromEnum.PLAYER_OR_ALLY
+      id: id,
+      attackFrom: AttackFromEnum.PLAYER_OR_ALLY,
     );
     ref.child("Games/$gameId/Players/$id/isFire").set(fire);
     fire++;
@@ -152,6 +153,13 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
+    if(life <= 30){
+      //скрыть игрока с экрана и показать через 5 секунд
+      removeFromParent();
+
+
+
+    }
     showDamage(
       damage,
       config: const TextStyle(
@@ -166,8 +174,10 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
   @override
   void die() {
+
     ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     removeFromParent();
+
     super.die();
   }
   var angleCheck = 0.0;
