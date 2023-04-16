@@ -146,53 +146,100 @@ class SimpleExampleGame extends StatelessWidget {
             ),
             cameraConfig: CameraConfig(moveOnlyMapArea: true, zoom: 0.83),
               overlayBuilderMap: {
-                'buttons': (BuildContext context, snapshot) {
+                'KD': (BuildContext context, snapshot) {
                   return  Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20),
-                    child: Text(
-                      'Kills:\nDeaths:',
-                      style: GoogleFonts
-                          .pressStart2p(
-                          textStyle: const TextStyle(
-                            shadows: [
-                              Shadow(
-                                // bottomLeft
-                                  offset: Offset(
-                                      -1.5,
-                                      -1.5),
-                                  color: Colors
-                                      .black),
-                              Shadow(
-                                // bottomRight
-                                  offset: Offset(
-                                      1.5,
-                                      -1.5),
-                                  color: Colors
-                                      .black),
-                              Shadow(
-                                // topRight
-                                  offset: Offset(
-                                      1.5, 1.5),
-                                  color: Colors
-                                      .black),
-                              Shadow(
-                                // topLeft
-                                  offset: Offset(
-                                      -1.5,
-                                      1.5),
-                                  color: Colors
-                                      .black),
-                            ],
-                            color: Colors.white,
+                    padding: const EdgeInsets.only(top: 35, left: 20),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Kills:',
+                          style: GoogleFonts
+                              .pressStart2p(
+                              textStyle: const TextStyle(
+                                shadows: [
+                                  Shadow(
+                                    // bottomLeft
+                                      offset: Offset(
+                                          -1.5,
+                                          -1.5),
+                                      color: Colors
+                                          .black),
+                                  Shadow(
+                                    // bottomRight
+                                      offset: Offset(
+                                          1.5,
+                                          -1.5),
+                                      color: Colors
+                                          .black),
+                                  Shadow(
+                                    // topRight
+                                      offset: Offset(
+                                          1.5, 1.5),
+                                      color: Colors
+                                          .black),
+                                  Shadow(
+                                    // topLeft
+                                      offset: Offset(
+                                          -1.5,
+                                          1.5),
+                                      color: Colors
+                                          .black),
+                                ],
+                                color: Colors.white,
 
-                            fontSize: 15,
+                                fontSize: 10,
 
-                          )),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            'Deaths:',
+                            style: GoogleFonts
+                                .pressStart2p(
+                                textStyle: const TextStyle(
+                                  shadows: [
+                                    Shadow(
+                                      // bottomLeft
+                                        offset: Offset(
+                                            -1.5,
+                                            -1.5),
+                                        color: Colors
+                                            .black),
+                                    Shadow(
+                                      // bottomRight
+                                        offset: Offset(
+                                            1.5,
+                                            -1.5),
+                                        color: Colors
+                                            .black),
+                                    Shadow(
+                                      // topRight
+                                        offset: Offset(
+                                            1.5, 1.5),
+                                        color: Colors
+                                            .black),
+                                    Shadow(
+                                      // topLeft
+                                        offset: Offset(
+                                            -1.5,
+                                            1.5),
+                                        color: Colors
+                                            .black),
+                                  ],
+                                  color: Colors.white,
+
+                                  fontSize: 10,
+
+                                )),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }
               },
-          initialActiveOverlays: ['buttons'],
+          initialActiveOverlays: const ['KD'],
 
             player: MyPlayer(Vector2(Cords![0], Cords[1]), (snapshot.data![3] as String), id, snapshot.data![4] as String),
 
