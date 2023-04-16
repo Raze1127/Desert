@@ -456,7 +456,9 @@ class _CreateGameState extends State<CreateGame> {
           'y': xy[1],
           'isFire': 0,
           'speed': 0,
-          'angle': 0
+          'angle': 0,
+          'kills': 0,
+          'deaths': 0,
         }
         );
 
@@ -473,7 +475,7 @@ class _CreateGameState extends State<CreateGame> {
           ).then((value) => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const SimpleExampleGame())) );
+                  builder: (context) =>  SimpleExampleGame())) );
         }
       }
     });

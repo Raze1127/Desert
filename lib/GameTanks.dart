@@ -21,10 +21,18 @@ import 'my_player.dart';
 ///
 /// Rafaelbarbosatec
 /// on 19/10/21
-class SimpleExampleGame extends StatelessWidget {
+class SimpleExampleGame extends StatefulWidget {
   const SimpleExampleGame({Key? key}) : super(key: key);
 
+  @override
+  _SimpleExampleGameState createState() => _SimpleExampleGameState();
 
+}
+
+class _SimpleExampleGameState extends State<SimpleExampleGame> {
+  var killsMain = 0;
+  var deathsMain = 0;
+  final GameController _controller = GameController();
 
   Future<List<RemotePlayer>> getEver() async {
 
@@ -47,18 +55,23 @@ class SimpleExampleGame extends StatelessWidget {
         }else{
           if(name.exists){
             players.add(RemotePlayer(Vector2(double.parse(x.value.toString()), double.parse(y.value.toString())), name.value.toString(), i, id));
+
+            DatabaseReference reff =
+            FirebaseDatabase.instance.ref('Games/$id/Players/$i/isDead');
+
+            reff.onValue.listen((DatabaseEvent event) async {
+              final data = event.snapshot.value as bool;
+              if(data == true){
+                _controller.addToParent(RemotePlayer(Vector2(double.parse(x.value.toString()), double.parse(y.value.toString())), name.value.toString(), i, id));
+              }
+            });
+
             i++;
           }else{
             i = -2;
           }
         }
-
       }
-
-
-
-      print(players);
-      print("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     if(players == null){
       return [];
     }else {
@@ -89,6 +102,9 @@ class SimpleExampleGame extends StatelessWidget {
     return int.parse(id);
   }
 
+
+
+
   Future<String> getGame() async{
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
@@ -118,15 +134,18 @@ class SimpleExampleGame extends StatelessWidget {
           getID(),
           getName(),
           getGame(),
+
     ]),
     builder:
     (BuildContext context, snapshot) {
-      print(snapshot.data);
+
       if (snapshot.hasData) {
+
         List<double>? Cords = snapshot.data![1] as List<double>?;
 
         var id = snapshot.data![2] as int;
         return  BonfireWidget(
+            gameController: _controller,
             map: WorldMapByTiled(
               'tiled/tanki2023.json',
               forceTileSize: Vector2(32, 32),
@@ -147,6 +166,33 @@ class SimpleExampleGame extends StatelessWidget {
             cameraConfig: CameraConfig(moveOnlyMapArea: true, zoom: 0.83),
               overlayBuilderMap: {
                 'KD': (BuildContext context, snapshot) {
+
+                  void getKD() async{
+                    final ref = FirebaseDatabase.instance.ref();
+                    final User? user = FirebaseAuth.instance.currentUser;
+                    var uid = user!.uid;
+                    var id = (await ref.child('Users/$uid/player').get()).value.toString();
+                    final idGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
+                    DatabaseReference killsRef =
+                    FirebaseDatabase.instance.ref('Games/$idGame/Players/$id/kills');
+                    DatabaseReference deathsRef =
+                    FirebaseDatabase.instance.ref('Games/$idGame/Players/$id/deaths');
+                    killsRef.onValue.listen((DatabaseEvent event) async {
+                      final data = event.snapshot.value as int;
+                      setState(() {
+                        killsMain = data;
+                      });
+
+                    });
+                    deathsRef.onValue.listen((DatabaseEvent event) async {
+                      final data = event.snapshot.value as int;
+                      setState(() {
+                        deathsMain = data;
+                      });
+                    });
+                  }
+
+                  getKD();
                   return  Padding(
                     padding: const EdgeInsets.only(top: 35, left: 20),
                     child: Column(
@@ -187,7 +233,7 @@ class SimpleExampleGame extends StatelessWidget {
 
                               fontSize: 10,
 
-                            )), child: const Text('Kills: 10',),),
+                            )), child:  Text('Kills: $killsMain',),),
 
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
@@ -227,7 +273,7 @@ class SimpleExampleGame extends StatelessWidget {
 
                                 fontSize: 10,
 
-                              )), child: const Text('Deaths: 10',),),
+                              )), child:  Text('Deaths: $deathsMain',),),
                         ),
                       ],
                     ),
@@ -250,7 +296,7 @@ class SimpleExampleGame extends StatelessWidget {
     );
   }
 
-
 }
+
 
 

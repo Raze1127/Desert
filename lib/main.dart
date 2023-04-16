@@ -47,7 +47,7 @@ class mainPage extends StatelessWidget{
           }else{
             return const Login();
           }
-          return  const SimpleExampleGame();
+
         }
     ),
   );

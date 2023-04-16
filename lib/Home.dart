@@ -127,7 +127,7 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const SimpleExampleGame()));
+                                      builder: (context) =>  SimpleExampleGame()));
                             }
                           }
                         });
