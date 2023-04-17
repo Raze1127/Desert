@@ -17,9 +17,23 @@ extension DoubleExtensions on double {
 }
 
 
-  void GetFriends() async {
+  Future<int> GetKills(String id) async {
+    final ref = FirebaseDatabase.instance.ref();
+    final User? user = FirebaseAuth.instance.currentUser;
+    var uid = user!.uid;
+    final curGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
+    final kills = (await ref.child('Games/$curGame/Players/$id/kills').get()).value.toString();
 
+    return int.parse(kills);
+  }
+Future<int> GetDeaths(String id) async {
+  final ref = FirebaseDatabase.instance.ref();
+  final User? user = FirebaseAuth.instance.currentUser;
+  var uid = user!.uid;
+  final curGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
+  final kills = (await ref.child('Games/$curGame/Players/$id/deaths').get()).value.toString();
 
+  return int.parse(kills);
 }
 
 class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
@@ -146,6 +160,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       attackFrom: AttackFromEnum.PLAYER_OR_ALLY,
     );
     ref.child("Games/$gameId/Players/$id/isFire").set(fire);
+
     fire++;
   }
 
@@ -154,11 +169,15 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
     if(life <= 30){
-      //скрыть игрока с экрана и показать через 5 секунд
-      removeFromParent();
+      GetKills(identify.toString()).then((value) {
 
+        ref.child("Games/$gameId/Players/$identify/kills").set(value + 1);
+      });
+      // GetDeaths(id.toString()).then((value) {
+      //   ref.child("Games/$gameId/Players/$id/deaths").set(value + 1);
+      // });
 
-
+      ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     }
     showDamage(
       damage,
@@ -174,8 +193,8 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
   @override
   void die() {
-
     ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
+    ref.child("Games/$gameId/Players/$id/isDead").set(true);
     removeFromParent();
 
     super.die();
@@ -187,6 +206,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   var time = DateTime.now().millisecondsSinceEpoch;
   @override
   void update(double dt) {
+    if (isDead) return;
     now = DateTime.now();
     int timestamp = now.millisecondsSinceEpoch;
 

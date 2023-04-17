@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
     final snapshot = await ref.child('Users/$uid/code').get();
 
     DatabaseReference starCountRef =
-        FirebaseDatabase.instance.ref('Users/$uid/request');
+    FirebaseDatabase.instance.ref('Users/$uid/request');
 
     starCountRef.onValue.listen((DatabaseEvent event) async {
       final data = event.snapshot.value;
@@ -153,12 +153,12 @@ class _HomeState extends State<Home> {
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
     final equal =
-        await ref.child("Users/").orderByChild("code").equalTo(code).get();
+    await ref.child("Users/").orderByChild("code").equalTo(code).get();
 
     final Frienduid = equal.children.first.key;
 
     final FriendsFriends =
-        await ref.child("Users/$Frienduid/friends/friendsUID").get();
+    await ref.child("Users/$Frienduid/friends/friendsUID").get();
     final MyFriends = await ref.child("Users/$uid/friends/friendsUID").get();
 
     List<String> MyFriendsList = MyFriends.value.toString().split("//");
@@ -284,53 +284,53 @@ class _HomeState extends State<Home> {
                                   Text(snapshot.data![0] as String,
                                       style: GoogleFonts.pressStart2p(
                                           textStyle: const TextStyle(
-                                        shadows: [
-                                          Shadow(
-                                              // bottomLeft
-                                              offset: Offset(-1.5, -1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // bottomRight
-                                              offset: Offset(1.5, -1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // topRight
-                                              offset: Offset(1.5, 1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // topLeft
-                                              offset: Offset(-1.5, 1.5),
-                                              color: Colors.black),
-                                        ],
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                      ))),
+                                            shadows: [
+                                              Shadow(
+                                                // bottomLeft
+                                                  offset: Offset(-1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // bottomRight
+                                                  offset: Offset(1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // topRight
+                                                  offset: Offset(1.5, 1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // topLeft
+                                                  offset: Offset(-1.5, 1.5),
+                                                  color: Colors.black),
+                                            ],
+                                            color: Colors.white,
+                                            fontSize: 25,
+                                          ))),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(snapshot.data![1] as String,
                                         style: GoogleFonts.pressStart2p(
                                             textStyle: const TextStyle(
-                                          shadows: [
-                                            Shadow(
-                                                // bottomLeft
-                                                offset: Offset(-1.5, -1.5),
-                                                color: Colors.black),
-                                            Shadow(
-                                                // bottomRight
-                                                offset: Offset(1.5, -1.5),
-                                                color: Colors.black),
-                                            Shadow(
-                                                // topRight
-                                                offset: Offset(1.5, 1.5),
-                                                color: Colors.black),
-                                            Shadow(
-                                                // topLeft
-                                                offset: Offset(-1.5, 1.5),
-                                                color: Colors.black),
-                                          ],
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                        ))),
+                                              shadows: [
+                                                Shadow(
+                                                  // bottomLeft
+                                                    offset: Offset(-1.5, -1.5),
+                                                    color: Colors.black),
+                                                Shadow(
+                                                  // bottomRight
+                                                    offset: Offset(1.5, -1.5),
+                                                    color: Colors.black),
+                                                Shadow(
+                                                  // topRight
+                                                    offset: Offset(1.5, 1.5),
+                                                    color: Colors.black),
+                                                Shadow(
+                                                  // topLeft
+                                                    offset: Offset(-1.5, 1.5),
+                                                    color: Colors.black),
+                                              ],
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                            ))),
                                   ),
                                 ],
                               ),
@@ -343,27 +343,27 @@ class _HomeState extends State<Home> {
                           child: Text("LVL",
                               style: GoogleFonts.pressStart2p(
                                   textStyle: const TextStyle(
-                                shadows: [
-                                  Shadow(
-                                      // bottomLeft
-                                      offset: Offset(-1.5, -1.5),
-                                      color: Colors.black),
-                                  Shadow(
-                                      // bottomRight
-                                      offset: Offset(1.5, -1.5),
-                                      color: Colors.black),
-                                  Shadow(
-                                      // topRight
-                                      offset: Offset(1.5, 1.5),
-                                      color: Colors.black),
-                                  Shadow(
-                                      // topLeft
-                                      offset: Offset(-1.5, 1.5),
-                                      color: Colors.black),
-                                ],
-                                color: Colors.white,
-                                fontSize: 10,
-                              ))),
+                                    shadows: [
+                                      Shadow(
+                                        // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ))),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
@@ -371,7 +371,7 @@ class _HomeState extends State<Home> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Opacity(
-                                opacity: 0.75,
+                                opacity: 1,
                                 child: LinearPercentIndicator(
                                   width: MediaQuery.of(context).size.width - 30,
                                   animation: true,
@@ -380,7 +380,7 @@ class _HomeState extends State<Home> {
                                   barRadius: const Radius.circular(10),
                                   linearStrokeCap: LinearStrokeCap.roundAll,
                                   backgroundColor: Colors.grey,
-                                  progressColor: const Color(0xff4A2BA3),
+                                  progressColor:  Colors.blueGrey[900],
                                 ),
                               ),
                             ],
@@ -391,34 +391,34 @@ class _HomeState extends State<Home> {
                           child: Text("STATS",
                               style: GoogleFonts.pressStart2p(
                                   textStyle: const TextStyle(
-                                shadows: [
-                                  Shadow(
-                                      // bottomLeft
-                                      offset: Offset(-1.5, -1.5),
-                                      color: Colors.black),
-                                  Shadow(
-                                      // bottomRight
-                                      offset: Offset(1.5, -1.5),
-                                      color: Colors.black),
-                                  Shadow(
-                                      // topRight
-                                      offset: Offset(1.5, 1.5),
-                                      color: Colors.black),
-                                  Shadow(
-                                      // topLeft
-                                      offset: Offset(-1.5, 1.5),
-                                      color: Colors.black),
-                                ],
-                                color: Colors.white,
-                                fontSize: 22,
-                              ))),
+                                    shadows: [
+                                      Shadow(
+                                        // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                  ))),
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 10, left: 20, right: 20),
                           child: Opacity(
-                            opacity: 0.75,
+                            opacity: 0.8,
                             child: Container(
-                              color: Colors.grey[400],
+                              color: Colors.grey,
                               child: Card(
                                 elevation: 0,
                                 color: Colors.transparent,
@@ -427,7 +427,7 @@ class _HomeState extends State<Home> {
                                   children: [
                                     Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                        MainAxisAlignment.start,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
@@ -435,28 +435,28 @@ class _HomeState extends State<Home> {
                                             child: Text("KILLS:",
                                                 style: GoogleFonts.pressStart2p(
                                                     textStyle: const TextStyle(
-                                                  shadows: [
-                                                    Shadow(
-                                                        // bottomLeft
-                                                        offset:
+                                                      shadows: [
+                                                        Shadow(
+                                                          // bottomLeft
+                                                            offset:
                                                             Offset(-1.5, -1.5),
-                                                        color: Colors.black),
-                                                    Shadow(
-                                                        // bottomRight
-                                                        offset: Offset(1.5, -1.5),
-                                                        color: Colors.black),
-                                                    Shadow(
-                                                        // topRight
-                                                        offset: Offset(1.5, 1.5),
-                                                        color: Colors.black),
-                                                    Shadow(
-                                                        // topLeft
-                                                        offset: Offset(-1.5, 1.5),
-                                                        color: Colors.black),
-                                                  ],
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                ))),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // bottomRight
+                                                            offset: Offset(1.5, -1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // topRight
+                                                            offset: Offset(1.5, 1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // topLeft
+                                                            offset: Offset(-1.5, 1.5),
+                                                            color: Colors.black),
+                                                      ],
+                                                      color: Colors.white,
+                                                      fontSize: 15,
+                                                    ))),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
@@ -464,28 +464,28 @@ class _HomeState extends State<Home> {
                                             child: Text("DEATHS:",
                                                 style: GoogleFonts.pressStart2p(
                                                     textStyle: const TextStyle(
-                                                  shadows: [
-                                                    Shadow(
-                                                        // bottomLeft
-                                                        offset:
+                                                      shadows: [
+                                                        Shadow(
+                                                          // bottomLeft
+                                                            offset:
                                                             Offset(-1.5, -1.5),
-                                                        color: Colors.black),
-                                                    Shadow(
-                                                        // bottomRight
-                                                        offset: Offset(1.5, -1.5),
-                                                        color: Colors.black),
-                                                    Shadow(
-                                                        // topRight
-                                                        offset: Offset(1.5, 1.5),
-                                                        color: Colors.black),
-                                                    Shadow(
-                                                        // topLeft
-                                                        offset: Offset(-1.5, 1.5),
-                                                        color: Colors.black),
-                                                  ],
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                ))),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // bottomRight
+                                                            offset: Offset(1.5, -1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // topRight
+                                                            offset: Offset(1.5, 1.5),
+                                                            color: Colors.black),
+                                                        Shadow(
+                                                          // topLeft
+                                                            offset: Offset(-1.5, 1.5),
+                                                            color: Colors.black),
+                                                      ],
+                                                      color: Colors.white,
+                                                      fontSize: 15,
+                                                    ))),
                                           )
                                         ])
                                   ],
@@ -502,27 +502,27 @@ class _HomeState extends State<Home> {
                               Text("FRIENDS",
                                   style: GoogleFonts.pressStart2p(
                                       textStyle: const TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                          // bottomLeft
-                                          offset: Offset(-1.5, -1.5),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // bottomRight
-                                          offset: Offset(1.5, -1.5),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topRight
-                                          offset: Offset(1.5, 1.5),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topLeft
-                                          offset: Offset(-1.5, 1.5),
-                                          color: Colors.black),
-                                    ],
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ))),
+                                        shadows: [
+                                          Shadow(
+                                            // bottomLeft
+                                              offset: Offset(-1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // bottomRight
+                                              offset: Offset(1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // topRight
+                                              offset: Offset(1.5, 1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // topLeft
+                                              offset: Offset(-1.5, 1.5),
+                                              color: Colors.black),
+                                        ],
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      ))),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     top: 10, left: 20, right: 20),
@@ -533,8 +533,8 @@ class _HomeState extends State<Home> {
                                       alignment: Alignment.centerLeft,
                                       child: Padding(
                                         padding:
-                                            const EdgeInsetsDirectional.fromSTEB(
-                                                0, 20, 20, 0),
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0, 20, 20, 0),
                                         child: Container(
                                           width: 200,
                                           child: TextField(
@@ -558,11 +558,13 @@ class _HomeState extends State<Home> {
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Padding(
-                                        padding:
-                                            const EdgeInsetsDirectional.fromSTEB(
-                                                0, 20, 0, 0),
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
+                                          padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 20, 0, 0),
+                                          child: ElevatedButton(
+                                            style:
+                                            ElevatedButton.styleFrom(
+                                              primary: Colors.blueGrey[900],
                                               shape: const RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(25)),
@@ -602,8 +604,8 @@ class _HomeState extends State<Home> {
                                                       fontSize: 12,
 
                                                     ))
-                                      ),
-                                    )
+                                            ),
+                                          )
                                       ),
                                     ),
                                   ],
@@ -620,174 +622,174 @@ class _HomeState extends State<Home> {
                                     final item = (snapshot.data![2] as List)[index];
 
                                     return FutureBuilder(
-                                      future: getFriendData(item),
-                                      builder: (context, snapshot) {
+                                        future: getFriendData(item),
+                                        builder: (context, snapshot) {
 
-                                         if (snapshot.hasData) {
-                                           final userData = snapshot.data as List;
-                                           var name = userData[0];
-                                           var xp = userData[1];
-                                           return Card(
-                                            margin: const EdgeInsets.all(10),
-                                            elevation: 10,
-                                            color: Colors.grey[800],
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(
-                                                  4.0),
-                                              child: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.all(4.0),
-                                                    child: Text(
-                                                      style: GoogleFonts
-                                                          .pressStart2p(
-                                                          textStyle: const TextStyle(
-                                                            shadows: [
-                                                              Shadow(
-                                                                // bottomLeft
-                                                                  offset: Offset(
-                                                                      -1.5,
-                                                                      -1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                              Shadow(
-                                                                // bottomRight
-                                                                  offset: Offset(
-                                                                      1.5,
-                                                                      -1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                              Shadow(
-                                                                // topRight
-                                                                  offset: Offset(
-                                                                      1.5, 1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                              Shadow(
-                                                                // topLeft
-                                                                  offset: Offset(
-                                                                      -1.5,
-                                                                      1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                            ],
-                                                            color: Colors.white,
+                                          if (snapshot.hasData) {
+                                            final userData = snapshot.data as List;
+                                            var name = userData[0];
+                                            var xp = userData[1];
+                                            return Card(
+                                              margin: const EdgeInsets.all(10),
+                                              elevation: 10,
+                                              color: Colors.blueGrey[900],
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                    4.0),
+                                                child: Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.all(4.0),
+                                                      child: Text(
+                                                        style: GoogleFonts
+                                                            .pressStart2p(
+                                                            textStyle: const TextStyle(
+                                                              shadows: [
+                                                                Shadow(
+                                                                  // bottomLeft
+                                                                    offset: Offset(
+                                                                        -1.5,
+                                                                        -1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                  // bottomRight
+                                                                    offset: Offset(
+                                                                        1.5,
+                                                                        -1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                  // topRight
+                                                                    offset: Offset(
+                                                                        1.5, 1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                  // topLeft
+                                                                    offset: Offset(
+                                                                        -1.5,
+                                                                        1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                              ],
+                                                              color: Colors.white,
 
-                                                            fontSize: 15,
+                                                              fontSize: 15,
 
-                                                          )),
-                                                      "${index + 1}.",
-                                                    ),
-                                                  ),
-
-                                                  Text(
-                                                    style: GoogleFonts
-                                                        .pressStart2p(
-                                                        textStyle: const TextStyle(
-                                                          shadows: [
-                                                            Shadow(
-                                                              // bottomLeft
-                                                                offset: Offset(
-                                                                    -1.5, -1.5),
-                                                                color: Colors
-                                                                    .black),
-                                                            Shadow(
-                                                              // bottomRight
-                                                                offset: Offset(
-                                                                    1.5, -1.5),
-                                                                color: Colors
-                                                                    .black),
-                                                            Shadow(
-                                                              // topRight
-                                                                offset: Offset(
-                                                                    1.5, 1.5),
-                                                                color: Colors
-                                                                    .black),
-                                                            Shadow(
-                                                              // topLeft
-                                                                offset: Offset(
-                                                                    -1.5, 1.5),
-                                                                color: Colors
-                                                                    .black),
-                                                          ],
-                                                          color: Colors.white,
-
-                                                          fontSize: 15,
-
-                                                        )),
-                                                    name.toString(),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        9, 0, 0, 0),
-                                                    child: Text(
-                                                      style: GoogleFonts
-                                                          .pressStart2p(
-                                                          textStyle: const TextStyle(
-                                                            shadows: [
-                                                              Shadow(
-                                                                // bottomLeft
-                                                                  offset: Offset(
-                                                                      -1.5,
-                                                                      -1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                              Shadow(
-                                                                // bottomRight
-                                                                  offset: Offset(
-                                                                      1.5,
-                                                                      -1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                              Shadow(
-                                                                // topRight
-                                                                  offset: Offset(
-                                                                      1.5, 1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                              Shadow(
-                                                                // topLeft
-                                                                  offset: Offset(
-                                                                      -1.5,
-                                                                      1.5),
-                                                                  color: Colors
-                                                                      .black),
-                                                            ],
-                                                            color: Colors.white,
-
-                                                            fontSize: 15,
-
-                                                          )),
-
-                                                      'LVL: ${xp.toString()}',
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                    children: [
-                                                      IconButton(
-                                                        onPressed: () {
-                                                          _removeItem(index);
-                                                          setState(() {});
-                                                        },
-                                                        icon: const Icon(
-                                                            Icons.delete),
+                                                            )),
+                                                        "${index + 1}.",
                                                       ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                    ),
+
+                                                    Text(
+                                                      style: GoogleFonts
+                                                          .pressStart2p(
+                                                          textStyle: const TextStyle(
+                                                            shadows: [
+                                                              Shadow(
+                                                                // bottomLeft
+                                                                  offset: Offset(
+                                                                      -1.5, -1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                // bottomRight
+                                                                  offset: Offset(
+                                                                      1.5, -1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                // topRight
+                                                                  offset: Offset(
+                                                                      1.5, 1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                // topLeft
+                                                                  offset: Offset(
+                                                                      -1.5, 1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                            ],
+                                                            color: Colors.white,
+
+                                                            fontSize: 15,
+
+                                                          )),
+                                                      name.toString(),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          9, 0, 0, 0),
+                                                      child: Text(
+                                                        style: GoogleFonts
+                                                            .pressStart2p(
+                                                            textStyle: const TextStyle(
+                                                              shadows: [
+                                                                Shadow(
+                                                                  // bottomLeft
+                                                                    offset: Offset(
+                                                                        -1.5,
+                                                                        -1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                  // bottomRight
+                                                                    offset: Offset(
+                                                                        1.5,
+                                                                        -1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                  // topRight
+                                                                    offset: Offset(
+                                                                        1.5, 1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                  // topLeft
+                                                                    offset: Offset(
+                                                                        -1.5,
+                                                                        1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                              ],
+                                                              color: Colors.white,
+
+                                                              fontSize: 15,
+
+                                                            )),
+
+                                                        'LVL: ${xp.toString()}',
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                      children: [
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            _removeItem(index);
+                                                            setState(() {});
+                                                          },
+                                                          icon: const Icon(
+                                                              Icons.delete),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        } else {
-                                          return const Center(
-                                            child: CircularProgressIndicator(),
-                                          );
+                                            );
+                                          } else {
+                                            return const Center(
+                                              child: CircularProgressIndicator(),
+                                            );
+                                          }
                                         }
-                                      }
                                     );
                                   },
                                 ),
@@ -796,7 +798,7 @@ class _HomeState extends State<Home> {
                                 padding: EdgeInsets.only(top: 10),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xff848080),
+                                    backgroundColor:  Colors.blueGrey[900],
                                     //add radius to button
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10)),
@@ -806,33 +808,33 @@ class _HomeState extends State<Home> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const CreateGame()),
+                                          const CreateGame()),
                                     );
                                   },
                                   child: Text("CREATE GAME",
                                       style: GoogleFonts.pressStart2p(
                                           textStyle: const TextStyle(
-                                        shadows: [
-                                          Shadow(
-                                              // bottomLeft
-                                              offset: Offset(-1.5, -1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // bottomRight
-                                              offset: Offset(1.5, -1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // topRight
-                                              offset: Offset(1.5, 1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // topLeft
-                                              offset: Offset(-1.5, 1.5),
-                                              color: Colors.black),
-                                        ],
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                      ))),
+                                            shadows: [
+                                              Shadow(
+                                                // bottomLeft
+                                                  offset: Offset(-1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // bottomRight
+                                                  offset: Offset(1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // topRight
+                                                  offset: Offset(1.5, 1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // topLeft
+                                                  offset: Offset(-1.5, 1.5),
+                                                  color: Colors.black),
+                                            ],
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                          ))),
                                 ),
                               )
                             ],

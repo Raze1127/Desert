@@ -107,6 +107,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
         centerOffset = Vector2(-0, 0);
         break;
     }
+    print('$id $angle');
     simpleAttackRangeByAngle(
       id: id,
       attackFrom: AttackFromEnum.ENEMY,
@@ -152,6 +153,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       for (var i = 0; i < decodedBytes.length; i += 8) {
         numbers.add(ByteData.view(decodedBytes.buffer).getFloat64(i, Endian.big));
       }
+
       print(numbers[0]);
       position.x = numbers[0];
       position.y = numbers[1];
@@ -179,6 +181,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
     DatabaseReference angleRef =
     FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/isFire');
+    print('Games/$gameId/Players/$id/isFire');
     angleRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as int;
 
@@ -200,6 +203,10 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
 
       if(life != data!.toDouble()){
+
+
+
+
         if(data.toDouble() < life){
 
           receiveDamage(AttackFromEnum.ENEMY, life - data.toDouble(), 1);
@@ -210,6 +217,15 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
           addLife(data.toDouble()-life);
         }
+
+        if(life<=0){
+          opacity = 0.4;
+
+        }else{
+
+          opacity = 1;
+        }
+
       }
 
     });
@@ -223,24 +239,35 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
   @override
   void update(double dt) {
+    if (isDead) {
 
-    if(io == 0){
-      io++;
-      health();
-      movement();
-      fire();
-    }
-    else{
-      moveFromAngle(speed1, angle1);
-    }
+        DatabaseReference reff =
+        FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/deaths');
 
+        // reff.onValue.listen((DatabaseEvent event) async {
+        //   updateLife(200.0);
+        //
+        // });
+
+
+    }else {
+      if (io == 0) {
+        io++;
+        health();
+        movement();
+        fire();
+      }
+      else {
+        moveFromAngle(speed1, angle1);
+      }
+    }
     //
     super.update(dt);
   }
 
   @override
   void die() {
-    removeFromParent();
+
     super.die();
   }
 }
