@@ -160,6 +160,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       attackFrom: AttackFromEnum.PLAYER_OR_ALLY,
     );
     ref.child("Games/$gameId/Players/$id/isFire").set(fire);
+
     fire++;
   }
 
@@ -172,9 +173,9 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
         ref.child("Games/$gameId/Players/$identify/kills").set(value + 1);
       });
-      GetDeaths(id.toString()).then((value) {
-        ref.child("Games/$gameId/Players/$id/deaths").set(value + 1);
-      });
+      // GetDeaths(id.toString()).then((value) {
+      //   ref.child("Games/$gameId/Players/$id/deaths").set(value + 1);
+      // });
 
       ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     }
@@ -195,6 +196,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     ref.child("Games/$gameId/Players/$id/isDead").set(true);
     removeFromParent();
+
     super.die();
   }
   var angleCheck = 0.0;
@@ -204,6 +206,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   var time = DateTime.now().millisecondsSinceEpoch;
   @override
   void update(double dt) {
+    if (isDead) return;
     now = DateTime.now();
     int timestamp = now.millisecondsSinceEpoch;
 

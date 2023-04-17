@@ -459,6 +459,7 @@ class _CreateGameState extends State<CreateGame> {
           'angle': 0,
           'kills': 0,
           'deaths': 0,
+          'isDead': false,
         }
         );
 
@@ -475,7 +476,7 @@ class _CreateGameState extends State<CreateGame> {
           ).then((value) => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>  SimpleExampleGame())) );
+                  builder: (context) =>  const SimpleExampleGame())) );
         }
       }
     });
