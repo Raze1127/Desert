@@ -57,6 +57,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^2.2.19
+
+flutter_native_splash:
+  background_image: assets/images/splash/splashback.png
+  image: assets/images/splash/splash.png
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -93,6 +98,8 @@ flutter:
     - assets/images/tiled/32x32_DEMO.png
     - assets/images/tiled/32x32_DEMO2.json
     - assets/images/tiled/tanki2023.json
+    - assets/images/splash/splashback.png
+    - assets/images/splash/splash.png
 
 
 

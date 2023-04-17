@@ -7,13 +7,15 @@ import 'package:koleso_fortune/Home.dart';
 import 'Login.dart';
 import 'Register.dart';
 import 'firebase_options.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  // WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -43,8 +45,11 @@ class mainPage extends StatelessWidget{
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData){
+            //FlutterNativeSplash.remove();
             return const Home();
+
           }else{
+            //FlutterNativeSplash.remove();
             return const Login();
           }
 
