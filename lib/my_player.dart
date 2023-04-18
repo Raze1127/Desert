@@ -165,20 +165,30 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   }
 
 
-
+  bool hasReceivedDamage = true;
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
-    if(life <= 30){
-      GetKills(identify.toString()).then((value) {
+    if(life <= 0 && hasReceivedDamage == true){
+      GetKills(identify.toString()).then((value) async {
 
         ref.child("Games/$gameId/Players/$identify/kills").set(value + 1);
+        var uid = (await ref.child('Games/$gameId/Players/$identify/uid').get()).value.toString();
+        var killsss = (await ref.child('Users/$uid/kills').get()).value.toString();
+        print('Users/$uid/kills  ${int.parse(killsss)+1}');
+        ref.child('Users/$uid/kills').set(int.parse(killsss)+1);
       });
-      // GetDeaths(id.toString()).then((value) {
-      //   ref.child("Games/$gameId/Players/$id/deaths").set(value + 1);
-      // });
+      hasReceivedDamage = false;
 
       ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     }
+    if(life >= 30 && hasReceivedDamage == false){
+      hasReceivedDamage = true;
+
+    }
+
+
+
+
     showDamage(
       damage,
       config: const TextStyle(
@@ -190,13 +200,18 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     super.receiveDamage(attacker, damage, identify);
 
   }
+  @override
+  bool checkCanReceiveDamage(AttackFromEnum attacker, double damage, from) {
+    return hasReceivedDamage;
+  }
 
   @override
   void die() {
     ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
     ref.child("Games/$gameId/Players/$id/isDead").set(true);
-    removeFromParent();
 
+    //removeFromParent();
+    hasReceivedDamage = true;
     super.die();
   }
   var angleCheck = 0.0;
@@ -204,13 +219,25 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   var healthCheck = 200.0;
   DateTime now = DateTime.now();
   var time = DateTime.now().millisecondsSinceEpoch;
+  var immortal = false;
   @override
   void update(double dt) {
-    if (isDead) return;
+    if(immortal == true){
+      addLife(200.0);
+    }
+    if(life <= 0){
+      speed = 0;
+      if(life == -10){
+        addLife(10.0);
+        opacity = 0.4;
+      }else{
+        opacity = 1;
+      }
+    }
     now = DateTime.now();
     int timestamp = now.millisecondsSinceEpoch;
 
-    if((timestamp - time) >= 1500){
+    if((timestamp - time) >= 800){
       time = timestamp;
       final List<double> numbers = [position.x, position.y];
       final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
@@ -219,8 +246,12 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     }
 
     if(io == 0){
-
-
+      DatabaseReference reff =
+      FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/isImmortal');
+      reff.onValue.listen((DatabaseEvent event) async {
+        final data = event.snapshot.value as bool;
+        immortal=data;
+      });
       speed = 0;
       angle = 0;
       speedCheck = speed;

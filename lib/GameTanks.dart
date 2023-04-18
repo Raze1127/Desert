@@ -54,7 +54,12 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
         i++;
       } else {
         if (name.exists) {
-          players.add(RemotePlayer(Vector2(double.parse(x.value.toString()), double.parse(y.value.toString())), name.value.toString(), i, id));
+          players.add(RemotePlayer(
+              Vector2(double.parse(x.value.toString()),
+                  double.parse(y.value.toString())),
+              name.value.toString(),
+              i,
+              id));
           //subscribeRemotePlayers(id, i, double.parse(x.value.toString()), double.parse(y.value.toString()), name.value.toString() );
           i++;
         } else {
@@ -111,8 +116,6 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
     return name;
   }
 
-
-
   @override
   void initState() {
     super.initState();
@@ -128,13 +131,6 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
         (await ref.child('Users/$uid/CurGame').get()).value.toString();
     final player =
         (await ref.child('Users/$uid/player').get()).value.toString();
-    final nick = (await ref.child('Users/$uid/player').get()).value.toString();
-    final x = (await ref.child('Games/$idGame/Players/$player/x').get())
-        .value
-        .toString();
-    final y = (await ref.child('Games/$idGame/Players/$player/y').get())
-        .value
-        .toString();
 
     DatabaseReference reff =
         FirebaseDatabase.instance.ref('Games/$idGame/Players/$player/isDead');
@@ -144,13 +140,11 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
         final data = event.snapshot.value as bool;
         print(data);
         if (data == true) {
-
           Future.delayed(const Duration(milliseconds: 1000), () {
             setState(() {
               resp = 'Respawning in';
               secondsLeft = 5;
             });
-
           });
 
           Future.delayed(const Duration(milliseconds: 2000), () {
@@ -168,19 +162,50 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
               secondsLeft = 2;
             });
           });
-          Future.delayed(const Duration(milliseconds: 5000), () {
+          Future.delayed(const Duration(milliseconds: 5000), () async {
             setState(() {
               secondsLeft = 1;
             });
-            resp = '';
 
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SimpleExampleGame()));
             DatabaseReference ref = FirebaseDatabase.instance.ref();
             ref.child('Games/$idGame/Players/$player/isDead').set(false);
-            ref.child('Games/$idGame/Players/$player/deaths').set(deathsMain+1);
+            ref
+                .child('Games/$idGame/Players/$player/deaths')
+                .set(deathsMain + 1);
 
+            var deathssss = (await ref.child('Users/$uid/deaths').get()).value.toString();
+
+            ref.child('Users/$uid/deaths').set(int.parse(deathssss)+1);
+
+            _controller.player!.addLife(200.0);
           });
+          Future.delayed(const Duration(milliseconds: 5050), () {
+            setState(() {
+              secondsLeft = 3;
+              resp = 'You are immortal for';
+              _controller.player!.addLife(200);
+              ref.child('Games/$idGame/Players/$player/isImmortal').set(true);
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                setState(() {
+                  secondsLeft = 2;
+                });
+              });
+              Future.delayed(const Duration(milliseconds: 2000), () {
+                setState(() {
+                  secondsLeft = 1;
+                });
+              });
+              Future.delayed(const Duration(milliseconds: 3000), () {
+                setState(() {
+                  _controller.player!.addLife(200.0);
+                  secondsLeft = 0;
+                  ref.child('Games/$idGame/Players/$player/isImmortal').set(false);
 
+                  resp = '';
+                });
+              });
+            });
+          });
         }
       }
     });
@@ -197,15 +222,17 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
         FirebaseDatabase.instance.ref('Games/$idGame/Players/$id/kills');
     DatabaseReference deathsRef =
         FirebaseDatabase.instance.ref('Games/$idGame/Players/$id/deaths');
-    killsRef.onValue.listen((DatabaseEvent event) async {
+    killsRef.onValue.listen((DatabaseEvent event)  {
       final data = event.snapshot.value as int;
-      setState(() {
+      setState(()  {
+
         killsMain = data;
       });
     });
-    deathsRef.onValue.listen((DatabaseEvent event) async {
+    deathsRef.onValue.listen((DatabaseEvent event)  {
       final data = event.snapshot.value as int;
-      setState(() {
+      setState(()  {
+
         deathsMain = data;
       });
     });
@@ -278,16 +305,19 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
                                   fontSize: 24,
                                 ),
                               ),
-                              child:
-                                  Column(
-                                    children: [
-                                      Text((resp), style: const TextStyle(fontSize: 10),),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(secondsLeft > 0 ? "$secondsLeft" : ""),
-                                      ),
-                                    ],
+                              child: Column(
+                                children: [
+                                  Text(
+                                    (resp),
+                                    style: const TextStyle(fontSize: 10),
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        secondsLeft > 0 ? "$secondsLeft" : ""),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

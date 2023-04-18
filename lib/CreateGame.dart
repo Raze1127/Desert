@@ -48,20 +48,16 @@ class _CreateGameState extends State<CreateGame> {
 
   void check(item) async {
 
-    final data = await getFriendData(item);
-    var name  = data[0];
-    var lvl = data[1];
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
-    var friends = {};
     final uid = user?.uid;
-    final snapshot = await ref.child('Users/$uid/friends/friendsUID').get();
+    var name  = (await ref.child('Users/$uid/Name').get()).value.toString();
 
       FirebaseDatabase database = FirebaseDatabase.instance;
 
       database.ref("Users/$item/").update({
         "answer": "",
-        "request": "$GameCode/$uid",
+        "request": "$GameCode/$name",
       });
       DatabaseReference starCountRef =
           FirebaseDatabase.instance.ref('Users/$item/answer');

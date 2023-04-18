@@ -50,13 +50,33 @@ class _HomeState extends State<Home> {
     return [name.value.toString(), xp.value.toString()];
   }
 
-  Future<String> GetPoints() async {
+  Future<List> GetPoints() async {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    final name = await ref.child('Users/$uid/Points').get();
+    final kills = int.parse((await ref.child('Users/$uid/kills').get()).value.toString());
+    final deaths = int.parse((await ref.child('Users/$uid/deaths').get()).value.toString());
+    var xp = (kills*80-deaths*30);
+    print(xp);
+    if(xp<=0){
+      xp=1;
+    }
+    int currentLevel = 1; // текущий уровень
+    int xpForCurrentLevel = 300; // количество xp для текущего уровня
+    int xpForNextLevel = xpForCurrentLevel + 200; // количество xp для следующего уровня
 
-    return name.value.toString();
+    while (xpForNextLevel <= xp) {
+      currentLevel++;
+      xpForCurrentLevel = xpForNextLevel;
+      xpForNextLevel += 200;
+    }
+    print("Текущий уровень: $currentLevel");
+    print("Количество xp для текущего уровня: $xpForCurrentLevel");
+    print("Количество xp для следующего уровня: $xpForNextLevel");
+    var perc = xp/xpForNextLevel;
+    print(perc);
+    print("$xpForNextLevel LOLOLO $xp");
+    return [kills, deaths, xp, currentLevel, xpForNextLevel, perc];
   }
 
   Future<String> GetPhoto() async {
@@ -88,9 +108,17 @@ class _HomeState extends State<Home> {
     final uid = user?.uid;
     final snapshot = await ref.child('Users/$uid/code').get();
 
+
+    return snapshot.value.toString();
+  }
+  @override
+  void initState(){
+
+
+    final User? user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
     DatabaseReference starCountRef =
     FirebaseDatabase.instance.ref('Users/$uid/request');
-
     starCountRef.onValue.listen((DatabaseEvent event) async {
       final data = event.snapshot.value;
       if (data != null) {
@@ -101,8 +129,55 @@ class _HomeState extends State<Home> {
               context: this.context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text("Request for a game"),
-                  content: Text("${pringls[1]} wants to play with you"),
+                  backgroundColor: Colors.blueGrey[900],
+                  title:  Text("Request for a game",
+                      style: GoogleFonts.pressStart2p(
+                          textStyle: const TextStyle(
+                            shadows: [
+                              Shadow(
+                                // bottomLeft
+                                  offset: Offset(-1.5, -1.5),
+                                  color: Colors.black),
+                              Shadow(
+                                // bottomRight
+                                  offset: Offset(1.5, -1.5),
+                                  color: Colors.black),
+                              Shadow(
+                                // topRight
+                                  offset: Offset(1.5, 1.5),
+                                  color: Colors.black),
+                              Shadow(
+                                // topLeft
+                                  offset: Offset(-1.5, 1.5),
+                                  color: Colors.black),
+                            ],
+                            color: Colors.white,
+                            fontSize: 13,
+                          ))),
+                  content: Text("${pringls[1]} wants to play with you",
+                      style: GoogleFonts.pressStart2p(
+                          textStyle: const TextStyle(
+                            shadows: [
+                              Shadow(
+                                // bottomLeft
+                                  offset: Offset(-1.5, -1.5),
+                                  color: Colors.black),
+                              Shadow(
+                                // bottomRight
+                                  offset: Offset(1.5, -1.5),
+                                  color: Colors.black),
+                              Shadow(
+                                // topRight
+                                  offset: Offset(1.5, 1.5),
+                                  color: Colors.black),
+                              Shadow(
+                                // topLeft
+                                  offset: Offset(-1.5, 1.5),
+                                  color: Colors.black),
+                            ],
+                            color: Colors.white,
+                            fontSize: 12,
+                          ))),
                   actions: [
                     TextButton(
                         onPressed: () {
@@ -114,29 +189,114 @@ class _HomeState extends State<Home> {
                           });
                           Navigator.pop(context);
                         },
-                        child: const Text("Отклонить")),
+                        child:  Text("Отклонить",
+                            style: GoogleFonts.pressStart2p(
+                                textStyle: const TextStyle(
+                                  shadows: [
+                                    Shadow(
+                                      // bottomLeft
+                                        offset: Offset(-1.5, -1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                      // bottomRight
+                                        offset: Offset(1.5, -1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                      // topRight
+                                        offset: Offset(1.5, 1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                      // topLeft
+                                        offset: Offset(-1.5, 1.5),
+                                        color: Colors.black),
+                                  ],
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                )))),
                     TextButton(
-                      child: const Text("Принять"),
+                      child:  Text("Принять",
+                          style: GoogleFonts.pressStart2p(
+                              textStyle: const TextStyle(
+                                shadows: [
+                                  Shadow(
+                                    // bottomLeft
+                                      offset: Offset(-1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                    // bottomRight
+                                      offset: Offset(1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                    // topRight
+                                      offset: Offset(1.5, 1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                    // topLeft
+                                      offset: Offset(-1.5, 1.5),
+                                      color: Colors.black),
+                                ],
+                                color: Colors.white,
+                                fontSize: 10,
+                              ))),
                       onPressed: () {
-                        DatabaseReference start =
-                        FirebaseDatabase.instance.ref('Games/${pringls[0]}/isStart');
-                        start.onValue.listen((DatabaseEvent event)  {
-                          final data = event.snapshot.value;
-                          if (data != null) {
-                            if (data == 1) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SimpleExampleGame()));
-                            }
-                          }
-                        });
+
                         database.ref("Users/$uid/").update({
                           "answer": "yes",
-                        });
-                        database.ref("Users/$uid/").update({
+                        }).then((value) => database.ref("Users/$uid/").update({
                           "request": "",
-                        });
+                        }).then((value) => showDialog(
+                            context: this.context,
+                            builder: (BuildContext context) {
+                              DatabaseReference start =
+                              FirebaseDatabase.instance.ref('Games/${pringls[0]}/isStart');
+                              start.onValue.listen((DatabaseEvent event)  {
+                                final data = event.snapshot.value;
+                                if (data != null) {
+                                  if (data == 1) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const SimpleExampleGame()));
+                                  }
+                                }
+                              });
+                              return AlertDialog(
+                                backgroundColor: Colors.blueGrey[900],
+                                title:  Text(" Waiting for the start of the game...",
+                                    style: GoogleFonts.pressStart2p(
+                                        textStyle: const TextStyle(
+                                          shadows: [
+                                            Shadow(
+                                              // bottomLeft
+                                                offset: Offset(-1.5, -1.5),
+                                                color: Colors.black),
+                                            Shadow(
+                                              // bottomRight
+                                                offset: Offset(1.5, -1.5),
+                                                color: Colors.black),
+                                            Shadow(
+                                              // topRight
+                                                offset: Offset(1.5, 1.5),
+                                                color: Colors.black),
+                                            Shadow(
+                                              // topLeft
+                                                offset: Offset(-1.5, 1.5),
+                                                color: Colors.black),
+                                          ],
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                        ))),
+                                content:
+                                Container(width: 50, height: 50, child: CircularProgressIndicator()),
+
+
+                              );
+                            })
+
+
+                        )
+                        );
+
                       },
                     ),
                   ],
@@ -145,7 +305,7 @@ class _HomeState extends State<Home> {
         }
       }
     });
-    return snapshot.value.toString();
+    super.initState();
   }
 
   void addFriend(String code) async {
@@ -201,43 +361,45 @@ class _HomeState extends State<Home> {
     var friends = {};
     final uid = user?.uid;
     final snapshot = await ref.child('Users/$uid/friends/friendsUID').get();
-    List<String> uids = snapshot.value.toString().split("|");
-    var uids2 = "";
-    for (var i = 0; i < uids.length; i++) {
-      final point = await ref.child('Users/${uids[i]}/Points').get();
-      friends.addAll({uids[i]: int.parse(point.value.toString())});
-    }
-    var friendsSorted = Map.fromEntries(friends.entries.toList()
-      ..sort((e1, e2) => e1.value.compareTo(e2.value)));
-    var delfr = friendsSorted.keys.elementAt(index);
-
-    for (var i = 0; i < friendsSorted.length; i++) {
-      if (friendsSorted.keys.elementAt(i) == delfr) {
-      } else {
-        if (friendsSorted.keys.elementAt(i) == "") {
-          uids2 += "";
-        } else {
-          uids2 += "${friendsSorted.keys.elementAt(i)}|";
-        }
-      }
-    }
-    ;
-    if (uids2.isNotEmpty) {
-      uids2 = uids2.substring(0, uids2.length - 1);
-    }
+    List<String> uids = snapshot.value.toString().split("//");
+    uids.removeAt(index);
+    String result = uids.join('//');
     ref.child('Users/$uid/friends/').update({
-      "friendsUID": uids2,
+      "friendsUID": result,
     });
     _key.currentState!.removeItem(index, (_, animation) {
       return SizeTransition(
         sizeFactor: animation,
-        child: const Card(
+        child:  Card(
           margin: EdgeInsets.all(8),
           elevation: 10,
           color: Colors.white,
           child: ListTile(
             contentPadding: EdgeInsets.all(7),
-            title: Text("Goodbye", style: TextStyle(fontSize: 20)),
+            title: Text("Goodbye",
+                style: GoogleFonts.pressStart2p(
+                    textStyle: const TextStyle(
+                      shadows: [
+                        Shadow(
+                          // bottomLeft
+                            offset: Offset(-1.5, -1.5),
+                            color: Colors.black),
+                        Shadow(
+                          // bottomRight
+                            offset: Offset(1.5, -1.5),
+                            color: Colors.black),
+                        Shadow(
+                          // topRight
+                            offset: Offset(1.5, 1.5),
+                            color: Colors.black),
+                        Shadow(
+                          // topLeft
+                            offset: Offset(-1.5, 1.5),
+                            color: Colors.black),
+                      ],
+                      color: Colors.white,
+                      fontSize: 20,
+                    ))),
           ),
         ),
       );
@@ -260,10 +422,14 @@ class _HomeState extends State<Home> {
               GetName(),
               GetCode(),
               GetFriends(),
+              GetPoints()
             ]),
             builder:
                 (BuildContext context,  snapshot) {
+              print(snapshot.data);
               if (snapshot.hasData) {
+                List daty = snapshot.data![3] as List;
+                GetPoints();
                 return Container(
                     height: double.infinity,
                     width: double.infinity,
@@ -340,7 +506,7 @@ class _HomeState extends State<Home> {
                         // Никнейм и код
                         Padding(
                           padding: const EdgeInsets.only(top: 50),
-                          child: Text("LVL",
+                          child: Text("LVL ${daty[3]}",
                               style: GoogleFonts.pressStart2p(
                                   textStyle: const TextStyle(
                                     shadows: [
@@ -373,10 +539,34 @@ class _HomeState extends State<Home> {
                               Opacity(
                                 opacity: 1,
                                 child: LinearPercentIndicator(
+                                  center: Text("${daty[2]} xp",
+                                      style: GoogleFonts.pressStart2p(
+                                          textStyle: const TextStyle(
+                                            shadows: [
+                                              Shadow(
+                                                // bottomLeft
+                                                  offset: Offset(-1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // bottomRight
+                                                  offset: Offset(1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // topRight
+                                                  offset: Offset(1.5, 1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                // topLeft
+                                                  offset: Offset(-1.5, 1.5),
+                                                  color: Colors.black),
+                                            ],
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                          ))),
                                   width: MediaQuery.of(context).size.width - 30,
                                   animation: true,
-                                  lineHeight: 14.0,
-                                  percent: 0.5,
+                                  lineHeight: 20.0,
+                                  percent: daty[5],
                                   barRadius: const Radius.circular(10),
                                   linearStrokeCap: LinearStrokeCap.roundAll,
                                   backgroundColor: Colors.grey,
@@ -432,7 +622,7 @@ class _HomeState extends State<Home> {
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 30, left: 5),
-                                            child: Text("KILLS:",
+                                            child: Text("KILLS: ${daty[0]}",
                                                 style: GoogleFonts.pressStart2p(
                                                     textStyle: const TextStyle(
                                                       shadows: [
@@ -461,7 +651,7 @@ class _HomeState extends State<Home> {
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 15, left: 10, bottom: 30),
-                                            child: Text("DEATHS:",
+                                            child: Text("DEATHS: ${daty[1]}",
                                                 style: GoogleFonts.pressStart2p(
                                                     textStyle: const TextStyle(
                                                       shadows: [
@@ -806,9 +996,21 @@ class _HomeState extends State<Home> {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const CreateGame()),
+                                      PageRouteBuilder(
+                                        pageBuilder: (_, __, ___) => CreateGame(),
+                                        transitionDuration: Duration(milliseconds: 200),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          const begin = Offset(0.0, 1.0);
+                                          const end = Offset.zero;
+                                          final tween = Tween(begin: begin, end: end);
+                                          final offsetAnimation = animation.drive(tween);
+
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                      ),
                                     );
                                   },
                                   child: Text("CREATE GAME",
