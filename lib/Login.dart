@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -22,8 +23,15 @@ class _MyLoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/background.png"),
+              fit: BoxFit.fill),
+        ),
         child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
             body: Center(child: Container( child: Container(
                width: 300,
               padding: EdgeInsets.only(top: MediaQuery
@@ -33,14 +41,38 @@ class _MyLoginState extends State<Login> {
               child: Column(
 
                   children: [
-                    const Text(
+                    const SizedBox(
+                      height: 50,
+                    ),
+                     Text(
                       "Sign in",
-                      style: TextStyle(
-                          color: Color(0xff4c505b), fontSize: 60),
+                        style: GoogleFonts.pressStart2p(
+                            textStyle: const TextStyle(
+                              shadows: [
+                                Shadow(
+                                  // bottomLeft
+                                    offset: Offset(-1.5, -1.5),
+                                    color: Colors.black),
+                                Shadow(
+                                  // bottomRight
+                                    offset: Offset(1.5, -1.5),
+                                    color: Colors.black),
+                                Shadow(
+                                  // topRight
+                                    offset: Offset(1.5, 1.5),
+                                    color: Colors.black),
+                                Shadow(
+                                  // topLeft
+                                    offset: Offset(-1.5, 1.5),
+                                    color: Colors.black),
+                              ],
+                              color: Colors.white,
+                              fontSize: 34,
+                            )),
                     ),
 
                     const SizedBox(
-                      height: 140,
+                      height: 100,
                     ),
 
                     //Image.asset("assets/images/logo2.png"),
@@ -90,13 +122,32 @@ class _MyLoginState extends State<Login> {
                           onPressed: () {
                             Navigator.pushNamed(context, 'register');
                           },
-                          child: const Text(
+                          child:  Text(
                             'Registration',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontSize: 18,
-                              color: Color(0xff4c505b),
-                            ),
+                            style: GoogleFonts.pressStart2p(
+                                textStyle: const TextStyle(
+                                  decoration:  TextDecoration.underline,
+                                  shadows: [
+                                    Shadow(
+                                      // bottomLeft
+                                        offset: Offset(-1.5, -1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                      // bottomRight
+                                        offset: Offset(1.5, -1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                      // topRight
+                                        offset: Offset(1.5, 1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                      // topLeft
+                                        offset: Offset(-1.5, 1.5),
+                                        color: Colors.black),
+                                  ],
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                )),
                           ),
                         ),
 

@@ -1,23 +1,19 @@
-import 'dart:collection';
-import 'dart:io';
-import 'dart:math';
+
 import 'dart:async';
 
-import 'package:firebase_database/ui/firebase_animated_list.dart';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:koleso_fortune/CreateGame.dart';
-
-import 'package:path/path.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-
 import 'GameTanks.dart';
+import 'inventory.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -42,9 +38,13 @@ class _HomeState extends State<Home> {
 
     return name.value.toString();
   }
+
+
+
   Future<List<String>> getFriendData(String uid) async {
 
     final name = await ref.child('Users/$uid/Name').get();
+
     final xp = await ref.child('Users/$uid/Points').get();
 
     return [name.value.toString(), xp.value.toString()];
@@ -56,8 +56,17 @@ class _HomeState extends State<Home> {
     final uid = user?.uid;
     final kills = int.parse((await ref.child('Users/$uid/kills').get()).value.toString());
     final deaths = int.parse((await ref.child('Users/$uid/deaths').get()).value.toString());
-    var xp = (kills*80-deaths*30);
-    print(xp);
+    var Prize = (await ref.child('Users/$uid/wonPrizesXP').get()).value.toString();
+    var PrizeXP = 0;
+    if(Prize == "null"){
+      PrizeXP = 0;
+    }
+    else{
+      PrizeXP = int.parse(Prize);
+    }
+
+    var xp = (kills*80-deaths*30)+PrizeXP;
+
     if(xp<=0){
       xp=1;
     }
@@ -68,36 +77,38 @@ class _HomeState extends State<Home> {
     while (xpForNextLevel <= xp) {
       currentLevel++;
       xpForCurrentLevel = xpForNextLevel;
-      xpForNextLevel += 200;
+      xpForNextLevel = (xpForCurrentLevel * 1.3).round(); // увеличиваем требуемый опыт на 20%
     }
-    print("Текущий уровень: $currentLevel");
-    print("Количество xp для текущего уровня: $xpForCurrentLevel");
-    print("Количество xp для следующего уровня: $xpForNextLevel");
+
+    ref.child('Users/$uid/Points').set(currentLevel);
     var perc = xp/xpForNextLevel;
-    print(perc);
-    print("$xpForNextLevel LOLOLO $xp");
     return [kills, deaths, xp, currentLevel, xpForNextLevel, perc];
   }
 
-  Future<String> GetPhoto() async {
-    final ref = FirebaseDatabase.instance.ref();
-    final User? user = FirebaseAuth.instance.currentUser;
-    final uid = user?.uid;
-    final relat = await ref.child('Users/$uid/photo').get();
-
-    if (relat.exists) {
-      return relat.value.toString();
-    } else {
-      return relat.value.toString();
-    }
-  }
 
   Future<List> GetFriends() async {
 
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    final token = await ref.child('Users/$uid/fcmToken').get();
+
+    if (defaultTargetPlatform == TargetPlatform.android){
+      if(token.value.toString() != fcmToken){
+        database.ref("Users/$uid").update({
+          "fcmToken": fcmToken,
+        }
+        );
+      }
+    }
+
+
     final snapshot = await ref.child('Users/$uid/friends/friendsUID').get();
+
+    if(snapshot.value.toString() == "null"){
+      return [];
+    }
     final friends = snapshot.value.toString().split("//");
     return friends;
   }
@@ -107,14 +118,11 @@ class _HomeState extends State<Home> {
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
     final snapshot = await ref.child('Users/$uid/code').get();
-
-
     return snapshot.value.toString();
   }
   @override
   void initState(){
-
-
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
     DatabaseReference starCountRef =
@@ -123,7 +131,8 @@ class _HomeState extends State<Home> {
       final data = event.snapshot.value;
       if (data != null) {
         List<String> pringls = data.toString().split("/");
-        if (pringls[1] != "null") {
+        if(pringls.length == 2){
+        if (pringls?[1] != "null") {
 
           showDialog(
               context: this.context,
@@ -189,7 +198,7 @@ class _HomeState extends State<Home> {
                           });
                           Navigator.pop(context);
                         },
-                        child:  Text("Отклонить",
+                        child:  Text("Decline",
                             style: GoogleFonts.pressStart2p(
                                 textStyle: const TextStyle(
                                   shadows: [
@@ -214,7 +223,7 @@ class _HomeState extends State<Home> {
                                   fontSize: 10,
                                 )))),
                     TextButton(
-                      child:  Text("Принять",
+                      child:  Text("Approve",
                           style: GoogleFonts.pressStart2p(
                               textStyle: const TextStyle(
                                 shadows: [
@@ -302,7 +311,7 @@ class _HomeState extends State<Home> {
                   ],
                 );
               });
-        }
+        }}
       }
     });
     super.initState();
@@ -342,11 +351,11 @@ class _HomeState extends State<Home> {
         if(MyFriends.value.toString() != "null") {
           database.ref("Users/$uid/friends/").update({
             "friendsUID": "${MyFriends.value}//$Frienduid",
-          });
+          }).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home())));
         }else{
           database.ref("Users/$uid/friends/").update({
             "friendsUID": "$Frienduid",
-          });
+          }).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home())));
         }
 
 
@@ -414,9 +423,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: const Color(0xffE0E3E7),
+        backgroundColor: Colors.transparent,
         body: FutureBuilder(
             future: Future.wait([
               GetName(),
@@ -426,10 +437,13 @@ class _HomeState extends State<Home> {
             ]),
             builder:
                 (BuildContext context,  snapshot) {
-              print(snapshot.data);
+
               if (snapshot.hasData) {
+
                 List daty = snapshot.data![3] as List;
                 GetPoints();
+                double height = MediaQuery.of(context).size.height;
+                double width = MediaQuery.of(context).size.width;
                 return Container(
                     height: double.infinity,
                     width: double.infinity,
@@ -447,30 +461,36 @@ class _HomeState extends State<Home> {
                               padding: const EdgeInsets.only(top: 43, left: 20),
                               child: Column(
                                 children: [
-                                  Text(snapshot.data![0] as String,
-                                      style: GoogleFonts.pressStart2p(
-                                          textStyle: const TextStyle(
-                                            shadows: [
-                                              Shadow(
-                                                // bottomLeft
-                                                  offset: Offset(-1.5, -1.5),
-                                                  color: Colors.black),
-                                              Shadow(
-                                                // bottomRight
-                                                  offset: Offset(1.5, -1.5),
-                                                  color: Colors.black),
-                                              Shadow(
-                                                // topRight
-                                                  offset: Offset(1.5, 1.5),
-                                                  color: Colors.black),
-                                              Shadow(
-                                                // topLeft
-                                                  offset: Offset(-1.5, 1.5),
-                                                  color: Colors.black),
-                                            ],
-                                            color: Colors.white,
-                                            fontSize: 25,
-                                          ))),
+
+                                  Row(
+                                    children: [
+                                      Text(snapshot.data![0] as String,
+                                          style: GoogleFonts.pressStart2p(
+                                              textStyle: const TextStyle(
+                                                shadows: [
+                                                  Shadow(
+                                                    // bottomLeft
+                                                      offset: Offset(-1.5, -1.5),
+                                                      color: Colors.black),
+                                                  Shadow(
+                                                    // bottomRight
+                                                      offset: Offset(1.5, -1.5),
+                                                      color: Colors.black),
+                                                  Shadow(
+                                                    // topRight
+                                                      offset: Offset(1.5, 1.5),
+                                                      color: Colors.black),
+                                                  Shadow(
+                                                    // topLeft
+                                                      offset: Offset(-1.5, 1.5),
+                                                      color: Colors.black),
+                                                ],
+                                                color: Colors.white,
+                                                fontSize: 25,
+                                              ))),
+
+                                    ],
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(snapshot.data![1] as String,
@@ -501,6 +521,81 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
+                            Container(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding:  EdgeInsets.only(left: (width *0.35), top: 40),
+                                //icon button for inventory
+                                child:  Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.inventory, shadows: [
+                                        Shadow(
+                                          // bottomLeft
+                                            offset: Offset(-1.5, -1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // bottomRight
+                                            offset: Offset(1.5, -1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // topRight
+                                            offset: Offset(1.5, 1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // topLeft
+                                            offset: Offset(-1.5, 1.5),
+                                            color: Colors.black),
+                                      ],),
+                                      iconSize: 25,
+                                      color: Colors.white,
+
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => const inventory()),
+                                        );
+                                      },
+                                    ),
+
+
+                                    IconButton(
+                                      icon: const Icon(Icons.settings, shadows: [
+                                        Shadow(
+                                          // bottomLeft
+                                            offset: Offset(-1.5, -1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // bottomRight
+                                            offset: Offset(1.5, -1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // topRight
+                                            offset: Offset(1.5, 1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // topLeft
+                                            offset: Offset(-1.5, 1.5),
+                                            color: Colors.black),
+                                      ],),
+                                      iconSize: 25,
+                                      color: Colors.white,
+
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => const inventory()),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+
+
+                              ),
+                            ),
                           ],
                         ),
                         // Никнейм и код
@@ -528,7 +623,7 @@ class _HomeState extends State<Home> {
                                           color: Colors.black),
                                     ],
                                     color: Colors.white,
-                                    fontSize: 10,
+                                    fontSize: 12,
                                   ))),
                         ),
                         Padding(
@@ -565,7 +660,7 @@ class _HomeState extends State<Home> {
                                           ))),
                                   width: MediaQuery.of(context).size.width - 30,
                                   animation: true,
-                                  lineHeight: 20.0,
+                                  lineHeight: 25.0,
                                   percent: daty[5],
                                   barRadius: const Radius.circular(10),
                                   linearStrokeCap: LinearStrokeCap.roundAll,
@@ -577,7 +672,36 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 50),
+                            padding: const EdgeInsets.only(top: 10),
+
+                            child: Text("Next LVL: ${daty[4]} xp",
+                                style: GoogleFonts.pressStart2p(
+                                    textStyle: const TextStyle(
+                                      shadows: [
+                                        Shadow(
+                                          // bottomLeft
+                                            offset: Offset(-1.5, -1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // bottomRight
+                                            offset: Offset(1.5, -1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // topRight
+                                            offset: Offset(1.5, 1.5),
+                                            color: Colors.black),
+                                        Shadow(
+                                          // topLeft
+                                            offset: Offset(-1.5, 1.5),
+                                            color: Colors.black),
+                                      ],
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ))),
+
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 23),
                           child: Text("STATS",
                               style: GoogleFonts.pressStart2p(
                                   textStyle: const TextStyle(
@@ -600,7 +724,7 @@ class _HomeState extends State<Home> {
                                           color: Colors.black),
                                     ],
                                     color: Colors.white,
-                                    fontSize: 22,
+                                    fontSize: 19,
                                   ))),
                         ),
                         Padding(
@@ -608,8 +732,13 @@ class _HomeState extends State<Home> {
                           child: Opacity(
                             opacity: 0.8,
                             child: Container(
-                              color: Colors.grey,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.all(Radius.circular(25))
+                              ),
+
                               child: Card(
+
                                 elevation: 0,
                                 color: Colors.transparent,
                                 child: Row(
@@ -711,7 +840,7 @@ class _HomeState extends State<Home> {
                                               color: Colors.black),
                                         ],
                                         color: Colors.white,
-                                        fontSize: 20,
+                                        fontSize: 19,
                                       ))),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -903,9 +1032,9 @@ class _HomeState extends State<Home> {
                                                                   color: Colors
                                                                       .black),
                                                             ],
-                                                            color: Colors.white,
+                                                              color: Colors.white,
 
-                                                            fontSize: 15,
+                                                            fontSize: 13,
 
                                                           )),
                                                       name.toString(),
@@ -913,7 +1042,7 @@ class _HomeState extends State<Home> {
                                                     Padding(
                                                       padding:
                                                       const EdgeInsets.fromLTRB(
-                                                          9, 0, 0, 0),
+                                                          5, 0, 0, 0),
                                                       child: Text(
                                                         style: GoogleFonts
                                                             .pressStart2p(
@@ -949,7 +1078,7 @@ class _HomeState extends State<Home> {
                                                               ],
                                                               color: Colors.white,
 
-                                                              fontSize: 15,
+                                                              fontSize: 13,
 
                                                             )),
 
@@ -1045,7 +1174,17 @@ class _HomeState extends State<Home> {
                       ]),
                     ));
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: Container(
+                      height: double.infinity,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/background.png"),
+                            fit: BoxFit.fill),
+                      ),
+                      child: const Center(child: CircularProgressIndicator())),
+                );
               }
             }));
   }

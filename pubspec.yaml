@@ -49,10 +49,14 @@ dependencies:
   path: ^1.8.2
   nanoid: 1.0.0
   ffi: ^2.0.1
+  flame_audio: ^2.0.2
+  confetti: ^0.7.0
   cached_network_image: ^3.2.2
-  bonfire: ^2.12.0
+  bonfire: ^2.12.2
   google_fonts: ^4.0.3
   percent_indicator: ^4.0.1
+  google_mobile_ads: ^3.0.0
+  firebase_messaging: ^14.6.0
 
 dev_dependencies:
   flutter_test:
@@ -91,7 +95,11 @@ flutter:
     - assets/images/player/knight_run.png
     - assets/images/player/knight_run_left.png
     - assets/images/player/tankLeft.png
-    - assets/images/player/tankRight.png
+    - assets/images/player/1tank.png
+    - assets/images/player/2tank.png
+    - assets/images/player/3tank.png
+    - assets/images/player/4tank.png
+    - assets/images/backk.png
     - assets/images/player/tankForward.png
     - assets/images/player/tanktoward.png
     - assets/images/bullet.png
@@ -100,6 +108,9 @@ flutter:
     - assets/images/tiled/tanki2023.json
     - assets/images/splash/splashback.png
     - assets/images/splash/splash.png
+    - assets/audio/explosion.wav
+    - assets/audio/sound_bg.mp3
+    - assets/images/player/explosion_fire.png
 
 
 
@@ -113,7 +124,7 @@ flutter:
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
-  # example:
+  # weedy:
   # fonts:
   #   - family: Schyler
   #     fonts:

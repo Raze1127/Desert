@@ -5,6 +5,10 @@ import 'package:bonfire/bonfire.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:koleso_fortune/sounds.dart';
+
+import 'game_sprite_sheet.dart';
+
 
 
 
@@ -16,12 +20,13 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
   late TextPaint textConfig;
   Vector2 sizeTextNick = Vector2.zero();
   final String gameId;
+  final String skinMain;
 
-  RemotePlayer(Vector2 position, this.nick, this.id, this.gameId )
+  RemotePlayer(Vector2 position, this.nick, this.id, this.gameId, this.skinMain )
       : super(
-    animIdle: _getSoldierSprite(),
-    animRun: _getSoldierSprite(),
-    size: Vector2.all(160),
+    animIdle: _getSoldierSprite(skinMain),
+    animRun: _getSoldierSprite(skinMain),
+    size: Vector2(75, 41.25),
     position: position,
     life: 200,
 
@@ -39,8 +44,12 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
     setupCollision(
       CollisionConfig(
         collisions: [
-          CollisionArea.rectangle(size: Vector2(65, 35),
-              align: Vector2(43, 65)),
+          CollisionArea.circle(radius: 17,
+              align: Vector2(-2, 4)
+          ),
+          CollisionArea.circle(radius: 17,
+              align: Vector2(30, 4)
+          ),
         ],
       ),
     );
@@ -50,7 +59,15 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       borderRadius: BorderRadius.circular(2),
       borderWidth: 2,
     );
+
+
+
   }
+
+
+
+
+
   @override
   void render(Canvas canvas) {
     renderNickName(canvas);
@@ -58,10 +75,18 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
     super.render(canvas);
   }
 
-  static Future<SpriteAnimation> _getSoldierSprite() {
-    return Sprite.load('player/tankRight.png').toAnimation();
+  static Future<SpriteAnimation> _getSoldierSprite(String skin)  {
+    var skinMain = skin;
+    return Sprite.load('player/${skinMain}tank.png').toAnimation();
   }
 
+
+
+@override
+  bool checkCanReceiveDamage(AttackFromEnum attacker) {
+
+    return super.checkCanReceiveDamage(attacker);
+  }
 
 
   void renderNickName(Canvas canvas) {
@@ -69,8 +94,8 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       canvas,
       nick,
       Vector2(
-        position.x + ((width - sizeTextNick.x) / 2),
-        position.y - sizeTextNick.y + 30,
+        position.x + ((width - sizeTextNick.x) /  2),
+        position.y - sizeTextNick.y - 25,
       ),
     );
   }
@@ -116,6 +141,10 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       centerOffset: centerOffset,
       marginFromOrigin: 8,
       speed: 210,
+      animationDestroy: GameSpriteSheet.fireBallExplosion(),
+      onDestroy: () {
+        Sounds.explosion();
+      },
       animation: Sprite.load('bullet.png').toAnimation(),
       damage: 30,
     );
@@ -123,55 +152,32 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
 
-    showDamage(
-      damage,
-      config: const TextStyle(
-        color: Colors.red,
-        fontSize: 14,
-      ),
-    );
-
     print('$attacker, $damage, $identify');
     super.receiveDamage(attacker, damage, identify);
 
   }
-  var angle1 = 0.0;
-  var speed1 = 0.0;
+
 
   void movement() {
 
     DatabaseReference XYRef =
     FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/data');
 
-    DatabaseReference SPEEDandleRef =
-    FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/dataMain');
 
     XYRef.onValue.listen((DatabaseEvent event) async {
       final encodedData = event.snapshot.value as String;
-      final decodedBytes = base64.decode(encodedData);
+      final decodedBytes = base64.decode("$encodedData"+"AAAAAAAA=");
       final numbers = <double>[];
       for (var i = 0; i < decodedBytes.length; i += 8) {
         numbers.add(ByteData.view(decodedBytes.buffer).getFloat64(i, Endian.big));
       }
-
-      print(numbers[0]);
       position.x = numbers[0];
       position.y = numbers[1];
+      angle = numbers[2];
+      speed = numbers[3];
     });
 
-    SPEEDandleRef.onValue.listen((DatabaseEvent event) async {
-      final encodedData = event.snapshot.value as String;
-      final decodedBytes = base64.decode(encodedData);
-      final numbers = <double>[];
-      for (var i = 0; i < decodedBytes.length; i += 8) {
-        numbers.add(ByteData.view(decodedBytes.buffer).getFloat64(i, Endian.big));
-      }
-      print(numbers[1]);
-      angle1 = numbers[1];
-      speed1 = numbers[0];
-      angle = angle1;
-    });
-
+   moveFromAngle(speed, angle);
 
 
   }
@@ -192,14 +198,18 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
 
   }
+  var checkLife = 200.0;
+  var collidable = true;
   void health() {
-
+    if(life !=  checkLife){
+      updateLife(checkLife);
+    }
 
     DatabaseReference angleRef =
     FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/life');
     angleRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as num?;
-      print('LOOOL');
+
 
 
       if(life != data!.toDouble()){
@@ -208,8 +218,15 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
 
         if(data.toDouble() < life){
-
+          checkLife = life;
           receiveDamage(AttackFromEnum.ENEMY, life - data.toDouble(), 1);
+          showDamage(
+            life - data.toDouble(),
+            config: const TextStyle(
+              color: Colors.red,
+              fontSize: 14,
+            ),
+          );
           updateLife(data.toDouble());
         }
         else{
@@ -220,9 +237,9 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
         if(life<=0){
           opacity = 0.4;
-
+          collidable = false;
         }else{
-
+          collidable = true;
           opacity = 1;
         }
 
@@ -233,32 +250,42 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
   }
   @override
-  bool checkCanReceiveDamage(AttackFromEnum attacker, double damage, from) {
-    return false;
+  bool onCollision(GameComponent component, bool active) {
+
+    if (collidable) {
+      return super.onCollision(component, active);
+    }else{
+      return false;
+    }
   }
+
 
   @override
   void update(double dt) {
     if (isDead) {
 
-        DatabaseReference reff =
-        FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/deaths');
-
-        // reff.onValue.listen((DatabaseEvent event) async {
-        //   updateLife(200.0);
-        //
-        // });
-
 
     }else {
+
       if (io == 0) {
+        DatabaseReference logout =
+        FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/logout');
+
+        logout.onValue.listen((DatabaseEvent event) async {
+          final data = event.snapshot.value as bool;
+          print("LOGOUT $data");
+          if(data == true){
+            removeFromParent();
+          }
+        });
+
         io++;
         health();
         movement();
         fire();
       }
       else {
-        moveFromAngle(speed1, angle1);
+        moveFromAngle(speed, angle);
       }
     }
     //

@@ -1,4 +1,4 @@
-package com.example.koleso_fortune
+package com.weedy.desert
 
 import io.flutter.embedding.android.FlutterActivity
 
