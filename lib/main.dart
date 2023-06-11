@@ -46,7 +46,7 @@ void main() async{
       MaterialApp(
         theme: ThemeData(
           primaryColor: Colors.black,
-          accentColor: Colors.black,
+          hintColor: Colors.black,
         ),
         debugShowCheckedModeBanner: false,
         initialRoute: 'main',
