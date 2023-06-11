@@ -30,7 +30,9 @@ class _RegisterState extends State<Register>{
 
 
       database.ref("Users/$uid").update({
-        'SelectedSkin': '1',
+        'wonPrizes': "",
+        'wonPrizesXP': 0,
+        'SelectedSkin': '0',
         "code": code,
         "Name": nameController.text.trim(),
         "uid": uid,
@@ -60,9 +62,10 @@ class _RegisterState extends State<Register>{
       decoration: const BoxDecoration(
         image: DecorationImage(
             image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.fill),
+            fit: BoxFit.cover),
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -132,6 +135,7 @@ class _RegisterState extends State<Register>{
                         height: 15,
                       ),
                       TextField(
+                        autofillHints: [AutofillHints.email],
                         controller: emailController,
                         decoration: InputDecoration(
                           fillColor: Colors.grey.shade100,
@@ -153,6 +157,7 @@ class _RegisterState extends State<Register>{
                         height: 15,
                       ),
                       TextField(
+                        autofillHints: [AutofillHints.password],
                         controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(

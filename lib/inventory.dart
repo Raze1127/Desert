@@ -97,7 +97,7 @@ class _inventoryState extends State<inventory> {
     if(selected == id){
       iconSelect = Icons.done;
     }
-    if(id == 3){
+    if(id == 4){
       var prize = priz.split("//");
       print(prize);
       if(priz == ""){
@@ -146,7 +146,7 @@ class _inventoryState extends State<inventory> {
             final ref = FirebaseDatabase.instance.ref();
             final User? user = FirebaseAuth.instance.currentUser;
             final uid = user?.uid;
-            ref.child('Users/$uid/SelectedSkin').set(3);
+            ref.child('Users/$uid/SelectedSkin').set(4);
             setState(() {
               iconSelect = Icons.done;
             });
@@ -263,9 +263,9 @@ class _inventoryState extends State<inventory> {
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
                     if(prizes == ""){
-                      ref.child('Users/$uid/wonPrizes').set("4");
+                      ref.child('Users/$uid/wonPrizes').set("5");
                     }else{
-                      ref.child('Users/$uid/wonPrizes').set("${prizes+"//4"}");
+                      ref.child('Users/$uid/wonPrizes').set("${prizes+"//5"}");
                     }
                   }
                   if(prize == 1){
@@ -428,7 +428,7 @@ class _inventoryState extends State<inventory> {
                                       borderWidth: 3, // <-- custom circle slice stroke width
                                     ),
                                     child: Image.asset(
-                                      'assets/images/player/4tank.png',
+                                      'assets/images/player/5tank.png',
                                       height: 80,
                                       width: 80,
                                     ),
@@ -885,7 +885,6 @@ class _inventoryState extends State<inventory> {
                                           ),
                                         ],
                                       )),
-                                  //FORTH TANK
                                   Container(
                                       height: 30, // высота контейнера
                                       width: 30, // ширина контейнера
@@ -927,6 +926,48 @@ class _inventoryState extends State<inventory> {
                                           ),
                                         ],
                                       )),
+                                  //FORTH TANK
+                                  Container(
+                                      height: 30, // высота контейнера
+                                      width: 30, // ширина контейнера
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 5,
+                                            blurRadius: 4,
+                                            offset: const Offset(
+                                                0, 3), // changes position of shadow
+                                          ),
+                                        ],
+                                        borderRadius: BorderRadius.circular(20),
+                                        image: DecorationImage(
+                                            image: AssetImage(
+                                                "assets/images/backk.png"),
+                                            fit: BoxFit.fill),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Center(
+                                              child: Image.asset(
+                                                  'assets/images/player/5tank.png')),
+                                          Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      bottom: 2.0),
+                                                  child:
+                                                  invent(4, int.parse((snapshot.data![0]).toString()), int.parse((snapshot.data![1]).toString()), (snapshot.data![2]).toString()),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )),
                                 ],
                               ),
                             ),
@@ -935,7 +976,17 @@ class _inventoryState extends State<inventory> {
                       ),
                     );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: Container(
+                          height: double.infinity,
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/images/background.png"),
+                                fit: BoxFit.fill),
+                          ),
+                          child: const Center(child: CircularProgressIndicator())),
+                    );
                   }
                 })),
         Padding(

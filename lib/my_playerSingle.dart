@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:koleso_fortune/sounds.dart';
 import 'package:koleso_fortune/player_sprite_sheet.dart';
 
@@ -179,7 +180,10 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
         speed: 210,
         animationDestroy: GameSpriteSheet.fireBallExplosion(),
         onDestroy: () {
-          Sounds.explosion();
+          var box = Hive.box('Settings');
+          var sound = box.get('sound');
+          if(sound == true){
+          Sounds.explosion();}
         },
         animation: Sprite.load('bullet.png').toAnimation(),
         damage: 30,

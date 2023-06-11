@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:koleso_fortune/Home.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -28,148 +29,153 @@ class _MyLoginState extends State<Login> {
         decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage("assets/images/background.png"),
-              fit: BoxFit.fill),
+              fit: BoxFit.cover),
         ),
         child: Scaffold(
+            resizeToAvoidBottomInset: true,
             backgroundColor: Colors.transparent,
-            body: Center(child: Container( child: Container(
-               width: 300,
-              padding: EdgeInsets.only(top: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.1),
-              child: Column(
+            body: SingleChildScrollView(
+              child: Center(child: Container( child: Container(
+                 width: 300,
+                padding: EdgeInsets.only(top: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.1),
+                child: Column(
 
-                  children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
-                     Text(
-                      "Sign in",
-                        style: GoogleFonts.pressStart2p(
-                            textStyle: const TextStyle(
-                              shadows: [
-                                Shadow(
-                                  // bottomLeft
-                                    offset: Offset(-1.5, -1.5),
-                                    color: Colors.black),
-                                Shadow(
-                                  // bottomRight
-                                    offset: Offset(1.5, -1.5),
-                                    color: Colors.black),
-                                Shadow(
-                                  // topRight
-                                    offset: Offset(1.5, 1.5),
-                                    color: Colors.black),
-                                Shadow(
-                                  // topLeft
-                                    offset: Offset(-1.5, 1.5),
-                                    color: Colors.black),
-                              ],
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                      ),
+                       Text(
+                        "Sign in",
+                          style: GoogleFonts.pressStart2p(
+                              textStyle: const TextStyle(
+                                shadows: [
+                                  Shadow(
+                                    // bottomLeft
+                                      offset: Offset(-1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                    // bottomRight
+                                      offset: Offset(1.5, -1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                    // topRight
+                                      offset: Offset(1.5, 1.5),
+                                      color: Colors.black),
+                                  Shadow(
+                                    // topLeft
+                                      offset: Offset(-1.5, 1.5),
+                                      color: Colors.black),
+                                ],
+                                color: Colors.white,
+                                fontSize: 34,
+                              )),
+                      ),
+
+                      const SizedBox(
+                        height: 100,
+                      ),
+
+                      //Image.asset("assets/images/logo2.png"),
+
+                      TextField(
+                        autofillHints: [AutofillHints.email],
+                        controller: emailController,
+                        cursorColor: const Color(0xff4c505b),
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          fillColor: Colors.grey.shade100,
+                          filled: true,
+                          hintText: 'Email',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: Color(
+                                0xff4c505b)),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      TextField(
+                        autofillHints: [AutofillHints.password],
+                        controller: passwordController,
+                        cursorColor: const Color(0xff4c505b),
+                        textInputAction: TextInputAction.done,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          fillColor: Colors.grey.shade100,
+                          filled: true,
+                          hintText: 'Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: Color(
+                                0xff4c505b)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, 'register');
+                            },
+                            child:  Text(
+                              'Registration',
+                              style: GoogleFonts.pressStart2p(
+                                  textStyle: const TextStyle(
+                                    decoration:  TextDecoration.underline,
+                                    shadows: [
+                                      Shadow(
+                                        // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                        // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  )),
+                            ),
+                          ),
+
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: const Color(0xff4c505b),
+                            child: IconButton(
                               color: Colors.white,
-                              fontSize: 34,
-                            )),
-                    ),
-
-                    const SizedBox(
-                      height: 100,
-                    ),
-
-                    //Image.asset("assets/images/logo2.png"),
-
-                    TextField(
-                      controller: emailController,
-                      cursorColor: const Color(0xff4c505b),
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        fillColor: Colors.grey.shade100,
-                        filled: true,
-                        hintText: 'Email',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Color(
-                              0xff4c505b)),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    TextField(
-                      controller: passwordController,
-                      cursorColor: const Color(0xff4c505b),
-                      textInputAction: TextInputAction.done,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        fillColor: Colors.grey.shade100,
-                        filled: true,
-                        hintText: 'Password',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Color(
-                              0xff4c505b)),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, 'register');
-                          },
-                          child:  Text(
-                            'Registration',
-                            style: GoogleFonts.pressStart2p(
-                                textStyle: const TextStyle(
-                                  decoration:  TextDecoration.underline,
-                                  shadows: [
-                                    Shadow(
-                                      // bottomLeft
-                                        offset: Offset(-1.5, -1.5),
-                                        color: Colors.black),
-                                    Shadow(
-                                      // bottomRight
-                                        offset: Offset(1.5, -1.5),
-                                        color: Colors.black),
-                                    Shadow(
-                                      // topRight
-                                        offset: Offset(1.5, 1.5),
-                                        color: Colors.black),
-                                    Shadow(
-                                      // topLeft
-                                        offset: Offset(-1.5, 1.5),
-                                        color: Colors.black),
-                                  ],
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                )),
+                              onPressed: signIn,
+                              icon: const Icon(Icons.arrow_forward),
+                            ),
                           ),
-                        ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
 
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: const Color(0xff4c505b),
-                          child: IconButton(
-                            color: Colors.white,
-                            onPressed: signIn,
-                            icon: const Icon(Icons.arrow_forward),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-
-                  ]),
+                    ]),
 
 
-            )),
+              )),
+              ),
             )
         )
     );
@@ -179,7 +185,7 @@ class _MyLoginState extends State<Login> {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim()
-    );
+    ).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home())));
   }
 
 

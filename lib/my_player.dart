@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:koleso_fortune/remote_player.dart';
 import 'package:koleso_fortune/sounds.dart';
 import 'package:koleso_fortune/player_sprite_sheet.dart';
 
@@ -178,7 +180,10 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
         speed: 210,
         animationDestroy: GameSpriteSheet.fireBallExplosion(),
         onDestroy: () {
-          Sounds.explosion();
+          var box = Hive.box('Settings');
+          var sound = box.get('sound');
+          if(sound == true){
+            Sounds.explosion();}
         },
         animation: Sprite.load('bullet.png').toAnimation(),
         damage: 30,
@@ -242,6 +247,21 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   }
 
 
+
+  @override
+  bool onCollision(GameComponent component, bool active) {
+
+    if (component is RemotePlayer) {
+      print('Player collided!');
+      double recoilDistance = 20.0;
+      double recoilAngle = angle + pi;
+      this.position.add(Vector2(cos(recoilAngle) * recoilDistance, sin(recoilAngle) * recoilDistance));
+    }
+
+    return super.onCollision(component, active);
+  }
+
+
   var angleCheck = 0.0;
   var speedCheck = 0.0;
   var xCheck = 0.0;
@@ -271,6 +291,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     }else{
       dead = false;
       opacity = 1;
+
     }
 
     now = DateTime.now();

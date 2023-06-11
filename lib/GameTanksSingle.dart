@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:koleso_fortune/Home.dart';
 import 'package:koleso_fortune/remote_player.dart';
 import 'package:koleso_fortune/sounds.dart';
@@ -156,7 +157,7 @@ class _SinglePlayer extends State<SinglePlayer> {
     });
   }
 
-
+  var box = Hive.box('Settings');
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -177,6 +178,7 @@ class _SinglePlayer extends State<SinglePlayer> {
               joystick: Joystick(
                 keyboardConfig: KeyboardConfig(),
                 directional: JoystickDirectional(
+                  isFixed: !box.get('joystick'),
                   size: 100,
                 ),
                 actions: [

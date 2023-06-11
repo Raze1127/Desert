@@ -109,16 +109,22 @@ class _CreateGameState extends State<CreateGame> {
 
         if (data == "yes" && !players.contains(item)) {
           if (players == "") {
-            idFriend= item;
-            players = item;
-            _key2.currentState!.insertItem(0);
-            _key.currentState!.removeItem(index, (context, animation) => Container());
+            setState(() {
+              idFriend= item;
+              players = item;
+              _key2.currentState!.insertItem(0);
+              _key.currentState!.removeItem(index, (context, animation) => Container());
+            });
+
           } else {
-            players += "|$item";
-            idFriend= item;
-            t++;
-            _key2.currentState!.insertItem(t);
-            _key.currentState!.removeItem(index, (context, animation) => Container());
+            setState(() {
+              players += "|$item";
+              idFriend= item;
+              t++;
+              _key2.currentState!.insertItem(t);
+              _key.currentState!.removeItem(index, (context, animation) => Container());
+            });
+
           }
 
           setState(() {
@@ -141,6 +147,13 @@ class _CreateGameState extends State<CreateGame> {
         }
       });
 
+  }
+  int playe(){
+    if(players == ""){
+      return 0;
+    }else{
+      return players.split("|").length;
+    }
   }
 
   Future<List<String>> getFriendData(String uid) async {
@@ -258,7 +271,7 @@ class _CreateGameState extends State<CreateGame> {
                                           fontSize: 15,
 
                                         )),
-                                    "${players.length}/4",
+                                    "${playe()  }/4",
                                   ),
                                 ),
 
@@ -682,6 +695,8 @@ class _CreateGameState extends State<CreateGame> {
                                                         children: [
                                                           IconButton(
                                                             onPressed: () {
+
+
                                                               if(players.length == 4 ){
 
                                                               }else{

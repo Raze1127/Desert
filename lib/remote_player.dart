@@ -5,6 +5,7 @@ import 'package:bonfire/bonfire.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:koleso_fortune/sounds.dart';
 
 import 'game_sprite_sheet.dart';
@@ -54,7 +55,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       ),
     );
     setupBarLife(
-
+      margin: 50,
       size: Vector2(70, 10),
       borderRadius: BorderRadius.circular(2),
       borderWidth: 2,
@@ -143,7 +144,10 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
       speed: 210,
       animationDestroy: GameSpriteSheet.fireBallExplosion(),
       onDestroy: () {
-        Sounds.explosion();
+        var box = Hive.box('Settings');
+        var sound = box.get('sound');
+        if(sound == true){
+          Sounds.explosion();}
       },
       animation: Sprite.load('bullet.png').toAnimation(),
       damage: 30,

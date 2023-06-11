@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:koleso_fortune/CreateGame.dart';
+import 'package:koleso_fortune/settings.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'GameTanks.dart';
 import 'inventory.dart';
@@ -91,10 +92,11 @@ class _HomeState extends State<Home> {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    final token = await ref.child('Users/$uid/fcmToken').get();
+
 
     if (defaultTargetPlatform == TargetPlatform.android){
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      final token = await ref.child('Users/$uid/fcmToken').get();
       if(token.value.toString() != fcmToken){
         database.ref("Users/$uid").update({
           "fcmToken": fcmToken,
@@ -524,73 +526,77 @@ class _HomeState extends State<Home> {
                             Container(
                               alignment: Alignment.center,
                               child: Padding(
-                                padding:  EdgeInsets.only(left: (width *0.35), top: 40),
+                                padding:  EdgeInsets.only(left: 5, top: 40),
                                 //icon button for inventory
-                                child:  Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.inventory, shadows: [
-                                        Shadow(
-                                          // bottomLeft
-                                            offset: Offset(-1.5, -1.5),
-                                            color: Colors.black),
-                                        Shadow(
-                                          // bottomRight
-                                            offset: Offset(1.5, -1.5),
-                                            color: Colors.black),
-                                        Shadow(
-                                          // topRight
-                                            offset: Offset(1.5, 1.5),
-                                            color: Colors.black),
-                                        Shadow(
-                                          // topLeft
-                                            offset: Offset(-1.5, 1.5),
-                                            color: Colors.black),
-                                      ],),
-                                      iconSize: 25,
-                                      color: Colors.white,
+                                child:  Container(
+                                  width: width*0.35,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.inventory, shadows: [
+                                          Shadow(
+                                            // bottomLeft
+                                              offset: Offset(-1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // bottomRight
+                                              offset: Offset(1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // topRight
+                                              offset: Offset(1.5, 1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // topLeft
+                                              offset: Offset(-1.5, 1.5),
+                                              color: Colors.black),
+                                        ],),
+                                        iconSize: 25,
+                                        color: Colors.white,
 
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => const inventory()),
-                                        );
-                                      },
-                                    ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const inventory()),
+                                          );
+                                        },
+                                      ),
 
 
-                                    IconButton(
-                                      icon: const Icon(Icons.settings, shadows: [
-                                        Shadow(
-                                          // bottomLeft
-                                            offset: Offset(-1.5, -1.5),
-                                            color: Colors.black),
-                                        Shadow(
-                                          // bottomRight
-                                            offset: Offset(1.5, -1.5),
-                                            color: Colors.black),
-                                        Shadow(
-                                          // topRight
-                                            offset: Offset(1.5, 1.5),
-                                            color: Colors.black),
-                                        Shadow(
-                                          // topLeft
-                                            offset: Offset(-1.5, 1.5),
-                                            color: Colors.black),
-                                      ],),
-                                      iconSize: 25,
-                                      color: Colors.white,
+                                      IconButton(
+                                        icon: const Icon(Icons.settings, shadows: [
+                                          Shadow(
+                                            // bottomLeft
+                                              offset: Offset(-1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // bottomRight
+                                              offset: Offset(1.5, -1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // topRight
+                                              offset: Offset(1.5, 1.5),
+                                              color: Colors.black),
+                                          Shadow(
+                                            // topLeft
+                                              offset: Offset(-1.5, 1.5),
+                                              color: Colors.black),
+                                        ],),
+                                        iconSize: 25,
+                                        color: Colors.white,
 
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => const inventory()),
-                                        );
-                                      },
-                                    ),
-                                  ],
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const settings()),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
 
 

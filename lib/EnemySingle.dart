@@ -1,9 +1,12 @@
 import 'dart:math';
 
 import 'package:bonfire/bonfire.dart';
+import 'package:bonfire/util/line_path_component.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:koleso_fortune/sounds.dart';
 
 import 'game_sprite_sheet.dart';
@@ -20,13 +23,13 @@ class SingleEnemy extends RotationEnemy
 
   SingleEnemy(Vector2 position, this.nick, this.id, this.gameId, this.skinMain)
       : super(
-          animIdle: _getSoldierSprite(skinMain),
-          animRun: _getSoldierSprite(skinMain),
-          size: Vector2(75, 41.25),
-          position: position,
-          life: 200,
-          speed: 80,
-        ) {
+    animIdle: _getSoldierSprite(skinMain),
+    animRun: _getSoldierSprite(skinMain),
+    size: Vector2(75, 41.25),
+    position: position,
+    life: 200,
+    speed: 80,
+  ) {
     angle = 0;
 
     textConfig = TextPaint(
@@ -50,6 +53,11 @@ class SingleEnemy extends RotationEnemy
       size: Vector2(70, 10),
       borderRadius: BorderRadius.circular(2),
       borderWidth: 2,
+    );
+    setupMoveToPositionAlongThePath(
+      pathLineColor: Colors.lightBlueAccent.withOpacity(0),
+      barriersCalculatedColor: Colors.blue.withOpacity(0),
+      pathLineStrokeWidth: 0,
     );
   }
 
@@ -119,17 +127,14 @@ class SingleEnemy extends RotationEnemy
       speed: 210,
       animationDestroy: GameSpriteSheet.fireBallExplosion(),
       onDestroy: () {
-        Sounds.explosion();
+        var box = Hive.box('Settings');
+        var sound = box.get('sound');
+        if (sound == true) {
+          Sounds.explosion();
+        }
       },
       animation: Sprite.load('bullet.png').toAnimation(),
       damage: 30,
-    );
-    setupMoveToPositionAlongThePath(
-      pathLineColor: Colors.lightBlueAccent.withOpacity(0),
-      barriersCalculatedColor: Colors.blue.withOpacity(0.5),
-      pathLineStrokeWidth: 4,
-      showBarriersCalculated:
-          false, // uses this to debug. This enable show in the map the tiles considered collision by algorithm.
     );
   }
 
@@ -156,10 +161,15 @@ class SingleEnemy extends RotationEnemy
     return super.onLoad();
   }
 
+  Future delPath() async {
+
+  }
+
   var posCheckX;
   var posCheckY;
   bool moveScheduled = false;
   var going = false;
+  var l = 1;
 
   Future<void> moveEnemy() async {
     while (i == 1) {
@@ -168,28 +178,50 @@ class SingleEnemy extends RotationEnemy
       if (posCheckX == null) posCheckX = playerX;
       if (posCheckY == null) posCheckY = playerY;
 
-      if (playerX != null && playerY != null && !going) {
-        if (((playerX - posCheckX).abs() > 0 ||
-            (playerY - posCheckY).abs() > 0)) {
-          print('playerpos $playerX');
-          posCheckX = playerX;
-          posCheckY = playerY;
-          stopMoveAlongThePath();
-          //get player collision
-          var playerCollision =
-              await gameRef.collisions().first.collisionConfig?.collisions;
+      double tankX = position.x;
+      double tankY = position.y;
 
-          print(playerCollision);
-          var path = await moveToPositionAlongThePath(
-              Vector2(playerX.roundToDouble(), playerY.roundToDouble()),
-              ignoreCollisions: [playerCollision], onFinish: () {
-            going = false;
-          });
-          print(path);
-          if (path.isNotEmpty) {
-            going = true;
+      double distanceToPlayer =
+      sqrt(pow(playerX! - tankX, 2) + pow(playerY! - tankY, 2));
+
+      if (distanceToPlayer >= visibilityRadius) {
+        if (playerX != null && playerY != null && !going) {
+          if (((playerX - posCheckX).abs() > 0 ||
+              (playerY - posCheckY).abs() > 0)) {
+            print('playerpos $playerX');
+            posCheckX = playerX;
+            posCheckY = playerY;
+            stopMoveAlongThePath();
+            //get player collision
+            var playerCollision =
+            await gameRef
+                .collisions()
+                .first
+                .collisionConfig
+                ?.collisions;
+
+            print(playerCollision);
+            var path = await moveToPositionAlongThePath(
+                Vector2(playerX.roundToDouble(), playerY.roundToDouble()),
+                ignoreCollisions: [playerCollision], onFinish: () {
+              going = false;
+            });
+            if (path.isNotEmpty) {
+              going = true;
+            }
           }
         }
+      }else{
+        stopMoveAlongThePath();
+        speed = 80;
+        seeAndMoveToPlayer(
+          closePlayer: (player) {
+
+          },
+
+          radiusVision: 250,
+
+        );
       }
       i = 2;
       Future.delayed(Duration(milliseconds: 20), () {
@@ -254,8 +286,8 @@ class SingleEnemy extends RotationEnemy
 
     Vector2? spawnPoint = getRandomSpawnPoint();
     if (spawnPoint != null) {
-      position.setFrom(spawnPoint);
       updateLife(200);
+      position.setFrom(spawnPoint);
     }
   }
 
@@ -267,6 +299,12 @@ class SingleEnemy extends RotationEnemy
 
   @override
   void update(double dt) {
+    if (life < 20) {
+      updateLife(200);
+      addLife(210);
+      respawn();
+      return;
+    }
     if (i == 0) {
       i = 1;
       moveEnemy();
@@ -277,7 +315,7 @@ class SingleEnemy extends RotationEnemy
     double tankY = position.y;
 
     double distanceToPlayer =
-        sqrt(pow(playerX - tankX, 2) + pow(playerY - tankY, 2));
+    sqrt(pow(playerX - tankX, 2) + pow(playerY - tankY, 2));
 
     if (distanceToPlayer <= visibilityRadius) {
       // Игрок в радиусе видимости
@@ -306,13 +344,14 @@ class SingleEnemy extends RotationEnemy
     double diff = ((targetAngle - angle + pi) % (2 * pi) - pi);
     if (diff < -pi) diff += 2 * pi;
     angle += diff * rotationSpeed;
+    delPath();
 
     super.update(dt);
   }
 
   @override
   void die() {
-    respawn();
-    super.die();
+
+
   }
 }

@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:koleso_fortune/Home.dart';
 import 'package:koleso_fortune/remote_player.dart';
 import 'package:koleso_fortune/sounds.dart';
@@ -237,6 +238,7 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -252,6 +254,16 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
             List<double>? Cords = snapshot.data![1] as List<double>?;
             var id = snapshot.data![2] as int;
             var gamecode = snapshot.data![4] as String;
+            var box =  Hive.boxExists('Settings');
+            var sound;
+            var joystick;
+            if(box == true){
+              sound = Hive.box('Settings').get('sound', defaultValue: true);
+              joystick = !Hive.box('Settings').get('joystick', defaultValue: true);
+            }else{
+              sound = true;
+              joystick = true;
+            }
 
             return BonfireWidget(
               gameController: _controller,
@@ -262,9 +274,13 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
               showCollisionArea: false,
               joystick: Joystick(
                 keyboardConfig: KeyboardConfig(),
-                directional: JoystickDirectional(),
+                directional: JoystickDirectional(
+                  isFixed: joystick,
+                  size: 100,
+                ),
                 actions: [
                   JoystickAction(
+                    size: 75,
                     actionId: 1,
                     margin: const EdgeInsets.all(60),
                   ),
