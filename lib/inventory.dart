@@ -99,7 +99,7 @@ class _inventoryState extends State<inventory> {
     }
     if(id == 4){
       var prize = priz.split("//");
-      print(prize);
+      //(prize);
       if(priz == ""){
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -332,7 +332,7 @@ class _inventoryState extends State<inventory> {
 
                   }
 
-                  print(prize);
+                  //(prize);
                   controller.add(
                       prize
                   );
@@ -362,7 +362,7 @@ class _inventoryState extends State<inventory> {
           });
         },
         onAdFailedToLoad: (err) {
-          print('Failed to load a rewarded ad: ${err.message}');
+          //('Failed to load a rewarded ad: ${err.message}');
         },
       ),
     );

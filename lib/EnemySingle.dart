@@ -140,7 +140,7 @@ class SingleEnemy extends RotationEnemy
 
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
-    print('$attacker, $damage, $identify');
+    //('$attacker, $damage, $identify');
     super.receiveDamage(attacker, damage, identify);
   }
 
@@ -188,7 +188,7 @@ class SingleEnemy extends RotationEnemy
         if (playerX != null && playerY != null && !going) {
           if (((playerX - posCheckX).abs() > 0 ||
               (playerY - posCheckY).abs() > 0)) {
-            print('playerpos $playerX');
+            //('playerpos $playerX');
             posCheckX = playerX;
             posCheckY = playerY;
             stopMoveAlongThePath();
@@ -200,7 +200,7 @@ class SingleEnemy extends RotationEnemy
                 .collisionConfig
                 ?.collisions;
 
-            print(playerCollision);
+            //(playerCollision);
             var path = await moveToPositionAlongThePath(
                 Vector2(playerX.roundToDouble(), playerY.roundToDouble()),
                 ignoreCollisions: [playerCollision], onFinish: () {

@@ -335,10 +335,10 @@ class _HomeState extends State<Home> {
     List<String> MyFriendsList = MyFriends.value.toString().split("//");
     List<String> FriendsFriendsList = FriendsFriends.value.toString().split("//");
     if (FriendsFriendsList.contains(uid)) {
-      print("Уже друзья");
+      //("Уже друзья");
     } else {
       if (MyFriendsList.contains(Frienduid)) {
-        print("Уже друзья");
+        //("Уже друзья");
       } else {
         if(FriendsFriends.value.toString() != "null") {
           database.ref("Users/$Frienduid/friends/").update({

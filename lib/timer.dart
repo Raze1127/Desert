@@ -15,7 +15,7 @@ class CountdownTimer extends StatefulWidget {
   final GlobalKey<_CountdownTimerState> _key = GlobalKey();
 
   void restartTimer() {
-    print("ДАРОВА БАНДИТЫ");
+    //("ДАРОВА БАНДИТЫ");
 
     _key.currentState!.restartTimer();
   }
@@ -47,7 +47,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
   }
 
   void restartTimer() {
-    print("ДАРОВА БАНДИТЫ");
+    //("ДАРОВА БАНДИТЫ");
     _timer.cancel();
     _secondsLeft = widget.seconds;
     _startTimer();

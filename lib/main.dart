@@ -15,7 +15,7 @@ import 'firebase_options.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Future<void> _messageHandler(RemoteMessage message) async {
-  print('background message ${message.notification!.body}');
+  //('background message ${message.notification!.body}');
 }
 
 void main() async{

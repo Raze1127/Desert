@@ -244,7 +244,7 @@ class _settingsState extends State<settings> {
                                 ),
                                 onTap: (selected) {
                                   box.put('sound', selected);
-                                  print(box.get('sound'));
+                                  //(box.get('sound'));
                                 },
                               );
                             },
@@ -309,7 +309,7 @@ class _settingsState extends State<settings> {
                                 ),
                                 onTap: (selec) {
                                   box.put('joystick', selec);
-                                  print(box.get('joystick'));
+                                  //(box.get('joystick'));
                                 },
                               );
                             },

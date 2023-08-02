@@ -212,7 +212,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
         ref.child("Games/$gameId/Players/$identify/kills").set(value + 1);
         var uid = (await ref.child('Games/$gameId/Players/$identify/uid').get()).value.toString();
         var killsss = (await ref.child('Users/$uid/kills').get()).value.toString();
-        print('Users/$uid/kills  ${int.parse(killsss)+1}');
+        //('Users/$uid/kills  ${int.parse(killsss)+1}');
         ref.child('Users/$uid/kills').set(int.parse(killsss)+1);
         hasReceivedDamage = false;
         ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
@@ -252,7 +252,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   bool onCollision(GameComponent component, bool active) {
 
     if (component is RemotePlayer) {
-      print('Player collided!');
+      //('Player collided!');
       double recoilDistance = 20.0;
       double recoilAngle = angle + pi;
       this.position.add(Vector2(cos(recoilAngle) * recoilDistance, sin(recoilAngle) * recoilDistance));
@@ -302,7 +302,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       final List<double> numbers = [position.x, position.y, angle, speed];
       final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
       final encodedData = base64.encode(bytes);
-      print(encodedData);
+      //(encodedData);
       final finalData = encodedData.substring(0, encodedData.length - 9);
       ref.child("Games/$gameId/Players/$id/data").set(finalData);
       angleCheck = angle;

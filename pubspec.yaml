@@ -52,7 +52,7 @@ dependencies:
   flame_audio: ^2.0.2
   confetti: ^0.7.0
   cached_network_image: ^3.2.2
-  bonfire: ^2.12.2
+  bonfire: ^2.12.7
   google_fonts: ^4.0.3
   percent_indicator: ^4.0.1
   google_mobile_ads: ^3.0.0

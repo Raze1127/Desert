@@ -133,7 +133,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
         centerOffset = Vector2(-0, 0);
         break;
     }
-    print('$id $angle');
+    //('$id $angle');
     simpleAttackRangeByAngle(
       id: id,
       attackFrom: AttackFromEnum.ENEMY,
@@ -156,7 +156,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
 
-    print('$attacker, $damage, $identify');
+    //('$attacker, $damage, $identify');
     super.receiveDamage(attacker, damage, identify);
 
   }
@@ -191,7 +191,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
     DatabaseReference angleRef =
     FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/isFire');
-    print('Games/$gameId/Players/$id/isFire');
+    //('Games/$gameId/Players/$id/isFire');
     angleRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as int;
 
@@ -277,7 +277,7 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
         logout.onValue.listen((DatabaseEvent event) async {
           final data = event.snapshot.value as bool;
-          print("LOGOUT $data");
+          //("LOGOUT $data");
           if(data == true){
             removeFromParent();
           }

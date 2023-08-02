@@ -81,10 +81,10 @@ class _CreateGameState extends State<CreateGame> {
           },
         ),
       );
-      print('done');
-      print(token);
+      //('done');
+      //(token);
     } catch (e) {
-      print("error push notification");
+      //("error push notification");
     }
   }
 
@@ -741,7 +741,7 @@ class _CreateGameState extends State<CreateGame> {
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.grey[800]),
                                         onPressed: () {
-                                          print(players)  ;
+                                          //(players)  ;
                                           List<String> uids = players.split("|");
                                           gameCreation(players);
                                         },
@@ -846,8 +846,8 @@ class _CreateGameState extends State<CreateGame> {
     List<String> players = players2.split("|");
 
 
-    print(players.length);
-    print(players); //Список игроков
+    //(players.length);
+    //(players); //Список игроков
     List<String> coordinates = ['120/400','60/160','500/800','850/600', '850/200'];
     var last = players.length;
     players.forEachIndexed((i, element) async {
@@ -868,9 +868,9 @@ class _CreateGameState extends State<CreateGame> {
 
       var cords = coordinates[i];
       List<String> xy = cords.split("/");
-      print("$nick $xy");
+      //("$nick $xy");
       if (nick == 'null') {
-        print('null');
+        //('null');
       }else {
         ref.child('Games/$GameCode/Players/${i + 1}').update({
           'uid': element,

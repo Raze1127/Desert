@@ -133,7 +133,7 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
     reff.onValue.listen((DatabaseEvent event) async {
       if (event.snapshot.value != null) {
         final data = event.snapshot.value as bool;
-        print(data);
+        //(data);
         if (data == true) {
           Future.delayed(const Duration(milliseconds: 1000), () {
             setState(() {

@@ -70,7 +70,7 @@ class _GamePageState extends State<GamePage> {
       final ref = FirebaseDatabase.instance.ref();
       final User? user = FirebaseAuth.instance.currentUser;
       final uid = user?.uid;
-      print("КУКУУУУ");
+      //("КУКУУУУ");
       FirebaseDatabase database =
           FirebaseDatabase.instance;
       database.ref("Users/$uid").update({
@@ -98,7 +98,7 @@ class _GamePageState extends State<GamePage> {
         var timerResult = ((26+(timeSync2))-6);
 
 
-        print(timerResult);
+        //(timerResult);
         return timerResult.toString();
 
     }
@@ -133,7 +133,7 @@ class _GamePageState extends State<GamePage> {
           var wining = await int.parse(await GetWin());
           var points = int.parse(await GetPoints());
           if(type == "X1"){
-            print("X1");
+            //("X1");
             if(wining == 0 || wining == 2 || wining == 5 || wining == 8 || wining == 10 || wining == 12 || wining == 14 || wining == 16 || wining == 18 ){
               points = points + int.parse(bid);
               SetPoints(points);
@@ -147,20 +147,20 @@ class _GamePageState extends State<GamePage> {
 
           }
           if(type == "X2"){
-            print("X2");
+            //("X2");
             if(wining == 1 || wining == 3 || wining == 6 || wining == 9 || wining == 15 || wining == 19  ){
               points = points + int.parse(bid)*2;
               SetPoints(points);
             }
             else{
               points = points - int.parse(bid);
-              print(bid);
-              print("Я ТУУУУУУТ");
+              //(bid);
+              //("Я ТУУУУУУТ");
               SetPoints(points);
             }
           }
           if(type == "X5"){
-            print("X5");
+            //("X5");
             if(wining == 7 || wining == 11 || wining == 17  ){
               points = points + int.parse(bid)*5;
               SetPoints(points);
@@ -171,7 +171,7 @@ class _GamePageState extends State<GamePage> {
             }
           }
           if(type == "X10"){
-            print("X10");
+            //("X10");
             if(wining == 4 || wining == 13 ){
               points = points + int.parse(bid)*10;
               SetPoints(points);
