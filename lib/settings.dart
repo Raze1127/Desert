@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -60,8 +57,8 @@ class _settingsState extends State<settings> {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    user?.delete().then((value) => ref.child('Users/$uid').remove().then((value) => logout()));
-
+    user?.delete().then(
+        (value) => ref.child('Users/$uid').remove().then((value) => logout()));
   }
 
   void changeName(String name) {
@@ -73,8 +70,8 @@ class _settingsState extends State<settings> {
 
   void logout() {
     FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(context,
-    MaterialPageRoute(builder: (context) => const Login()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const Login()));
   }
 
   final nameController = TextEditingController();

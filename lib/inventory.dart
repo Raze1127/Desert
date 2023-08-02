@@ -20,7 +20,6 @@ class inventory extends StatefulWidget {
 }
 
 class _inventoryState extends State<inventory> {
-
   StreamController<int> controller = StreamController<int>();
 
   Future<int> GetADTanks() async {
@@ -36,15 +35,19 @@ class _inventoryState extends State<inventory> {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    final kills = int.parse((await ref.child('Users/$uid/kills').get()).value.toString());
-    final deaths = int.parse((await ref.child('Users/$uid/deaths').get()).value.toString());
-    var Prize = (await ref.child('Users/$uid/wonPrizesXP').get()).value.toString();
+    final kills =
+        int.parse((await ref.child('Users/$uid/kills').get()).value.toString());
+    final deaths = int.parse(
+        (await ref.child('Users/$uid/deaths').get()).value.toString());
+    var Prize =
+        (await ref.child('Users/$uid/wonPrizesXP').get()).value.toString();
     var PrizeXP = 0;
-    if(Prize == "null"){
-      PrizeXP = 0;}else{
+    if (Prize == "null") {
+      PrizeXP = 0;
+    } else {
       PrizeXP = int.parse(Prize);
     }
-    var xp = (kills*80-deaths*30)+PrizeXP;
+    var xp = (kills * 80 - deaths * 30) + PrizeXP;
 
     return xp;
   }
@@ -53,15 +56,16 @@ class _inventoryState extends State<inventory> {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    var Prize = (await ref.child('Users/$uid/wonPrizesXP').get()).value.toString();
+    var Prize =
+        (await ref.child('Users/$uid/wonPrizesXP').get()).value.toString();
     var PrizeXP = 0;
-    if(Prize == "null"){
-      PrizeXP = 0;}else{
+    if (Prize == "null") {
+      PrizeXP = 0;
+    } else {
       PrizeXP = int.parse(Prize);
     }
     return PrizeXP;
   }
-
 
   Future<int> skinSelected() async {
     final ref = FirebaseDatabase.instance.ref();
@@ -94,13 +98,12 @@ class _inventoryState extends State<inventory> {
     var lvl = i;
     var iconSelect = Icons.done_outline;
     var priz = prize;
-    if(selected == id){
+    if (selected == id) {
       iconSelect = Icons.done;
     }
-    if(id == 4){
-      var prize = priz.split("//");
+    if (id == 4) {
       //(prize);
-      if(priz == ""){
+      if (priz == "") {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -115,32 +118,32 @@ class _inventoryState extends State<inventory> {
                 child: Text("Spin to unlock",
                     style: GoogleFonts.pressStart2p(
                         textStyle: const TextStyle(
-                          shadows: [
-                            Shadow(
-                              // bottomLeft
-                                offset: Offset(-1.5, -1.5),
-                                color: Colors.black),
-                            Shadow(
-                              // bottomRight
-                                offset: Offset(1.5, -1.5),
-                                color: Colors.black),
-                            Shadow(
-                              // topRight
-                                offset: Offset(1.5, 1.5),
-                                color: Colors.black),
-                            Shadow(
-                              // topLeft
-                                offset: Offset(-1.5, 1.5),
-                                color: Colors.black),
-                          ],
-                          color: Colors.white,
-                          fontSize: 8,
-                        ))),
+                      shadows: [
+                        Shadow(
+                            // bottomLeft
+                            offset: Offset(-1.5, -1.5),
+                            color: Colors.black),
+                        Shadow(
+                            // bottomRight
+                            offset: Offset(1.5, -1.5),
+                            color: Colors.black),
+                        Shadow(
+                            // topRight
+                            offset: Offset(1.5, 1.5),
+                            color: Colors.black),
+                        Shadow(
+                            // topLeft
+                            offset: Offset(-1.5, 1.5),
+                            color: Colors.black),
+                      ],
+                      color: Colors.white,
+                      fontSize: 8,
+                    ))),
               ),
             ),
           ],
         );
-      }else{
+      } else {
         return GestureDetector(
           onTap: () {
             final ref = FirebaseDatabase.instance.ref();
@@ -158,8 +161,7 @@ class _inventoryState extends State<inventory> {
           ),
         );
       }
-
-    }else {
+    } else {
       if (id == 0) {
         return GestureDetector(
           onTap: () {
@@ -209,27 +211,27 @@ class _inventoryState extends State<inventory> {
                 child: Text("${id * 5} lvl ",
                     style: GoogleFonts.pressStart2p(
                         textStyle: const TextStyle(
-                          shadows: [
-                            Shadow(
-                              // bottomLeft
-                                offset: Offset(-1.5, -1.5),
-                                color: Colors.black),
-                            Shadow(
-                              // bottomRight
-                                offset: Offset(1.5, -1.5),
-                                color: Colors.black),
-                            Shadow(
-                              // topRight
-                                offset: Offset(1.5, 1.5),
-                                color: Colors.black),
-                            Shadow(
-                              // topLeft
-                                offset: Offset(-1.5, 1.5),
-                                color: Colors.black),
-                          ],
-                          color: Colors.white,
-                          fontSize: 10,
-                        ))),
+                      shadows: [
+                        Shadow(
+                            // bottomLeft
+                            offset: Offset(-1.5, -1.5),
+                            color: Colors.black),
+                        Shadow(
+                            // bottomRight
+                            offset: Offset(1.5, -1.5),
+                            color: Colors.black),
+                        Shadow(
+                            // topRight
+                            offset: Offset(1.5, 1.5),
+                            color: Colors.black),
+                        Shadow(
+                            // topLeft
+                            offset: Offset(-1.5, 1.5),
+                            color: Colors.black),
+                      ],
+                      color: Colors.white,
+                      fontSize: 10,
+                    ))),
               ),
             ],
           );
@@ -258,84 +260,93 @@ class _inventoryState extends State<inventory> {
                   var prize = Random().nextInt(9);
                   var prizes = await wonPrizes();
 
-                  if(prize == 0){
+                  if (prize == 0) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    if(prizes == ""){
+                    if (prizes == "") {
                       ref.child('Users/$uid/wonPrizes').set("5");
-                    }else{
-                      ref.child('Users/$uid/wonPrizes').set("${prizes+"//5"}");
+                    } else {
+                      ref
+                          .child('Users/$uid/wonPrizes')
+                          .set("${prizes + "//5"}");
                     }
                   }
-                  if(prize == 1){
+                  if (prize == 1) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 225);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 225);
                   }
-                  if(prize == 2){
+                  if (prize == 2) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 75);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 75);
                   }
-                  if(prize == 3){
+                  if (prize == 3) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 450);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 450);
                   }
-                  if(prize == 4){
+                  if (prize == 4) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 350);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 350);
                   }
-                  if(prize == 5){
+                  if (prize == 5) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 250);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 250);
                   }
-                  if(prize == 6){
+                  if (prize == 6) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 200);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 200);
                   }
-                  if(prize == 7){
+                  if (prize == 7) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 50);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 50);
                   }
-                  if(prize == 8){
+                  if (prize == 8) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 300);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 300);
                   }
-                  if(prize == 9){
+                  if (prize == 9) {
                     final ref = FirebaseDatabase.instance.ref();
                     final User? user = FirebaseAuth.instance.currentUser;
                     final uid = user?.uid;
-                    ref.child('Users/$uid/wonPrizesXP').set((await prizeXP()) + 100);
-
+                    ref
+                        .child('Users/$uid/wonPrizesXP')
+                        .set((await prizeXP()) + 100);
                   }
 
                   //(prize);
-                  controller.add(
-                      prize
-                  );
+                  controller.add(prize);
                   Future.delayed(const Duration(seconds: 4), () {
                     controllerConfet.play();
                   });
@@ -348,9 +359,6 @@ class _inventoryState extends State<inventory> {
                       ),
                     );
                   });
-
-
-                  
                 });
               });
               //_loadRewardedAd();
@@ -369,38 +377,34 @@ class _inventoryState extends State<inventory> {
   }
 
   final controllerConfet = ConfettiController();
+
   @override
   void initState() {
-    if (defaultTargetPlatform == TargetPlatform.android){
+    if (defaultTargetPlatform == TargetPlatform.android) {
       _loadRewardedAd();
     }
     super.initState();
   }
+
   @override
   void dispose() {
     controllerConfet.dispose();
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Stack(
       alignment: Alignment.center,
       children: [
-
         Scaffold(
             key: scaffoldKey,
             backgroundColor: const Color(0xffE0E3E7),
             body: FutureBuilder(
-                future: Future.wait([
-                  GetADTanks(),
-                  skinSelected(),
-                  wonPrizes()
-                ]),
+                future:
+                    Future.wait([GetADTanks(), skinSelected(), wonPrizes()]),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
                     return Container(
@@ -423,288 +427,298 @@ class _inventoryState extends State<inventory> {
                                 items: [
                                   FortuneItem(
                                     style: FortuneItemStyle(
-                                      color: Colors.red, // <-- custom circle slice fill color
-                                      borderColor: Colors.green, // <-- custom circle slice stroke color
-                                      borderWidth: 3, // <-- custom circle slice stroke width
+                                      color: Colors.red,
+                                      // <-- custom circle slice fill color
+                                      borderColor: Colors.green,
+                                      // <-- custom circle slice stroke color
+                                      borderWidth:
+                                          3, // <-- custom circle slice stroke width
                                     ),
                                     child: Image.asset(
                                       'assets/images/player/5tank.png',
                                       height: 80,
                                       width: 80,
                                     ),
-
                                   ),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("225 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("225 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("75 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("75 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("450 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("450 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("350 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("350 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("250 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("250 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("200 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("200 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("50 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("50 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("300 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("300 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
+                                              ))))),
                                   FortuneItem(
                                       style: FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
-                                      child: Center(child: Text("100 xp",
-                                          style: GoogleFonts.pressStart2p(
-                                              textStyle: const TextStyle(
+                                      child: Center(
+                                          child: Text("100 xp",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
                                                 shadows: [
                                                   Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // bottomRight
+                                                      // bottomRight
                                                       offset: Offset(1.5, -1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topRight
+                                                      // topRight
                                                       offset: Offset(1.5, 1.5),
                                                       color: Colors.black),
                                                   Shadow(
-                                                    // topLeft
+                                                      // topLeft
                                                       offset: Offset(-1.5, 1.5),
                                                       color: Colors.black),
                                                 ],
                                                 color: Colors.white,
                                                 fontSize: 10,
-                                              ))))
-                                  ),
-
+                                              ))))),
                                 ],
                               ),
                             ),
@@ -719,14 +733,13 @@ class _inventoryState extends State<inventory> {
                                     borderRadius: BorderRadius.circular(10)),
                               ),
                               onPressed: () {
-
-                                if (defaultTargetPlatform == TargetPlatform.android){
+                                if (defaultTargetPlatform ==
+                                    TargetPlatform.android) {
                                   _loadRewardedAd();
                                   _rewardedAd?.show(
                                       onUserEarnedReward: (AdWithoutView ad,
                                           RewardItem rewardItem) {});
                                 }
-
                               },
                               child: Text("Watch ad to get a spin!",
                                   style: GoogleFonts.pressStart2p(
@@ -755,8 +768,8 @@ class _inventoryState extends State<inventory> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                const EdgeInsets.only(top: 30, left: 20, right: 20),
+                            padding: const EdgeInsets.only(
+                                top: 30, left: 20, right: 20),
                             child: SizedBox(
                               width: width * 0.9,
                               height: height * 0.613,
@@ -775,27 +788,33 @@ class _inventoryState extends State<inventory> {
                                           color: Colors.grey.withOpacity(0.5),
                                           spreadRadius: 5,
                                           blurRadius: 7,
-                                          offset: const Offset(
-                                              0, 3), // changes position of shadow
+                                          offset: const Offset(0,
+                                              3), // changes position of shadow
                                         ),
                                       ],
                                       borderRadius: BorderRadius.circular(20),
                                       image: DecorationImage(
-                                          image:
-                                              AssetImage("assets/images/backk.png"),
+                                          image: AssetImage(
+                                              "assets/images/backk.png"),
                                           fit: BoxFit.fill),
                                     ),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 25.0),
+                                          padding: const EdgeInsets.only(
+                                              bottom: 25.0),
                                           child: Center(
                                               child: Image.asset(
                                                   'assets/images/player/1tank.png')),
                                         ),
-                                        invent(0, int.parse((snapshot.data![0]).toString()), int.parse((snapshot.data![1]).toString()), (snapshot.data![2]).toString()),
+                                        invent(
+                                            0,
+                                            int.parse(
+                                                (snapshot.data![0]).toString()),
+                                            int.parse(
+                                                (snapshot.data![1]).toString()),
+                                            (snapshot.data![2]).toString()),
                                       ],
                                     ),
                                   ),
@@ -811,8 +830,8 @@ class _inventoryState extends State<inventory> {
                                             color: Colors.grey.withOpacity(0.5),
                                             spreadRadius: 5,
                                             blurRadius: 7,
-                                            offset: const Offset(
-                                                0, 3), // changes position of shadow
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
@@ -832,10 +851,19 @@ class _inventoryState extends State<inventory> {
                                                   MainAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      bottom: 2.0),
-                                                  child:
-                                                      invent(1, int.parse((snapshot.data![0]).toString()), int.parse((snapshot.data![1]).toString()), (snapshot.data![2]).toString()),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 2.0),
+                                                  child: invent(
+                                                      1,
+                                                      int.parse(
+                                                          (snapshot.data![0])
+                                                              .toString()),
+                                                      int.parse(
+                                                          (snapshot.data![1])
+                                                              .toString()),
+                                                      (snapshot.data![2])
+                                                          .toString()),
                                                 ),
                                               ],
                                             ),
@@ -854,8 +882,8 @@ class _inventoryState extends State<inventory> {
                                             color: Colors.grey.withOpacity(0.5),
                                             spreadRadius: 5,
                                             blurRadius: 7,
-                                            offset: const Offset(
-                                                0, 3), // changes position of shadow
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
@@ -875,10 +903,19 @@ class _inventoryState extends State<inventory> {
                                                   MainAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      bottom: 2.0),
-                                                  child:
-                                                      invent(2, int.parse((snapshot.data![0]).toString()), int.parse((snapshot.data![1]).toString()), (snapshot.data![2]).toString()),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 2.0),
+                                                  child: invent(
+                                                      2,
+                                                      int.parse(
+                                                          (snapshot.data![0])
+                                                              .toString()),
+                                                      int.parse(
+                                                          (snapshot.data![1])
+                                                              .toString()),
+                                                      (snapshot.data![2])
+                                                          .toString()),
                                                 ),
                                               ],
                                             ),
@@ -895,8 +932,8 @@ class _inventoryState extends State<inventory> {
                                             color: Colors.grey.withOpacity(0.5),
                                             spreadRadius: 5,
                                             blurRadius: 7,
-                                            offset: const Offset(
-                                                0, 3), // changes position of shadow
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
@@ -913,13 +950,22 @@ class _inventoryState extends State<inventory> {
                                           Center(
                                             child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                                  MainAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      bottom: 2.0),
-                                                  child:
-                                                  invent(3, int.parse((snapshot.data![0]).toString()), int.parse((snapshot.data![1]).toString()), (snapshot.data![2]).toString()),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 2.0),
+                                                  child: invent(
+                                                      3,
+                                                      int.parse(
+                                                          (snapshot.data![0])
+                                                              .toString()),
+                                                      int.parse(
+                                                          (snapshot.data![1])
+                                                              .toString()),
+                                                      (snapshot.data![2])
+                                                          .toString()),
                                                 ),
                                               ],
                                             ),
@@ -937,8 +983,8 @@ class _inventoryState extends State<inventory> {
                                             color: Colors.grey.withOpacity(0.5),
                                             spreadRadius: 5,
                                             blurRadius: 4,
-                                            offset: const Offset(
-                                                0, 3), // changes position of shadow
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
@@ -955,13 +1001,22 @@ class _inventoryState extends State<inventory> {
                                           Center(
                                             child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                                  MainAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      bottom: 2.0),
-                                                  child:
-                                                  invent(4, int.parse((snapshot.data![0]).toString()), int.parse((snapshot.data![1]).toString()), (snapshot.data![2]).toString()),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 2.0),
+                                                  child: invent(
+                                                      4,
+                                                      int.parse(
+                                                          (snapshot.data![0])
+                                                              .toString()),
+                                                      int.parse(
+                                                          (snapshot.data![1])
+                                                              .toString()),
+                                                      (snapshot.data![2])
+                                                          .toString()),
                                                 ),
                                               ],
                                             ),
@@ -982,10 +1037,12 @@ class _inventoryState extends State<inventory> {
                           width: double.infinity,
                           decoration: const BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage("assets/images/background.png"),
+                                image:
+                                    AssetImage("assets/images/background.png"),
                                 fit: BoxFit.fill),
                           ),
-                          child: const Center(child: CircularProgressIndicator())),
+                          child:
+                              const Center(child: CircularProgressIndicator())),
                     );
                   }
                 })),
@@ -994,9 +1051,10 @@ class _inventoryState extends State<inventory> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ConfettiWidget(confettiController: controllerConfet, shouldLoop: false,
-              blastDirectionality: BlastDirectionality.explosive,
-
+              ConfettiWidget(
+                confettiController: controllerConfet,
+                shouldLoop: false,
+                blastDirectionality: BlastDirectionality.explosive,
               ),
             ],
           ),

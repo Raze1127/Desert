@@ -7,7 +7,12 @@ class CountdownTimer extends StatefulWidget {
   final Function onTimerFinish;
   final double fontSize;
 
-  CountdownTimer({ required this.seconds, required this.onTimerFinish, required this.fontSize, Key? key }) : super(key: key);
+  CountdownTimer(
+      {required this.seconds,
+      required this.onTimerFinish,
+      required this.fontSize,
+      Key? key})
+      : super(key: key);
 
   @override
   _CountdownTimerState createState() => _CountdownTimerState();
@@ -15,7 +20,7 @@ class CountdownTimer extends StatefulWidget {
   final GlobalKey<_CountdownTimerState> _key = GlobalKey();
 
   void restartTimer() {
-    //("ДАРОВА БАНДИТЫ");
+
 
     _key.currentState!.restartTimer();
   }
@@ -24,12 +29,10 @@ class CountdownTimer extends StatefulWidget {
 class _CountdownTimerState extends State<CountdownTimer> {
   late int _secondsLeft;
   late Timer _timer;
-  static late _CountdownTimerState _countdownTimerState;
 
   @override
   void initState() {
     super.initState();
-    _countdownTimerState = this;
     _secondsLeft = widget.seconds;
   }
 
@@ -90,7 +93,3 @@ class _CountdownTimerState extends State<CountdownTimer> {
     );
   }
 }
-
-
-
-

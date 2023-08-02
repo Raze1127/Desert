@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:async';
 import 'package:bonfire/bonfire.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:koleso_fortune/sounds.dart';
-import 'package:koleso_fortune/player_sprite_sheet.dart';
 
 import 'game_sprite_sheet.dart';
 
@@ -21,41 +18,46 @@ extension DoubleExtensions on double {
   }
 }
 
+Future<int> GetKills(String id) async {
+  final ref = FirebaseDatabase.instance.ref();
+  final User? user = FirebaseAuth.instance.currentUser;
+  var uid = user!.uid;
+  final curGame =
+      (await ref.child('Users/$uid/CurGame').get()).value.toString();
+  final kills = (await ref.child('Games/$curGame/Players/$id/kills').get())
+      .value
+      .toString();
 
-  Future<int> GetKills(String id) async {
-    final ref = FirebaseDatabase.instance.ref();
-    final User? user = FirebaseAuth.instance.currentUser;
-    var uid = user!.uid;
-    final curGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
-    final kills = (await ref.child('Games/$curGame/Players/$id/kills').get()).value.toString();
-
-    return int.parse(kills);
-  }
+  return int.parse(kills);
+}
 
 Future<int> GetSkin() async {
   final ref = FirebaseDatabase.instance.ref();
   final User? user = FirebaseAuth.instance.currentUser;
   var uid = user!.uid;
-  final skin = (await ref.child('Users/$uid/SelectedSkin').get()).value.toString();
-  if(skin == "null"){
+  final skin =
+      (await ref.child('Users/$uid/SelectedSkin').get()).value.toString();
+  if (skin == "null") {
     return 0;
-  }else{
-    return int.parse(skin)+1;
+  } else {
+    return int.parse(skin) + 1;
   }
 }
-
 
 Future<int> GetDeaths(String id) async {
   final ref = FirebaseDatabase.instance.ref();
   final User? user = FirebaseAuth.instance.currentUser;
   var uid = user!.uid;
-  final curGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
-  final kills = (await ref.child('Games/$curGame/Players/$id/deaths').get()).value.toString();
+  final curGame =
+      (await ref.child('Users/$uid/CurGame').get()).value.toString();
+  final kills = (await ref.child('Games/$curGame/Players/$id/deaths').get())
+      .value
+      .toString();
 
   return int.parse(kills);
 }
 
-class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
+class MyPlayerSingle extends RotationPlayer with ObjectCollision, UseBarLife {
   final int id;
   var io = 0;
   final String nick;
@@ -64,18 +66,14 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
   DatabaseReference ref = FirebaseDatabase.instance.ref();
   final String gameId;
 
-
-
   MyPlayerSingle(Vector2 position, this.nick, this.id, this.gameId)
       : super(
-    animIdle: _getSoldierSprite(),
-    animRun: _getSoldierSprite(),
-    size: Vector2(75, 41.25),
-    position: position,
-    life: 200,
-  ) {
-
-
+          animIdle: _getSoldierSprite(),
+          animRun: _getSoldierSprite(),
+          size: Vector2(75, 41.25),
+          position: position,
+          life: 200,
+        ) {
     textConfig = TextPaint(
       style: const TextStyle(
         fontSize: 10,
@@ -83,16 +81,13 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
       ),
     );
     sizeTextNick = textConfig.measureText(nick);
+
     /// here we configure collision of the player
     setupCollision(
       CollisionConfig(
         collisions: [
-          CollisionArea.circle(radius: 17,
-            align: Vector2(-2, 4)
-          ),
-          CollisionArea.circle(radius: 17,
-              align: Vector2(30, 4)
-          ),
+          CollisionArea.circle(radius: 17, align: Vector2(-2, 4)),
+          CollisionArea.circle(radius: 17, align: Vector2(30, 4)),
         ],
       ),
     );
@@ -103,6 +98,7 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
       borderWidth: 2,
     );
   }
+
   @override
   void render(Canvas canvas) {
     renderNickName(canvas);
@@ -115,7 +111,6 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
   }
 
   void joystickChangeDirectional(JoystickDirectionalEvent event) {
-
     speed = 100 * event.intensity;
     super.joystickChangeDirectional(event);
   }
@@ -125,7 +120,7 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
       canvas,
       nick,
       Vector2(
-        position.x + ((width - sizeTextNick.x) /  2),
+        position.x + ((width - sizeTextNick.x) / 2),
         position.y - sizeTextNick.y - 25,
       ),
     );
@@ -138,10 +133,11 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
       actionAttack();
     }
     super.joystickAction(event);
-
   }
+
   var fire = 0;
   var canShoot = true;
+
   void actionAttack() {
     if (immortal == false && dead == false && canShoot == true) {
       Vector2 centerOffset = Vector2.zero();
@@ -172,7 +168,6 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
           break;
       }
       simpleAttackRangeByAngle(
-
         angle: angle,
         size: Vector2(12, 8),
         centerOffset: centerOffset,
@@ -182,8 +177,9 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
         onDestroy: () {
           var box = Hive.box('Settings');
           var sound = box.get('sound');
-          if(sound == true){
-          Sounds.explosion();}
+          if (sound == true) {
+            Sounds.explosion();
+          }
         },
         animation: Sprite.load('bullet.png').toAnimation(),
         damage: 30,
@@ -195,23 +191,20 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
       Future.delayed(const Duration(milliseconds: 500), () {
         canShoot = true;
       });
-
     }
 
-      fire++;
-
+    fire++;
   }
 
-
   bool hasReceivedDamage = true;
+
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
-    if(life <= 20 && hasReceivedDamage == true){
-        hasReceivedDamage = false;
+    if (life <= 20 && hasReceivedDamage == true) {
+      hasReceivedDamage = false;
     }
-    if(life >= 30 && hasReceivedDamage == false){
+    if (life >= 30 && hasReceivedDamage == false) {
       hasReceivedDamage = true;
-
     }
     showDamage(
       damage,
@@ -222,9 +215,6 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
     );
     super.receiveDamage(attacker, damage, identify);
   }
-
-
-
 
   @override
   void die() {
@@ -237,42 +227,35 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
     super.die();
   }
 
-
-
   var immortal = false;
   var dead = false;
 
   @override
   void update(double dt) {
-
-
-
-    if(immortal == true){
+    if (immortal == true) {
       addLife(200.0);
     }
 
-    if(life <= 0){
+    if (life <= 0) {
       speed = 0;
       opacity = 0.4;
-      if(life == -10){
+      if (life == -10) {
         addLife(10.0);
       }
       dead = true;
-    }else{
+    } else {
       dead = false;
       opacity = 1;
     }
 
-
-
-    if(io == 0){
+    if (io == 0) {
       final User? user = FirebaseAuth.instance.currentUser;
       var uid = user!.uid;
       DatabaseReference reff =
-      FirebaseDatabase.instance.ref('Users/$uid/$gameId/isImmortal');
+          FirebaseDatabase.instance.ref('Users/$uid/$gameId/isImmortal');
       reff.onValue.listen((DatabaseEvent event) async {
         final data = event.snapshot.value as bool;
-        immortal=data;
+        immortal = data;
       });
       speed = 0;
       angle = 0;
@@ -281,7 +264,4 @@ class MyPlayerSingle  extends RotationPlayer with ObjectCollision, UseBarLife {
     }
     super.update(dt);
   }
-
-
 }
-

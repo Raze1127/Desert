@@ -1,13 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:koleso_fortune/GameTanks.dart';
 import 'package:koleso_fortune/Home.dart';
 import 'Login.dart';
 import 'Register.dart';
@@ -32,7 +30,6 @@ void main() async{
   //password for admin@desertsteel.online j2F)x0E^g4
   if (defaultTargetPlatform == TargetPlatform.android){
     Future<InitializationStatus> _initGoogleMobileAds() {
-      // TODO: Initialize Google Mobile Ads SDK
       return MobileAds.instance.initialize();
     }
     await _initGoogleMobileAds();

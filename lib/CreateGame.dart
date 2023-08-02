@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:http/http.dart' as http;
 
-import 'GamePageOld.dart';
 import 'GameTanks.dart';
 import 'GameTanksSingle.dart';
 
@@ -30,32 +28,25 @@ class _CreateGameState extends State<CreateGame> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var iop = 0;
   var value = 1;
-  var t=0;
-  var add = const Icon(
-      Icons.add);
+  var t = 0;
+  var add = const Icon(Icons.add);
 
-  var no = const Icon(
-    Icons.call_missed_outgoing
-  );
-  var yes = const Icon(
-    Icons.check
-  );
+  var no = const Icon(Icons.call_missed_outgoing);
+  var yes = const Icon(Icons.check);
 
   Future<List> GetFriends() async {
-
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
     final snapshot = await ref.child('Users/$uid/friends/friendsUID').get();
     final friends = snapshot.value.toString().split("//");
-    if(snapshot.value.toString() == "null"){
+    if (snapshot.value.toString() == "null") {
       return [];
-    }else{
+    } else {
       return friends;
     }
-
-
   }
+
   void sendPushMessage(String body, String title, String token) async {
     try {
       await http.post(
@@ -63,7 +54,7 @@ class _CreateGameState extends State<CreateGame> {
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-          'key=AAAAxkBoobs:APA91bEOkequ3bZVO0Wh3njtyM8huxybgpJ2G2lBXSYpBrsiuhZ4IijJiqARKAGg_IzbrWrLfnESXw0zKn0ukjkfc9hQ8WTc-h6-Ws9YTdxqLS9dGdBc7S643pa12RKVoGZNOyVDf2u0',
+              'key=AAAAxkBoobs:APA91bEOkequ3bZVO0Wh3njtyM8huxybgpJ2G2lBXSYpBrsiuhZ4IijJiqARKAGg_IzbrWrLfnESXw0zKn0ukjkfc9hQ8WTc-h6-Ws9YTdxqLS9dGdBc7S643pa12RKVoGZNOyVDf2u0',
         },
         body: jsonEncode(
           <String, dynamic>{
@@ -89,69 +80,69 @@ class _CreateGameState extends State<CreateGame> {
   }
 
   void check(item, int index) async {
-
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
-    var name  = (await ref.child('Users/$uid/Name').get()).value.toString();
-    var fcm  = (await ref.child('Users/$item/fcmToken').get()).value.toString();
-    sendPushMessage("You have a new game request from $name", "New Game Request", fcm);
-      FirebaseDatabase database = FirebaseDatabase.instance;
+    var name = (await ref.child('Users/$uid/Name').get()).value.toString();
+    var fcm = (await ref.child('Users/$item/fcmToken').get()).value.toString();
+    sendPushMessage(
+        "You have a new game request from $name", "New Game Request", fcm);
+    FirebaseDatabase database = FirebaseDatabase.instance;
 
-      database.ref("Users/$item/").update({
-        "answer": "",
-        "request": "$GameCode/$name",
-      });
-      DatabaseReference starCountRef =
-          FirebaseDatabase.instance.ref('Users/$item/answer');
-      starCountRef.onValue.listen((DatabaseEvent event) {
-        var data = event.snapshot.value;
+    database.ref("Users/$item/").update({
+      "answer": "",
+      "request": "$GameCode/$name",
+    });
+    DatabaseReference starCountRef =
+        FirebaseDatabase.instance.ref('Users/$item/answer');
+    starCountRef.onValue.listen((DatabaseEvent event) {
+      var data = event.snapshot.value;
 
-        if (data == "yes" && !players.contains(item)) {
-          if (players == "") {
-            setState(() {
-              idFriend= item;
-              players = item;
-              _key2.currentState!.insertItem(0);
-              _key.currentState!.removeItem(index, (context, animation) => Container());
-            });
-
-          } else {
-            setState(() {
-              players += "|$item";
-              idFriend= item;
-              t++;
-              _key2.currentState!.insertItem(t);
-              _key.currentState!.removeItem(index, (context, animation) => Container());
-            });
-
-          }
-
+      if (data == "yes" && !players.contains(item)) {
+        if (players == "") {
           setState(() {
-            add = yes;
+            idFriend = item;
+            players = item;
+            _key2.currentState!.insertItem(0);
+            _key.currentState!
+                .removeItem(index, (context, animation) => Container());
+          });
+        } else {
+          setState(() {
+            players += "|$item";
+            idFriend = item;
+            t++;
+            _key2.currentState!.insertItem(t);
+            _key.currentState!
+                .removeItem(index, (context, animation) => Container());
           });
         }
-        if (data == "no") {
-          if (playersNo == "") {
-            playersNo = item;
-          } else {
-            playersNo += "|$item";
-          }
-          database.ref("Users/$item/").update({
-            "answer": "",
-            "request": "",
-          });
-          setState(() {
-            add = no;
-          });
-        }
-      });
 
+        setState(() {
+          add = yes;
+        });
+      }
+      if (data == "no") {
+        if (playersNo == "") {
+          playersNo = item;
+        } else {
+          playersNo += "|$item";
+        }
+        database.ref("Users/$item/").update({
+          "answer": "",
+          "request": "",
+        });
+        setState(() {
+          add = no;
+        });
+      }
+    });
   }
-  int playe(){
-    if(players == ""){
+
+  int playe() {
+    if (players == "") {
       return 0;
-    }else{
+    } else {
       return players.split("|").length;
     }
   }
@@ -163,12 +154,11 @@ class _CreateGameState extends State<CreateGame> {
 
     return [name.value.toString(), xp.value.toString()];
   }
- var idFriend;
 
+  var idFriend;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: const Color(0xffE0E3E7),
@@ -176,11 +166,9 @@ class _CreateGameState extends State<CreateGame> {
             future: Future.wait([
               GetFriends(),
             ]),
-            builder:
-                (BuildContext context,  snapshot) {
+            builder: (BuildContext context, snapshot) {
               if (snapshot.hasData) {
                 return Scaffold(
-
                     backgroundColor: const Color(0xffE0E3E7),
                     body: Container(
                       height: double.infinity,
@@ -196,327 +184,313 @@ class _CreateGameState extends State<CreateGame> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                           Padding(
+                          Padding(
                             padding: EdgeInsets.all(15.0),
                             child: Align(
                               alignment: Alignment.topCenter,
-                              child: Text(
-                                  'Create Game',
+                              child: Text('Create Game',
                                   style: GoogleFonts.pressStart2p(
                                       textStyle: const TextStyle(
-                                        shadows: [
-                                          Shadow(
-                                            // bottomLeft
-                                              offset: Offset(-1.5, -1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                            // bottomRight
-                                              offset: Offset(1.5, -1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                            // topRight
-                                              offset: Offset(1.5, 1.5),
-                                              color: Colors.black),
-                                          Shadow(
-                                            // topLeft
-                                              offset: Offset(-1.5, 1.5),
-                                              color: Colors.black),
-                                        ],
-                                        color: Colors.white,
-                                        fontSize: 25,
-                                      ))
-                              ),
+                                    shadows: [
+                                      Shadow(
+                                          // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                  ))),
                             ),
                           ),
                           Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child:
-                                  Text(
-                                    style: GoogleFonts
-                                        .pressStart2p(
-                                        textStyle: const TextStyle(
-                                          shadows: [
-                                            Shadow(
-                                              // bottomLeft
-                                                offset: Offset(
-                                                    -1.5,
-                                                    -1.5),
-                                                color: Colors
-                                                    .black),
-                                            Shadow(
-                                              // bottomRight
-                                                offset: Offset(
-                                                    1.5,
-                                                    -1.5),
-                                                color: Colors
-                                                    .black),
-                                            Shadow(
-                                              // topRight
-                                                offset: Offset(
-                                                    1.5, 1.5),
-                                                color: Colors
-                                                    .black),
-                                            Shadow(
-                                              // topLeft
-                                                offset: Offset(
-                                                    -1.5,
-                                                    1.5),
-                                                color: Colors
-                                                    .black),
-                                          ],
-                                          color: Colors.white,
-
-                                          fontSize: 15,
-
-                                        )),
-                                    "${playe()  }/4",
-                                  ),
+                                child: Text(
+                                  style: GoogleFonts.pressStart2p(
+                                      textStyle: const TextStyle(
+                                    shadows: [
+                                      Shadow(
+                                          // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  )),
+                                  "${playe()}/4",
                                 ),
-
-                              Padding(padding:  EdgeInsets.all(10),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
                                 child: SizedBox(
                                   width: 350,
                                   height: 200,
                                   child: AnimatedList(
-                                    key: _key2,
-                                    initialItemCount: players.length,
-                                    itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                                      var item = idFriend;
-                                      return FutureBuilder(
-                                          future: getFriendData(item),
-                                          builder: (context, snapshot) {
-
-
-                                            if (snapshot.hasData) {
-                                              List<String> playersnono = playersNo.split("|");
-                                              List<String> playersyes = players.split("|");
-                                              final userData = snapshot.data as List;
-                                              var name = userData[0];
-                                              var xp = userData[1];
-                                              if(playersnono.contains(item)){
-                                                add = no;
-                                              }else{
-                                                if(playersyes.contains(item)){
-                                                  add = yes;
-                                                }else{
-                                                  add = const Icon(
-                                                      Icons.add);
+                                      key: _key2,
+                                      initialItemCount: players.length,
+                                      itemBuilder: (BuildContext context,
+                                          int index,
+                                          Animation<double> animation) {
+                                        var item = idFriend;
+                                        return FutureBuilder(
+                                            future: getFriendData(item),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                List<String> playersnono =
+                                                    playersNo.split("|");
+                                                List<String> playersyes =
+                                                    players.split("|");
+                                                final userData =
+                                                    snapshot.data as List;
+                                                var name = userData[0];
+                                                var xp = userData[1];
+                                                if (playersnono
+                                                    .contains(item)) {
+                                                  add = no;
+                                                } else {
+                                                  if (playersyes
+                                                      .contains(item)) {
+                                                    add = yes;
+                                                  } else {
+                                                    add = const Icon(Icons.add);
+                                                  }
                                                 }
-                                              }
 
-                                              return Card(
-                                                margin: const EdgeInsets.all(10),
-                                                elevation: 10,
-                                                color: Colors.grey[800],
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      4.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets.all(4.0),
-                                                        child: Text(
-                                                          style: GoogleFonts
-                                                              .pressStart2p(
-                                                              textStyle: const TextStyle(
-                                                                shadows: [
-                                                                  Shadow(
-                                                                    // bottomLeft
-                                                                      offset: Offset(
-                                                                          -1.5,
-                                                                          -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // bottomRight
-                                                                      offset: Offset(
-                                                                          1.5,
-                                                                          -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topRight
-                                                                      offset: Offset(
-                                                                          1.5, 1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topLeft
-                                                                      offset: Offset(
-                                                                          -1.5,
-                                                                          1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
-                                                                color: Colors.white,
-
-                                                                fontSize: 15,
-
-                                                              )),
-                                                          "${index + 1}.",
-                                                        ),
-                                                      ),
-
-                                                      Text(
-                                                        style: GoogleFonts
-                                                            .pressStart2p(
-                                                            textStyle: const TextStyle(
+                                                return Card(
+                                                  margin:
+                                                      const EdgeInsets.all(10),
+                                                  elevation: 10,
+                                                  color: Colors.grey[800],
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            4.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4.0),
+                                                          child: Text(
+                                                            style: GoogleFonts
+                                                                .pressStart2p(
+                                                                    textStyle:
+                                                                        const TextStyle(
                                                               shadows: [
                                                                 Shadow(
-                                                                  // bottomLeft
+                                                                    // bottomLeft
                                                                     offset: Offset(
-                                                                        -1.5, -1.5),
+                                                                        -1.5,
+                                                                        -1.5),
                                                                     color: Colors
                                                                         .black),
                                                                 Shadow(
-                                                                  // bottomRight
-                                                                    offset: Offset(
-                                                                        1.5, -1.5),
+                                                                    // bottomRight
+                                                                    offset:
+                                                                        Offset(
+                                                                            1.5,
+                                                                            -1.5),
                                                                     color: Colors
                                                                         .black),
                                                                 Shadow(
-                                                                  // topRight
-                                                                    offset: Offset(
-                                                                        1.5, 1.5),
+                                                                    // topRight
+                                                                    offset:
+                                                                        Offset(
+                                                                            1.5,
+                                                                            1.5),
                                                                     color: Colors
                                                                         .black),
                                                                 Shadow(
-                                                                  // topLeft
-                                                                    offset: Offset(
-                                                                        -1.5, 1.5),
+                                                                    // topLeft
+                                                                    offset:
+                                                                        Offset(
+                                                                            -1.5,
+                                                                            1.5),
                                                                     color: Colors
                                                                         .black),
                                                               ],
-                                                              color: Colors.white,
-
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 15,
-
                                                             )),
-                                                        name.toString(),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets.fromLTRB(
-                                                            9, 0, 0, 0),
-                                                        child: Text(
+                                                            "${index + 1}.",
+                                                          ),
+                                                        ),
+                                                        Text(
                                                           style: GoogleFonts
                                                               .pressStart2p(
-                                                              textStyle: const TextStyle(
-                                                                shadows: [
-                                                                  Shadow(
-                                                                    // bottomLeft
-                                                                      offset: Offset(
+                                                                  textStyle:
+                                                                      const TextStyle(
+                                                            shadows: [
+                                                              Shadow(
+                                                                  // bottomLeft
+                                                                  offset:
+                                                                      Offset(
                                                                           -1.5,
                                                                           -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // bottomRight
-                                                                      offset: Offset(
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // bottomRight
+                                                                  offset:
+                                                                      Offset(
                                                                           1.5,
                                                                           -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topRight
-                                                                      offset: Offset(
-                                                                          1.5, 1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topLeft
-                                                                      offset: Offset(
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // topRight
+                                                                  offset:
+                                                                      Offset(
+                                                                          1.5,
+                                                                          1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // topLeft
+                                                                  offset:
+                                                                      Offset(
                                                                           -1.5,
                                                                           1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
-                                                                color: Colors.white,
-
-                                                                fontSize: 15,
-
-                                                              )),
-
-                                                          'LVL: ${xp.toString()}',
+                                                                  color: Colors
+                                                                      .black),
+                                                            ],
+                                                            color: Colors.white,
+                                                            fontSize: 15,
+                                                          )),
+                                                          name.toString(),
                                                         ),
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                        children: [
-                                                          IconButton(
-                                                            onPressed: () {
-
-
-                                                              setState(() {});
-                                                            },
-                                                            icon: add,
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .fromLTRB(
+                                                                  9, 0, 0, 0),
+                                                          child: Text(
+                                                            style: GoogleFonts
+                                                                .pressStart2p(
+                                                                    textStyle:
+                                                                        const TextStyle(
+                                                              shadows: [
+                                                                Shadow(
+                                                                    // bottomLeft
+                                                                    offset: Offset(
+                                                                        -1.5,
+                                                                        -1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                    // bottomRight
+                                                                    offset:
+                                                                        Offset(
+                                                                            1.5,
+                                                                            -1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                    // topRight
+                                                                    offset:
+                                                                        Offset(
+                                                                            1.5,
+                                                                            1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                                Shadow(
+                                                                    // topLeft
+                                                                    offset:
+                                                                        Offset(
+                                                                            -1.5,
+                                                                            1.5),
+                                                                    color: Colors
+                                                                        .black),
+                                                              ],
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 15,
+                                                            )),
+                                                            'LVL: ${xp.toString()}',
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            IconButton(
+                                                              onPressed: () {
+                                                                setState(() {});
+                                                              },
+                                                              icon: add,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            } else {
-                                              return const Center(
-                                                child: CircularProgressIndicator(),
-                                              );
-                                            }
-                                          }
-                                      );
-                                    }
-                                  ),
+                                                );
+                                              } else {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                            });
+                                      }),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child:
-                                Text(
-                                  style: GoogleFonts
-                                      .pressStart2p(
+                                child: Text(
+                                  style: GoogleFonts.pressStart2p(
                                       textStyle: const TextStyle(
-                                        shadows: [
-                                          Shadow(
-                                            // bottomLeft
-                                              offset: Offset(
-                                                  -1.5,
-                                                  -1.5),
-                                              color: Colors
-                                                  .black),
-                                          Shadow(
-                                            // bottomRight
-                                              offset: Offset(
-                                                  1.5,
-                                                  -1.5),
-                                              color: Colors
-                                                  .black),
-                                          Shadow(
-                                            // topRight
-                                              offset: Offset(
-                                                  1.5, 1.5),
-                                              color: Colors
-                                                  .black),
-                                          Shadow(
-                                            // topLeft
-                                              offset: Offset(
-                                                  -1.5,
-                                                  1.5),
-                                              color: Colors
-                                                  .black),
-                                        ],
-                                        color: Colors.white,
-
-                                        fontSize: 15,
-
-                                      )),
+                                    shadows: [
+                                      Shadow(
+                                          // bottomLeft
+                                          offset: Offset(-1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // bottomRight
+                                          offset: Offset(1.5, -1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topRight
+                                          offset: Offset(1.5, 1.5),
+                                          color: Colors.black),
+                                      Shadow(
+                                          // topLeft
+                                          offset: Offset(-1.5, 1.5),
+                                          color: Colors.black),
+                                    ],
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  )),
                                   "Friends",
                                 ),
                               ),
-
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 7, 0, 0),
                                 child: SizedBox(
@@ -524,183 +498,194 @@ class _CreateGameState extends State<CreateGame> {
                                   height: 200,
                                   child: AnimatedList(
                                     key: _key,
-                                    initialItemCount: (snapshot.data![0]).length,
-                                    itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                                    initialItemCount:
+                                        (snapshot.data![0]).length,
+                                    itemBuilder: (BuildContext context,
+                                        int index,
+                                        Animation<double> animation) {
                                       final item = (snapshot.data![0])[index];
-
 
                                       return FutureBuilder(
                                           future: getFriendData(item),
                                           builder: (context, snapshot) {
-
-
                                             if (snapshot.hasData) {
-                                              List<String> playersnono = playersNo.split("|");
-                                              List<String> playersyes = players.split("|");
-                                              final userData = snapshot.data as List;
+                                              List<String> playersnono =
+                                                  playersNo.split("|");
+                                              List<String> playersyes =
+                                                  players.split("|");
+                                              final userData =
+                                                  snapshot.data as List;
                                               var name = userData[0];
                                               var xp = userData[1];
 
-                                              if(playersnono.contains(item)){
+                                              if (playersnono.contains(item)) {
                                                 add = no;
-                                              }else{
-                                                if(playersyes.contains(item)){
+                                              } else {
+                                                if (playersyes.contains(item)) {
                                                   add = yes;
-                                                }else{
-                                                  add = const Icon(
-                                                      Icons.add);
+                                                } else {
+                                                  add = const Icon(Icons.add);
                                                 }
                                               }
 
                                               return Card(
-                                                margin: const EdgeInsets.all(10),
+                                                margin:
+                                                    const EdgeInsets.all(10),
                                                 elevation: 10,
                                                 color: Colors.grey[800],
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      4.0),
+                                                  padding:
+                                                      const EdgeInsets.all(4.0),
                                                   child: Row(
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                        const EdgeInsets.all(4.0),
+                                                            const EdgeInsets
+                                                                .all(4.0),
                                                         child: Text(
                                                           style: GoogleFonts
                                                               .pressStart2p(
-                                                              textStyle: const TextStyle(
-                                                                shadows: [
-                                                                  Shadow(
-                                                                    // bottomLeft
-                                                                      offset: Offset(
+                                                                  textStyle:
+                                                                      const TextStyle(
+                                                            shadows: [
+                                                              Shadow(
+                                                                  // bottomLeft
+                                                                  offset:
+                                                                      Offset(
                                                                           -1.5,
                                                                           -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // bottomRight
-                                                                      offset: Offset(
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // bottomRight
+                                                                  offset:
+                                                                      Offset(
                                                                           1.5,
                                                                           -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topRight
-                                                                      offset: Offset(
-                                                                          1.5, 1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topLeft
-                                                                      offset: Offset(
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // topRight
+                                                                  offset:
+                                                                      Offset(
+                                                                          1.5,
+                                                                          1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // topLeft
+                                                                  offset:
+                                                                      Offset(
                                                                           -1.5,
                                                                           1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
-                                                                color: Colors.white,
-
-                                                                fontSize: 15,
-
-                                                              )),
+                                                                  color: Colors
+                                                                      .black),
+                                                            ],
+                                                            color: Colors.white,
+                                                            fontSize: 15,
+                                                          )),
                                                           "${index + 1}.",
                                                         ),
                                                       ),
-
                                                       Text(
                                                         style: GoogleFonts
                                                             .pressStart2p(
-                                                            textStyle: const TextStyle(
-                                                              shadows: [
-                                                                Shadow(
-                                                                  // bottomLeft
-                                                                    offset: Offset(
-                                                                        -1.5, -1.5),
-                                                                    color: Colors
-                                                                        .black),
-                                                                Shadow(
-                                                                  // bottomRight
-                                                                    offset: Offset(
-                                                                        1.5, -1.5),
-                                                                    color: Colors
-                                                                        .black),
-                                                                Shadow(
-                                                                  // topRight
-                                                                    offset: Offset(
-                                                                        1.5, 1.5),
-                                                                    color: Colors
-                                                                        .black),
-                                                                Shadow(
-                                                                  // topLeft
-                                                                    offset: Offset(
-                                                                        -1.5, 1.5),
-                                                                    color: Colors
-                                                                        .black),
-                                                              ],
-                                                              color: Colors.white,
-
-                                                              fontSize: 15,
-
-                                                            )),
+                                                                textStyle:
+                                                                    const TextStyle(
+                                                          shadows: [
+                                                            Shadow(
+                                                                // bottomLeft
+                                                                offset: Offset(
+                                                                    -1.5, -1.5),
+                                                                color: Colors
+                                                                    .black),
+                                                            Shadow(
+                                                                // bottomRight
+                                                                offset: Offset(
+                                                                    1.5, -1.5),
+                                                                color: Colors
+                                                                    .black),
+                                                            Shadow(
+                                                                // topRight
+                                                                offset: Offset(
+                                                                    1.5, 1.5),
+                                                                color: Colors
+                                                                    .black),
+                                                            Shadow(
+                                                                // topLeft
+                                                                offset: Offset(
+                                                                    -1.5, 1.5),
+                                                                color: Colors
+                                                                    .black),
+                                                          ],
+                                                          color: Colors.white,
+                                                          fontSize: 15,
+                                                        )),
                                                         name.toString(),
                                                       ),
                                                       Padding(
                                                         padding:
-                                                        const EdgeInsets.fromLTRB(
-                                                            9, 0, 0, 0),
+                                                            const EdgeInsets
+                                                                    .fromLTRB(
+                                                                9, 0, 0, 0),
                                                         child: Text(
                                                           style: GoogleFonts
                                                               .pressStart2p(
-                                                              textStyle: const TextStyle(
-                                                                shadows: [
-                                                                  Shadow(
-                                                                    // bottomLeft
-                                                                      offset: Offset(
+                                                                  textStyle:
+                                                                      const TextStyle(
+                                                            shadows: [
+                                                              Shadow(
+                                                                  // bottomLeft
+                                                                  offset:
+                                                                      Offset(
                                                                           -1.5,
                                                                           -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // bottomRight
-                                                                      offset: Offset(
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // bottomRight
+                                                                  offset:
+                                                                      Offset(
                                                                           1.5,
                                                                           -1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topRight
-                                                                      offset: Offset(
-                                                                          1.5, 1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                  Shadow(
-                                                                    // topLeft
-                                                                      offset: Offset(
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // topRight
+                                                                  offset:
+                                                                      Offset(
+                                                                          1.5,
+                                                                          1.5),
+                                                                  color: Colors
+                                                                      .black),
+                                                              Shadow(
+                                                                  // topLeft
+                                                                  offset:
+                                                                      Offset(
                                                                           -1.5,
                                                                           1.5),
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
-                                                                color: Colors.white,
-
-                                                                fontSize: 15,
-
-                                                              )),
-
+                                                                  color: Colors
+                                                                      .black),
+                                                            ],
+                                                            color: Colors.white,
+                                                            fontSize: 15,
+                                                          )),
                                                           'LVL: ${xp.toString()}',
                                                         ),
                                                       ),
                                                       Row(
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                            MainAxisAlignment
+                                                                .end,
                                                         children: [
                                                           IconButton(
                                                             onPressed: () {
-
-
-                                                              if(players.length == 4 ){
-
-                                                              }else{
-                                                                check(item, index);
+                                                              if (players
+                                                                      .length ==
+                                                                  4) {
+                                                              } else {
+                                                                check(item,
+                                                                    index);
                                                                 setState(() {});
                                                               }
                                                             },
@@ -714,22 +699,17 @@ class _CreateGameState extends State<CreateGame> {
                                               );
                                             } else {
                                               return const Center(
-                                                child: CircularProgressIndicator(),
+                                                child:
+                                                    CircularProgressIndicator(),
                                               );
                                             }
-                                          }
-                                      );
+                                          });
                                     },
                                   ),
                                 ),
                               ),
-
-
-
-
                             ],
                           ),
-
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Align(
@@ -741,37 +721,34 @@ class _CreateGameState extends State<CreateGame> {
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.grey[800]),
                                         onPressed: () {
-                                          //(players)  ;
-                                          List<String> uids = players.split("|");
                                           gameCreation(players);
                                         },
-                                        child:  Text(
+                                        child: Text(
                                           'Start with friends',
                                           style: GoogleFonts.pressStart2p(
                                               textStyle: const TextStyle(
-                                                shadows: [
-                                                  Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
-                                                      color: Colors.black),
-                                                  Shadow(
-                                                    // bottomRight
-                                                      offset: Offset(1.5, -1.5),
-                                                      color: Colors.black),
-                                                  Shadow(
-                                                    // topRight
-                                                      offset: Offset(1.5, 1.5),
-                                                      color: Colors.black),
-                                                  Shadow(
-                                                    // topLeft
-                                                      offset: Offset(-1.5, 1.5),
-                                                      color: Colors.black),
-                                                ],
-                                                color: Colors.white,
-                                                wordSpacing: -3,
-                                                fontSize: 15,
-
-                                              )),
+                                            shadows: [
+                                              Shadow(
+                                                  // bottomLeft
+                                                  offset: Offset(-1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                  // bottomRight
+                                                  offset: Offset(1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                  // topRight
+                                                  offset: Offset(1.5, 1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                  // topLeft
+                                                  offset: Offset(-1.5, 1.5),
+                                                  color: Colors.black),
+                                            ],
+                                            color: Colors.white,
+                                            wordSpacing: -3,
+                                            fontSize: 15,
+                                          )),
                                         )),
                                     SizedBox(
                                       height: 10,
@@ -782,33 +759,32 @@ class _CreateGameState extends State<CreateGame> {
                                         onPressed: () {
                                           gameCreationSingle();
                                         },
-                                        child:  Text(
+                                        child: Text(
                                           'Singleplayer',
                                           style: GoogleFonts.pressStart2p(
                                               textStyle: const TextStyle(
-                                                shadows: [
-                                                  Shadow(
-                                                    // bottomLeft
-                                                      offset: Offset(-1.5, -1.5),
-                                                      color: Colors.black),
-                                                  Shadow(
-                                                    // bottomRight
-                                                      offset: Offset(1.5, -1.5),
-                                                      color: Colors.black),
-                                                  Shadow(
-                                                    // topRight
-                                                      offset: Offset(1.5, 1.5),
-                                                      color: Colors.black),
-                                                  Shadow(
-                                                    // topLeft
-                                                      offset: Offset(-1.5, 1.5),
-                                                      color: Colors.black),
-                                                ],
-                                                color: Colors.white,
-                                                wordSpacing: 1,
-                                                fontSize: 15,
-
-                                              )),
+                                            shadows: [
+                                              Shadow(
+                                                  // bottomLeft
+                                                  offset: Offset(-1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                  // bottomRight
+                                                  offset: Offset(1.5, -1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                  // topRight
+                                                  offset: Offset(1.5, 1.5),
+                                                  color: Colors.black),
+                                              Shadow(
+                                                  // topLeft
+                                                  offset: Offset(-1.5, 1.5),
+                                                  color: Colors.black),
+                                            ],
+                                            color: Colors.white,
+                                            wordSpacing: 1,
+                                            fontSize: 15,
+                                          )),
                                         )),
                                   ],
                                 ),
@@ -819,7 +795,7 @@ class _CreateGameState extends State<CreateGame> {
                       )),
                     ));
               } else {
-                return  Center(
+                return Center(
                   child: Container(
                       height: double.infinity,
                       width: double.infinity,
@@ -833,7 +809,8 @@ class _CreateGameState extends State<CreateGame> {
               }
             }));
   }
-  void gameCreation(String players2){
+
+  void gameCreation(String players2) {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
@@ -845,33 +822,37 @@ class _CreateGameState extends State<CreateGame> {
 
     List<String> players = players2.split("|");
 
-
     //(players.length);
     //(players); //Список игроков
-    List<String> coordinates = ['120/400','60/160','500/800','850/600', '850/200'];
+    List<String> coordinates = [
+      '120/400',
+      '60/160',
+      '500/800',
+      '850/600',
+      '850/200'
+    ];
     var last = players.length;
     players.forEachIndexed((i, element) async {
       var skinchik = 1;
       final nick =
-      (await ref.child('Users/$element/Name').get()).value.toString();
-      final skin =
-      (await ref.child('Users/$element/SelectedSkin').get()).value.toString();
-      if(skin == 'null'){
+          (await ref.child('Users/$element/Name').get()).value.toString();
+      final skin = (await ref.child('Users/$element/SelectedSkin').get())
+          .value
+          .toString();
+      if (skin == 'null') {
         ref.child('Users/$element').update({
           'SelectedSkin': '1',
-        }
-        );
-      }else{
-        skinchik = int.parse(skin)+1;
+        });
+      } else {
+        skinchik = int.parse(skin) + 1;
       }
-
 
       var cords = coordinates[i];
       List<String> xy = cords.split("/");
       //("$nick $xy");
       if (nick == 'null') {
         //('null');
-      }else {
+      } else {
         ref.child('Games/$GameCode/Players/${i + 1}').update({
           'uid': element,
           'life': 200,
@@ -883,60 +864,43 @@ class _CreateGameState extends State<CreateGame> {
           'deaths': 0,
           'isDead': false,
           'Skin': skinchik.toString(),
-        }
-        );
+        });
 
         ref.child('Users/$element').update({
           'player': i + 1,
           'CurGame': GameCode,
-        }
-        ).then((value) => {
-        if(last == i+1){
-            ref.child('Games/$GameCode').update({
-          'isStart': 1,
-        }
-        ).then((value) => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>  const SimpleExampleGame())) )
-      }
-        });
-
-
+        }).then((value) => {
+              if (last == i + 1)
+                {
+                  ref.child('Games/$GameCode').update({
+                    'isStart': 1,
+                  }).then((value) => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SimpleExampleGame())))
+                }
+            });
       }
     });
   }
 
-
-  void gameCreationSingle(){
+  void gameCreationSingle() {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     final uid = user?.uid;
 
+    ref.child('Users/$uid/Single').update({
+      'kills': 0,
+      'deaths': 0,
+      'isDead': false,
+      'isImmortal': false,
+    });
 
-        ref.child('Users/$uid/Single').update({
-          'kills': 0,
-          'deaths': 0,
-          'isDead': false,
-          'isImmortal': false,
-        }
-        );
-
-        ref.child('Users/$uid').update({
-          'CurGame': "Single",
-        }
-        ).then((value) => {
-          Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>  const SinglePlayer()))
-
+    ref.child('Users/$uid').update({
+      'CurGame': "Single",
+    }).then((value) => {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const SinglePlayer()))
         });
-
-
-
-
   }
-
-
 }

@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:koleso_fortune/Home.dart';
 import 'package:koleso_fortune/remote_player.dart';
-import 'package:koleso_fortune/sounds.dart';
 
 
 import 'my_player.dart';
@@ -37,7 +36,6 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
     var uid = user!.uid;
 
     final id = (await ref.child('Users/$uid/CurGame').get()).value.toString();
-    final myname = (await ref.child('Users/$uid/Name').get()).value.toString();
 
     while (i > -1) {
       final uidl = await ref.child('Games/$id/Players/$i/uid').get();
@@ -62,6 +60,7 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
         }
       }
     }
+    // ignore: unnecessary_null_comparison
     if (players == null) {
       return [];
     } else {
@@ -255,6 +254,7 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
             var id = snapshot.data![2] as int;
             var gamecode = snapshot.data![4] as String;
             var box =  Hive.boxExists('Settings');
+            // ignore: unused_local_variable
             var sound;
             var joystick;
             if(box == true){

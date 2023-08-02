@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:bonfire/bonfire.dart';
-import 'package:bonfire/util/line_path_component.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flame/game.dart';
@@ -185,7 +184,7 @@ class SingleEnemy extends RotationEnemy
       sqrt(pow(playerX! - tankX, 2) + pow(playerY! - tankY, 2));
 
       if (distanceToPlayer >= visibilityRadius) {
-        if (playerX != null && playerY != null && !going) {
+        if (!going) {
           if (((playerX - posCheckX).abs() > 0 ||
               (playerY - posCheckY).abs() > 0)) {
             //('playerpos $playerX');
@@ -242,13 +241,6 @@ class SingleEnemy extends RotationEnemy
       Vector2(120, 400),
       Vector2(60, 160),
       Vector2(500, 800)
-    ];
-    List<String> coordinates = [
-      '120/400',
-      '60/160',
-      '500/800',
-      '850/600',
-      '850/200'
     ];
     // Проверяем каждую точку на карте
     for (final spawnPoint in mapSpawnPoints) {

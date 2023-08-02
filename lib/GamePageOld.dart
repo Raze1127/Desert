@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -20,7 +19,6 @@ class _GamePageState extends State<GamePage> {
   var points = 100;
   var _start = "0";
   var stratTime;
-  late Timer _timer;
   var win;
   var bid = "0";
   var type;
@@ -66,18 +64,6 @@ class _GamePageState extends State<GamePage> {
       return name.value.toString();
     }
 
-    Future<void> SetPoints(int winw) async {
-      final ref = FirebaseDatabase.instance.ref();
-      final User? user = FirebaseAuth.instance.currentUser;
-      final uid = user?.uid;
-      //("КУКУУУУ");
-      FirebaseDatabase database =
-          FirebaseDatabase.instance;
-      database.ref("Users/$uid").update({
-        "Points": winw,
-      });
-
-    }
 
 
     Future<String>GetTime() async {
@@ -104,119 +90,7 @@ class _GamePageState extends State<GamePage> {
     }
 
 
-    Future<String> GetWin() async {
-      final ref = FirebaseDatabase.instance.ref();
-      final User? user = FirebaseAuth.instance.currentUser;
-      final uid = user?.uid;
-      final game = await ref.child('Users/$uid/CurGame').get();
-      final wine = await ref.child('Games/${game.value.toString()}/win').get();
-      win = wine.value.toString();
-      return win;
-    }
 
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (Timer t) async {
-      var result = await GetTime();
-
-      if(int.parse(result) == 5 ){
-        GetWin();
-      }
-
-      if(int.parse(result) == 0 ){
-        var res = Fortune.randomInt(1, 19);
-        selected.add(int.parse(win));
-
-      }
-      if(int.parse(result) == 19 ){
-
-        if(io != "null") {
-          io = "null";
-          var wining = await int.parse(await GetWin());
-          var points = int.parse(await GetPoints());
-          if(type == "X1"){
-            //("X1");
-            if(wining == 0 || wining == 2 || wining == 5 || wining == 8 || wining == 10 || wining == 12 || wining == 14 || wining == 16 || wining == 18 ){
-              points = points + int.parse(bid);
-              SetPoints(points);
-
-            }
-            else{
-              points = points - int.parse(bid);
-              SetPoints(points);
-            }
-
-
-          }
-          if(type == "X2"){
-            //("X2");
-            if(wining == 1 || wining == 3 || wining == 6 || wining == 9 || wining == 15 || wining == 19  ){
-              points = points + int.parse(bid)*2;
-              SetPoints(points);
-            }
-            else{
-              points = points - int.parse(bid);
-              //(bid);
-              //("Я ТУУУУУУТ");
-              SetPoints(points);
-            }
-          }
-          if(type == "X5"){
-            //("X5");
-            if(wining == 7 || wining == 11 || wining == 17  ){
-              points = points + int.parse(bid)*5;
-              SetPoints(points);
-            }
-            else{
-              points = points - int.parse(bid);
-              SetPoints(points);
-            }
-          }
-          if(type == "X10"){
-            //("X10");
-            if(wining == 4 || wining == 13 ){
-              points = points + int.parse(bid)*10;
-              SetPoints(points);
-            }
-            else{
-              points = points - int.parse(bid);
-              SetPoints(points);
-            }
-          }
-
-        }
-
-
-
-
-        var res = Fortune.randomInt(1, 19);
-        final ref = FirebaseDatabase.instance.ref();
-        final User? user = FirebaseAuth.instance.currentUser;
-        final uid = user?.uid;
-        FirebaseDatabase database =
-            FirebaseDatabase.instance;
-        final game = await ref.child('Users/$uid/CurGame').get();
-        database.ref("Games/${game.value.toString()}").update({
-          "win": res,
-        });
-
-
-      }
-      if(int.parse(result) < 0 ){
-
-        if(_start != "0"){
-          setState(() {
-            _start = "0";
-          });
-        }
-
-      }
-      else{
-        if(_start != result){
-        setState(() {
-          _start = result;
-        });
-        }
-      }
-    });
 
 
 
@@ -588,7 +462,6 @@ class _GamePageState extends State<GamePage> {
                                 onPressed: () {
 
                                   Future<void> exit() async {
-                                    final ref = FirebaseDatabase.instance.ref();
                                     final User? user = FirebaseAuth.instance.currentUser;
                                     final uid = user?.uid;
                                     FirebaseDatabase database =

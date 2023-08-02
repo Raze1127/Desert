@@ -6,14 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:koleso_fortune/Home.dart';
-import 'package:koleso_fortune/remote_player.dart';
-import 'package:koleso_fortune/sounds.dart';
 
 
 import 'EnemySingle.dart';
-import 'my_player.dart';
 import 'my_playerSingle.dart';
-
 
 class SinglePlayer extends StatefulWidget {
   const SinglePlayer({Key? key}) : super(key: key);
@@ -30,8 +26,6 @@ class _SinglePlayer extends State<SinglePlayer> {
   final GameController _controller = GameController();
   var secondsLeft = 0;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -44,11 +38,10 @@ class _SinglePlayer extends State<SinglePlayer> {
     final User? user = FirebaseAuth.instance.currentUser;
     var uid = user!.uid;
     final idGame =
-    (await ref.child('Users/$uid/CurGame').get()).value.toString();
-
+        (await ref.child('Users/$uid/CurGame').get()).value.toString();
 
     DatabaseReference reff =
-    FirebaseDatabase.instance.ref('Users/$uid/$idGame/isDead');
+        FirebaseDatabase.instance.ref('Users/$uid/$idGame/isDead');
 
     reff.onValue.listen((DatabaseEvent event) async {
       if (event.snapshot.value != null) {
@@ -83,13 +76,12 @@ class _SinglePlayer extends State<SinglePlayer> {
 
             DatabaseReference ref = FirebaseDatabase.instance.ref();
             ref.child('Users/$uid/$idGame/isDead').set(false);
-            ref
-                .child('Users/$uid/$idGame/deaths')
-                .set(deathsMain + 1);
+            ref.child('Users/$uid/$idGame/deaths').set(deathsMain + 1);
 
-            var deathssss = (await ref.child('Users/$uid/deaths').get()).value.toString();
+            var deathssss =
+                (await ref.child('Users/$uid/deaths').get()).value.toString();
 
-            ref.child('Users/$uid/deaths').set(int.parse(deathssss)+1);
+            ref.child('Users/$uid/deaths').set(int.parse(deathssss) + 1);
 
             _controller.player!.addLife(200.0);
           });
@@ -129,45 +121,38 @@ class _SinglePlayer extends State<SinglePlayer> {
     final ref = FirebaseDatabase.instance.ref();
     final User? user = FirebaseAuth.instance.currentUser;
     var uid = user!.uid;
-    var id = (await ref.child('Users/$uid/player').get()).value.toString();
     final idGame =
-    (await ref.child('Users/$uid/CurGame').get()).value.toString();
+        (await ref.child('Users/$uid/CurGame').get()).value.toString();
     DatabaseReference killsRef =
-    FirebaseDatabase.instance.ref('Users/$uid/$idGame/kills');
+        FirebaseDatabase.instance.ref('Users/$uid/$idGame/kills');
     DatabaseReference deathsRef =
-    FirebaseDatabase.instance.ref('Users/$uid/$idGame/deaths');
-    killsRef.onValue.listen((DatabaseEvent event)  {
+        FirebaseDatabase.instance.ref('Users/$uid/$idGame/deaths');
+    killsRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as int;
-      if(killsMain != data){
-        setState(()  {
-
+      if (killsMain != data) {
+        setState(() {
           killsMain = data;
         });
       }
-
     });
-    deathsRef.onValue.listen((DatabaseEvent event)  {
+    deathsRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as int;
-      if(deathsMain != data){
-        setState(()  {
+      if (deathsMain != data) {
+        setState(() {
           deathsMain = data;
         });
       }
-
     });
   }
 
   var box = Hive.box('Settings');
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Future.wait([
-
-        ]),
+        future: Future.wait([]),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-
-
             return BonfireWidget(
               gameController: _controller,
               map: WorldMapByTiled(
@@ -310,26 +295,26 @@ class _SinglePlayer extends State<SinglePlayer> {
                       Container(
                         alignment: Alignment.topRight,
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 25, right: 10)  ,
+                          padding: const EdgeInsets.only(top: 25, right: 10),
                           child: Material(
                             color: Colors.transparent,
                             child: IconButton(
-                              color: Colors.white,
-                              icon: const Icon(Icons.logout),
-                              onPressed: ()  {
-                                final ref = FirebaseDatabase.instance.ref();
-                                final User? user = FirebaseAuth.instance.currentUser;
-                                final uid = user?.uid;
+                                color: Colors.white,
+                                icon: const Icon(Icons.logout),
+                                onPressed: () {
+                                  final ref = FirebaseDatabase.instance.ref();
+                                  final User? user =
+                                      FirebaseAuth.instance.currentUser;
+                                  final uid = user?.uid;
 
-                                ref.child('Users/$uid').update({
-                                  'CurGame': null,
-                                });
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Home()));
-                              }
-                            ),
+                                  ref.child('Users/$uid').update({
+                                    'CurGame': null,
+                                  });
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const Home()));
+                                }),
                           ),
                         ),
                       ),
@@ -338,14 +323,11 @@ class _SinglePlayer extends State<SinglePlayer> {
                 }
               },
               initialActiveOverlays: const ['KD'],
-              player: MyPlayerSingle(
-                  Vector2(120, 400),
-                  "You",
-                  1,
-                  "Single"),
-              enemies: [SingleEnemy( Vector2(500, 800), "Enemy", 1, "Single", '1'),] ,
+              player: MyPlayerSingle(Vector2(120, 400), "You", 1, "Single"),
+              enemies: [
+                SingleEnemy(Vector2(500, 800), "Enemy", 1, "Single", '1'),
+              ],
               lightingColorGame: Colors.transparent,
-
               backgroundColor: const Color.fromARGB(255, 132, 101, 77),
             );
           } else {
@@ -353,7 +335,4 @@ class _SinglePlayer extends State<SinglePlayer> {
           }
         });
   }
-
-
-
 }

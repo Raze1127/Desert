@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:async';
 import 'package:bonfire/bonfire.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koleso_fortune/remote_player.dart';
 import 'package:koleso_fortune/sounds.dart';
-import 'package:koleso_fortune/player_sprite_sheet.dart';
 
 import 'game_sprite_sheet.dart';
 
@@ -22,40 +20,46 @@ extension DoubleExtensions on double {
   }
 }
 
+Future<int> GetKills(String id) async {
+  final ref = FirebaseDatabase.instance.ref();
+  final User? user = FirebaseAuth.instance.currentUser;
+  var uid = user!.uid;
+  final curGame =
+      (await ref.child('Users/$uid/CurGame').get()).value.toString();
+  final kills = (await ref.child('Games/$curGame/Players/$id/kills').get())
+      .value
+      .toString();
 
-  Future<int> GetKills(String id) async {
-    final ref = FirebaseDatabase.instance.ref();
-    final User? user = FirebaseAuth.instance.currentUser;
-    var uid = user!.uid;
-    final curGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
-    final kills = (await ref.child('Games/$curGame/Players/$id/kills').get()).value.toString();
+  return int.parse(kills);
+}
 
-    return int.parse(kills);
-  }
 Future<int> GetSkin() async {
   final ref = FirebaseDatabase.instance.ref();
   final User? user = FirebaseAuth.instance.currentUser;
   var uid = user!.uid;
-  final skin = (await ref.child('Users/$uid/SelectedSkin').get()).value.toString();
-  if(skin == "null"){
+  final skin =
+      (await ref.child('Users/$uid/SelectedSkin').get()).value.toString();
+  if (skin == "null") {
     return 0;
-  }else{
-    return int.parse(skin)+1;
+  } else {
+    return int.parse(skin) + 1;
   }
 }
-
 
 Future<int> GetDeaths(String id) async {
   final ref = FirebaseDatabase.instance.ref();
   final User? user = FirebaseAuth.instance.currentUser;
   var uid = user!.uid;
-  final curGame = (await ref.child('Users/$uid/CurGame').get()).value.toString();
-  final kills = (await ref.child('Games/$curGame/Players/$id/deaths').get()).value.toString();
+  final curGame =
+      (await ref.child('Users/$uid/CurGame').get()).value.toString();
+  final kills = (await ref.child('Games/$curGame/Players/$id/deaths').get())
+      .value
+      .toString();
 
   return int.parse(kills);
 }
 
-class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
+class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
   final int id;
   var io = 0;
   final String nick;
@@ -64,18 +68,14 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   DatabaseReference ref = FirebaseDatabase.instance.ref();
   final String gameId;
 
-
-
   MyPlayer(Vector2 position, this.nick, this.id, this.gameId)
       : super(
-    animIdle: _getSoldierSprite(),
-    animRun: _getSoldierSprite(),
-    size: Vector2(75, 41.25),
-    position: position,
-    life: 200,
-  ) {
-
-
+          animIdle: _getSoldierSprite(),
+          animRun: _getSoldierSprite(),
+          size: Vector2(75, 41.25),
+          position: position,
+          life: 200,
+        ) {
     textConfig = TextPaint(
       style: const TextStyle(
         fontSize: 10,
@@ -83,16 +83,13 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       ),
     );
     sizeTextNick = textConfig.measureText(nick);
+
     /// here we configure collision of the player
     setupCollision(
       CollisionConfig(
         collisions: [
-          CollisionArea.circle(radius: 17,
-            align: Vector2(-2, 4)
-          ),
-          CollisionArea.circle(radius: 17,
-              align: Vector2(30, 4)
-          ),
+          CollisionArea.circle(radius: 17, align: Vector2(-2, 4)),
+          CollisionArea.circle(radius: 17, align: Vector2(30, 4)),
         ],
       ),
     );
@@ -103,6 +100,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       borderWidth: 2,
     );
   }
+
   @override
   void render(Canvas canvas) {
     renderNickName(canvas);
@@ -115,7 +113,6 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
   }
 
   void joystickChangeDirectional(JoystickDirectionalEvent event) {
-
     speed = 100 * event.intensity;
     super.joystickChangeDirectional(event);
   }
@@ -125,7 +122,7 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       canvas,
       nick,
       Vector2(
-        position.x + ((width - sizeTextNick.x) /  2),
+        position.x + ((width - sizeTextNick.x) / 2),
         position.y - sizeTextNick.y - 25,
       ),
     );
@@ -138,10 +135,11 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       actionAttack();
     }
     super.joystickAction(event);
-
   }
+
   var fire = 0;
   var canShoot = true;
+
   void actionAttack() {
     if (immortal == false && dead == false && canShoot == true) {
       Vector2 centerOffset = Vector2.zero();
@@ -172,7 +170,6 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
           break;
       }
       simpleAttackRangeByAngle(
-
         angle: angle,
         size: Vector2(12, 8),
         centerOffset: centerOffset,
@@ -182,8 +179,9 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
         onDestroy: () {
           var box = Hive.box('Settings');
           var sound = box.get('sound');
-          if(sound == true){
-            Sounds.explosion();}
+          if (sound == true) {
+            Sounds.explosion();
+          }
         },
         animation: Sprite.load('bullet.png').toAnimation(),
         damage: 30,
@@ -195,33 +193,31 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       Future.delayed(const Duration(milliseconds: 500), () {
         canShoot = true;
       });
-
     }
 
-      fire++;
-
+    fire++;
   }
 
-
   bool hasReceivedDamage = true;
+
   @override
   void receiveDamage(AttackFromEnum attacker, double damage, dynamic identify) {
-    if(life <= 20 && hasReceivedDamage == true){
+    if (life <= 20 && hasReceivedDamage == true) {
       GetKills(identify.toString()).then((value) async {
-
         ref.child("Games/$gameId/Players/$identify/kills").set(value + 1);
-        var uid = (await ref.child('Games/$gameId/Players/$identify/uid').get()).value.toString();
-        var killsss = (await ref.child('Users/$uid/kills').get()).value.toString();
+        var uid = (await ref.child('Games/$gameId/Players/$identify/uid').get())
+            .value
+            .toString();
+        var killsss =
+            (await ref.child('Users/$uid/kills').get()).value.toString();
         //('Users/$uid/kills  ${int.parse(killsss)+1}');
-        ref.child('Users/$uid/kills').set(int.parse(killsss)+1);
+        ref.child('Users/$uid/kills').set(int.parse(killsss) + 1);
         hasReceivedDamage = false;
         ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
       });
-
     }
-    if(life >= 30 && hasReceivedDamage == false){
+    if (life >= 30 && hasReceivedDamage == false) {
       hasReceivedDamage = true;
-
     }
     showDamage(
       damage,
@@ -233,9 +229,6 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     super.receiveDamage(attacker, damage, identify);
   }
 
-
-
-
   @override
   void die() {
     ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
@@ -246,21 +239,18 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
     super.die();
   }
 
-
-
   @override
   bool onCollision(GameComponent component, bool active) {
-
     if (component is RemotePlayer) {
       //('Player collided!');
       double recoilDistance = 20.0;
       double recoilAngle = angle + pi;
-      this.position.add(Vector2(cos(recoilAngle) * recoilDistance, sin(recoilAngle) * recoilDistance));
+      this.position.add(Vector2(cos(recoilAngle) * recoilDistance,
+          sin(recoilAngle) * recoilDistance));
     }
 
     return super.onCollision(component, active);
   }
-
 
   var angleCheck = 0.0;
   var speedCheck = 0.0;
@@ -274,33 +264,34 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
 
   @override
   void update(double dt) {
-
-
-
-    if(immortal == true){
+    if (immortal == true) {
       addLife(200.0);
     }
 
-    if(life <= 0){
+    if (life <= 0) {
       speed = 0;
       opacity = 0.4;
-      if(life == -10){
+      if (life == -10) {
         addLife(10.0);
       }
       dead = true;
-    }else{
+    } else {
       dead = false;
       opacity = 1;
-
     }
 
     now = DateTime.now();
     int timestamp = now.millisecondsSinceEpoch;
 
-    if((timestamp - time) >= 5 && (angle != angleCheck || speed != speedCheck || position.x != xCheck || position.y != yCheck)){
+    if ((timestamp - time) >= 5 &&
+        (angle != angleCheck ||
+            speed != speedCheck ||
+            position.x != xCheck ||
+            position.y != yCheck)) {
       time = timestamp;
       final List<double> numbers = [position.x, position.y, angle, speed];
-      final bytes = numbers.fold<List<int>>([], (previousValue, element) => previousValue..addAll(element.toBytes()));
+      final bytes = numbers.fold<List<int>>([],
+          (previousValue, element) => previousValue..addAll(element.toBytes()));
       final encodedData = base64.encode(bytes);
       //(encodedData);
       final finalData = encodedData.substring(0, encodedData.length - 9);
@@ -311,12 +302,12 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       yCheck = position.y;
     }
 
-    if(io == 0){
+    if (io == 0) {
       DatabaseReference reff =
-      FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/isImmortal');
+          FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/isImmortal');
       reff.onValue.listen((DatabaseEvent event) async {
         final data = event.snapshot.value as bool;
-        immortal=data;
+        immortal = data;
       });
       speed = 0;
       angle = 0;
@@ -326,16 +317,11 @@ class MyPlayer  extends RotationPlayer with ObjectCollision, UseBarLife {
       io++;
     }
 
-
-    if(life != healthCheck){
+    if (life != healthCheck) {
       ref.child("Games/$gameId/Players/$id/life").set(life.toDouble());
       healthCheck = life;
     }
 
-
     super.update(dt);
   }
-
-
 }
-
