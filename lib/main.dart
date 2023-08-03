@@ -8,67 +8,76 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:koleso_fortune/Home.dart';
 import 'Login.dart';
-import 'Register.dart';
 import 'firebase_options.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-Future<void> _messageHandler(RemoteMessage message) async {
-  //('background message ${message.notification!.body}');
+
+void main() {
+  runApp(const MyApp());
 }
 
-void main() async{
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
+  @override
+  _MyAppState createState() => _MyAppState();
+}
 
-  FirebaseMessaging.onBackgroundMessage(_messageHandler);
+class _MyAppState extends State<MyApp> {
+  bool _isLoading = true;
 
-
-  //password for site r8Y.q3T%v2
-  //password for admin@desertsteel.online j2F)x0E^g4
-  if (defaultTargetPlatform == TargetPlatform.android){
-    Future<InitializationStatus> _initGoogleMobileAds() {
-      return MobileAds.instance.initialize();
-    }
-    await _initGoogleMobileAds();
+  @override
+  void initState() {
+    super.initState();
+    initializeApp();
   }
-  await Hive.initFlutter();
-  Hive.openBox('Settings');
 
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  Future<void> initializeApp() async {
 
-    runApp(
-      MaterialApp(
-        theme: ThemeData(
-          primaryColor: Colors.black,
-          hintColor: Colors.black,
-        ),
-        debugShowCheckedModeBanner: false,
-        initialRoute: 'main',
-        // theme: ThemeData(
-        //   fontFamily: 'FiraSans',
-        // ),
-        routes: {
-          'main': (context) => const mainPage(),
-          'login': (context) => const Login(),
-          'register': (context) => const Register(),
-          'home': (context) => const Home(),
-        },
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform).whenComplete(() => setState(() {
+      _isLoading = false;
+    }));
+  
+    FirebaseMessaging.onBackgroundMessage(_messageHandler);
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await MobileAds.instance.initialize();
+    }
+
+    await Hive.initFlutter();
+    await Hive.openBox('Settings');
+
+    
+
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.black,
+        hintColor: Colors.black,
       ),
+      debugShowCheckedModeBanner: false,
+      home: _isLoading ? const LoadingScreen() : const MainPage(),
     );
-
-
-
-
-
+  }
 }
 
-class mainPage extends StatelessWidget {
-  const mainPage({Key? key}) : super(key: key);
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.black,
+    );
+  }
+}
 
+class MainPage extends StatelessWidget {
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,24 +85,23 @@ class mainPage extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    FlutterNativeSplash.remove();
+
 
     return Scaffold(
       body: StreamBuilder<User?>(
-
-
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-
-            if (snapshot.hasData) {
-              //FlutterNativeSplash.remove();
-              return const Home();
-            } else {
-              //FlutterNativeSplash.remove();
-              return const Login();
-            }
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const Home();
+          } else {
+            return const Login();
           }
+        },
       ),
     );
   }
+}
+
+Future<void> _messageHandler(RemoteMessage message) async {
+  // Handle background messages here
 }

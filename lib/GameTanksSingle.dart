@@ -163,7 +163,7 @@ class _SinglePlayer extends State<SinglePlayer> {
               joystick: Joystick(
                 keyboardConfig: KeyboardConfig(),
                 directional: JoystickDirectional(
-                  isFixed: !box.get('joystick'),
+                  isFixed: !box.get('joystick', defaultValue: true),
                   size: 100,
                 ),
                 actions: [
