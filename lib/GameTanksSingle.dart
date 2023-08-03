@@ -15,6 +15,7 @@ class SinglePlayer extends StatefulWidget {
   const SinglePlayer({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _SinglePlayer createState() => _SinglePlayer();
 }
 
