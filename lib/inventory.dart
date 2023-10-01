@@ -1067,7 +1067,11 @@ class _inventoryState extends State<inventory> {
                                   children: [
                                     Column(
                                       children: [
-                                        Text('Щит'),
+                                        Image.asset(
+                                          'assets/images/abilities/shield.png',
+                                          height: 30,
+                                          width: 30,
+                                        ),
                                         Text('$shieldCount/1'),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -1114,7 +1118,11 @@ class _inventoryState extends State<inventory> {
                                     ),
                                     Column(
                                       children: [
-                                        Text('Здоровье'),
+                                        Image.asset(
+                                          'assets/images/abilities/health.png',
+                                          height: 30,
+                                          width: 30,
+                                        ),
                                         Text('$healthCount/1'),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -1161,7 +1169,10 @@ class _inventoryState extends State<inventory> {
                                     ),
                                     Column(
                                       children: [
-                                        Text('Ракета'),
+                                        Image.asset(
+                                          'assets/images/abilities/rocket.png',
+                                          height: 30,
+                                          width: 30,),
                                         Text('$rocketCount/1'),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
