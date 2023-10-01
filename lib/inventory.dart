@@ -107,7 +107,7 @@ class _inventoryState extends State<inventory> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.lock,
               size: 25,
               color: Colors.white70,
@@ -201,7 +201,7 @@ class _inventoryState extends State<inventory> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.lock,
                 size: 25,
                 color: Colors.white70,
@@ -248,7 +248,7 @@ class _inventoryState extends State<inventory> {
   void _loadRewardedAd() {
     RewardedAd.load(
       adUnitId: AdHelper.rewardedAdUnitId,
-      request: AdRequest(),
+      request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
           ad.fullScreenContentCallback = FullScreenContentCallback(
@@ -267,9 +267,7 @@ class _inventoryState extends State<inventory> {
                     if (prizes == "") {
                       ref.child('Users/$uid/wonPrizes').set("5");
                     } else {
-                      ref
-                          .child('Users/$uid/wonPrizes')
-                          .set("${prizes + "//5"}");
+                      ref.child('Users/$uid/wonPrizes').set("$prizes//5");
                     }
                   }
                   if (prize == 1) {
@@ -377,6 +375,9 @@ class _inventoryState extends State<inventory> {
   }
 
   final controllerConfet = ConfettiController();
+  int shieldCount = 0;
+  int healthCount = 0;
+  int rocketCount = 0;
 
   @override
   void initState() {
@@ -426,7 +427,7 @@ class _inventoryState extends State<inventory> {
                                 selected: controller.stream,
                                 items: [
                                   FortuneItem(
-                                    style: FortuneItemStyle(
+                                    style: const FortuneItemStyle(
                                       color: Colors.red,
                                       // <-- custom circle slice fill color
                                       borderColor: Colors.green,
@@ -441,7 +442,7 @@ class _inventoryState extends State<inventory> {
                                     ),
                                   ),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -472,7 +473,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -503,7 +504,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -534,7 +535,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -565,7 +566,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -596,7 +597,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -627,7 +628,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -658,7 +659,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -689,7 +690,7 @@ class _inventoryState extends State<inventory> {
                                                 fontSize: 10,
                                               ))))),
                                   FortuneItem(
-                                      style: FortuneItemStyle(
+                                      style: const FortuneItemStyle(
                                         color: Color(0xFF6699CC),
                                         borderColor: Colors.black,
                                       ),
@@ -772,7 +773,7 @@ class _inventoryState extends State<inventory> {
                                 top: 30, left: 20, right: 20),
                             child: SizedBox(
                               width: width * 0.9,
-                              height: height * 0.613,
+                              height: height * 0.32,
                               child: GridView.count(
                                 crossAxisCount: 2,
                                 mainAxisSpacing: 10,
@@ -793,7 +794,7 @@ class _inventoryState extends State<inventory> {
                                         ),
                                       ],
                                       borderRadius: BorderRadius.circular(20),
-                                      image: DecorationImage(
+                                      image: const DecorationImage(
                                           image: AssetImage(
                                               "assets/images/backk.png"),
                                           fit: BoxFit.fill),
@@ -835,7 +836,7 @@ class _inventoryState extends State<inventory> {
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
-                                        image: DecorationImage(
+                                        image: const DecorationImage(
                                             image: AssetImage(
                                                 "assets/images/backk.png"),
                                             fit: BoxFit.fill),
@@ -887,7 +888,7 @@ class _inventoryState extends State<inventory> {
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
-                                        image: DecorationImage(
+                                        image: const DecorationImage(
                                             image: AssetImage(
                                                 "assets/images/backk.png"),
                                             fit: BoxFit.fill),
@@ -937,7 +938,7 @@ class _inventoryState extends State<inventory> {
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
-                                        image: DecorationImage(
+                                        image: const DecorationImage(
                                             image: AssetImage(
                                                 "assets/images/backk.png"),
                                             fit: BoxFit.fill),
@@ -988,7 +989,7 @@ class _inventoryState extends State<inventory> {
                                           ),
                                         ],
                                         borderRadius: BorderRadius.circular(20),
-                                        image: DecorationImage(
+                                        image: const DecorationImage(
                                             image: AssetImage(
                                                 "assets/images/backk.png"),
                                             fit: BoxFit.fill),
@@ -1025,6 +1026,194 @@ class _inventoryState extends State<inventory> {
                                       )),
                                 ],
                               ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text("Abilities:",
+                                style: GoogleFonts.pressStart2p(
+                                    textStyle: const TextStyle(
+                                  shadows: [
+                                    Shadow(
+                                        // bottomLeft
+                                        offset: Offset(-1.5, -1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // bottomRight
+                                        offset: Offset(1.5, -1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topRight
+                                        offset: Offset(1.5, 1.5),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topLeft
+                                        offset: Offset(-1.5, 1.5),
+                                        color: Colors.black),
+                                  ],
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ))),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10, bottom: 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text('Щит'),
+                                        Text('$shieldCount/1'),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blueGrey[900],
+                                            //add radius to button
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10)),
+                                          ),
+                                          onPressed: () {
+                                            if (defaultTargetPlatform ==
+                                                TargetPlatform.android) {
+                                              _loadRewardedAd();
+                                              _rewardedAd?.show(
+                                                  onUserEarnedReward: (AdWithoutView ad,
+                                                      RewardItem rewardItem) {});
+                                            }
+                                          },
+                                          child: Text("1",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
+                                                    shadows: [
+                                                      Shadow(
+                                                        // bottomLeft
+                                                          offset: Offset(-1.5, -1.5),
+                                                          color: Colors.black),
+                                                      Shadow(
+                                                        // bottomRight
+                                                          offset: Offset(1.5, -1.5),
+                                                          color: Colors.black),
+                                                      Shadow(
+                                                        // topRight
+                                                          offset: Offset(1.5, 1.5),
+                                                          color: Colors.black),
+                                                      Shadow(
+                                                        // topLeft
+                                                          offset: Offset(-1.5, 1.5),
+                                                          color: Colors.black),
+                                                    ],
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                  ))),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text('Здоровье'),
+                                        Text('$healthCount/1'),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blueGrey[900],
+                                            //add radius to button
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10)),
+                                          ),
+                                          onPressed: () {
+                                            if (defaultTargetPlatform ==
+                                                TargetPlatform.android) {
+                                              _loadRewardedAd();
+                                              _rewardedAd?.show(
+                                                  onUserEarnedReward: (AdWithoutView ad,
+                                                      RewardItem rewardItem) {});
+                                            }
+                                          },
+                                          child: Text("1",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
+                                                    shadows: [
+                                                      Shadow(
+                                                        // bottomLeft
+                                                          offset: Offset(-1.5, -1.5),
+                                                          color: Colors.black),
+                                                      Shadow(
+                                                        // bottomRight
+                                                          offset: Offset(1.5, -1.5),
+                                                          color: Colors.black),
+                                                      Shadow(
+                                                        // topRight
+                                                          offset: Offset(1.5, 1.5),
+                                                          color: Colors.black),
+                                                      Shadow(
+                                                        // topLeft
+                                                          offset: Offset(-1.5, 1.5),
+                                                          color: Colors.black),
+                                                    ],
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                  ))),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text('Ракета'),
+                                        Text('$rocketCount/1'),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.blueGrey[900],
+                                            //add radius to button
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                          ),
+                                          onPressed: () {
+                                            if (defaultTargetPlatform ==
+                                                TargetPlatform.android) {
+                                              _loadRewardedAd();
+                                              _rewardedAd?.show(
+                                                  onUserEarnedReward:
+                                                      (AdWithoutView ad,
+                                                          RewardItem
+                                                              rewardItem) {});
+                                            }
+                                          },
+                                          child: Text("1",
+                                              style: GoogleFonts.pressStart2p(
+                                                  textStyle: const TextStyle(
+                                                shadows: [
+                                                  Shadow(
+                                                      // bottomLeft
+                                                      offset:
+                                                          Offset(-1.5, -1.5),
+                                                      color: Colors.black),
+                                                  Shadow(
+                                                      // bottomRight
+                                                      offset: Offset(1.5, -1.5),
+                                                      color: Colors.black),
+                                                  Shadow(
+                                                      // topRight
+                                                      offset: Offset(1.5, 1.5),
+                                                      color: Colors.black),
+                                                  Shadow(
+                                                      // topLeft
+                                                      offset: Offset(-1.5, 1.5),
+                                                      color: Colors.black),
+                                                ],
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                              ))),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ],

@@ -101,7 +101,7 @@ class _settingsState extends State<settings> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: height * 0.06,
+                      height: height * 0.05,
                     ),
                     Text(
                       "Settings",
