@@ -298,7 +298,7 @@ class _HomeState extends State<Home> {
                                       content: Container(
                                           width: 50,
                                           height: 50,
-                                          child: CircularProgressIndicator()),
+                                          child: const CircularProgressIndicator()),
                                     );
                                   })));
                         },
@@ -375,11 +375,11 @@ class _HomeState extends State<Home> {
       return SizeTransition(
         sizeFactor: animation,
         child: Card(
-          margin: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(8),
           elevation: 10,
           color: Colors.white,
           child: ListTile(
-            contentPadding: EdgeInsets.all(7),
+            contentPadding: const EdgeInsets.all(7),
             title: Text("Goodbye",
                 style: GoogleFonts.pressStart2p(
                     textStyle: const TextStyle(
@@ -506,7 +506,7 @@ class _HomeState extends State<Home> {
                             Container(
                               alignment: Alignment.center,
                               child: Padding(
-                                padding: EdgeInsets.only(left: 5, top: 40),
+                                padding: const EdgeInsets.only(left: 5, top: 40),
                                 //icon button for inventory
                                 child: Container(
                                   width: width * 0.35,
@@ -589,7 +589,7 @@ class _HomeState extends State<Home> {
                         ),
                         // Никнейм и код
                         Padding(
-                          padding: const EdgeInsets.only(top: 50),
+                          padding: const EdgeInsets.only(top: 10),
                           child: Text("LVL ${daty[3]}",
                               style: GoogleFonts.pressStart2p(
                                   textStyle: const TextStyle(
@@ -717,11 +717,11 @@ class _HomeState extends State<Home> {
                         ),
                         Padding(
                           padding:
-                              EdgeInsets.only(top: 10, left: 20, right: 20),
+                              const EdgeInsets.only(top: 5, left: 20, right: 20),
                           child: Opacity(
                             opacity: 0.8,
                             child: Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   color: Colors.grey,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(25))),
@@ -737,7 +737,7 @@ class _HomeState extends State<Home> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 30, left: 5),
+                                                top: 10, left: 5),
                                             child: Text("KILLS: ${daty[0]}",
                                                 style: GoogleFonts.pressStart2p(
                                                     textStyle: const TextStyle(
@@ -769,7 +769,7 @@ class _HomeState extends State<Home> {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 15, left: 10, bottom: 30),
+                                                top: 15, left: 10, bottom: 10),
                                             child: Text("DEATHS: ${daty[1]}",
                                                 style: GoogleFonts.pressStart2p(
                                                     textStyle: const TextStyle(
@@ -808,7 +808,7 @@ class _HomeState extends State<Home> {
                         ),
                         //Статистика
                         Padding(
-                          padding: const EdgeInsets.only(top: 25),
+                          padding: const EdgeInsets.only(top: 5),
                           child: Column(
                             children: [
                               Text("FRIENDS",
@@ -845,7 +845,7 @@ class _HomeState extends State<Home> {
                                       alignment: Alignment.centerLeft,
                                       child: Padding(
                                         padding: const EdgeInsetsDirectional
-                                            .fromSTEB(0, 20, 20, 0),
+                                            .fromSTEB(0, 2, 20, 0),
                                         child: Container(
                                           width: 200,
                                           child: TextField(
@@ -868,7 +868,7 @@ class _HomeState extends State<Home> {
                                       alignment: Alignment.centerLeft,
                                       child: Padding(
                                           padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 20, 0, 0),
+                                              .fromSTEB(0, 2, 0, 0),
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.blueGrey[900],
@@ -921,7 +921,7 @@ class _HomeState extends State<Home> {
                               ),
                               Container(
                                 padding: const EdgeInsets.only(
-                                    top: 20, left: 20, right: 20),
+                                    top: 2, left: 20, right: 20),
                                 height: 200,
                                 child: AnimatedList(
                                   key: _key,
@@ -1027,7 +1027,7 @@ class _HomeState extends State<Home> {
                                                       name.toString(),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets
+                                                      padding:  const EdgeInsets
                                                           .fromLTRB(5, 0, 0, 0),
                                                       child: Text(
                                                         style: GoogleFonts
@@ -1095,7 +1095,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(top: 10),
+                                padding: const EdgeInsets.only(top: 10),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blueGrey[900],
@@ -1109,9 +1109,9 @@ class _HomeState extends State<Home> {
                                       context,
                                       PageRouteBuilder(
                                         pageBuilder: (_, __, ___) =>
-                                            CreateGame(),
+                                            const CreateGame(),
                                         transitionDuration:
-                                            Duration(milliseconds: 200),
+                                            const Duration(milliseconds: 200),
                                         transitionsBuilder: (context, animation,
                                             secondaryAnimation, child) {
                                           const begin = Offset(0.0, 1.0);

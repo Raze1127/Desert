@@ -4,6 +4,9 @@ import "package:firebase_database/firebase_database.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nanoid/nanoid.dart';
 
+import 'Home.dart';
+import 'Login.dart';
+
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
 
@@ -40,7 +43,7 @@ class _RegisterState extends State<Register> {
         }).then((value) => database.ref("Users/$uid").update({
               "kills": 0,
               "deaths": 0,
-            }).then((value) => Navigator.pushNamed(context, 'home'))));
+            }).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home())))));
   }
 
   @override
@@ -142,7 +145,7 @@ class _RegisterState extends State<Register> {
                 height: 15,
               ),
               TextField(
-                autofillHints: [AutofillHints.password],
+                autofillHints: const [AutofillHints.password],
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -212,7 +215,7 @@ class _RegisterState extends State<Register> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, 'login');
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()));
                   },
                   child: const Text(
                     '',
