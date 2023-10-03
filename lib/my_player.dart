@@ -134,8 +134,109 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
         event.event == ActionEvent.DOWN) {
       actionAttack();
     }
+    if (event.id == 2 ) {
+      reveal();
+    }
+    if (event.id == 3 ) {
+      rocket();
+    }
+    if (event.id == 4 ) {
+      shield();
+    }
     super.joystickAction(event);
   }
+  void reveal(){
+    addLife(200.0);
+  }
+
+  void rocket(){
+    if (immortal == false && dead == false && canShoot == true) {
+      Vector2 centerOffset = Vector2.zero();
+      switch (lastDirection) {
+        case Direction.left:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.right:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.up:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.down:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.upLeft:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.upRight:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.downLeft:
+          centerOffset = Vector2(0, 0);
+          break;
+        case Direction.downRight:
+          centerOffset = Vector2(0, 0);
+          break;
+      }
+      simpleAttackRangeByAngle(
+        angle: angle,
+        size: Vector2(15, 10),
+        centerOffset: centerOffset,
+        marginFromOrigin: 28,
+        speed: 200,
+        animationDestroy: GameSpriteSheet.fireBallExplosion(),
+        onDestroy: () {
+          var box = Hive.box('Settings');
+          var sound = box.get('sound');
+          if (sound == true) {
+            Sounds.explosion();
+          }
+        },
+        animation: Sprite.load('bullet.png').toAnimation(),
+        damage: 200,
+        id: id,
+        attackFrom: AttackFromEnum.PLAYER_OR_ALLY,
+      );
+      ref.child("Games/$gameId/Players/$id/isFireRocket").set(fire);
+      canShoot = false;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        canShoot = true;
+      });
+    }
+
+    fire++;
+  }
+
+
+  void shield(){
+    bool isRunning = false;
+    isRunning = true;
+
+    // Get the current time
+    final startTime = DateTime.now();
+    ref.child("Games/$gameId/Players/$id/shield").set(true);
+    // Run the code inside a loop
+    while (isRunning) {
+      // Calculate the elapsed time
+      final currentTime = DateTime.now();
+      final elapsedTime = currentTime.difference(startTime);
+
+      // Check if 5 seconds have passed
+      if (elapsedTime.inSeconds >= 5) {
+        // Stop the code execution after 5 seconds
+        ref.child("Games/$gameId/Players/$id/shield").set(false);
+        isRunning = false;
+      }
+
+      addLife(200.0);
+    }
+  }
+
+
+
+
+
+
 
   var fire = 0;
   var canShoot = true;

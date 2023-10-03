@@ -1184,15 +1184,8 @@ class _inventoryState extends State<inventory> {
                                                     BorderRadius.circular(10)),
                                           ),
                                           onPressed: () {
-                                            if (defaultTargetPlatform ==
-                                                TargetPlatform.android) {
-                                              _loadRewardedAd();
-                                              _rewardedAd?.show(
-                                                  onUserEarnedReward:
-                                                      (AdWithoutView ad,
-                                                          RewardItem
-                                                              rewardItem) {});
-                                            }
+
+
                                           },
                                           child: Text("1",
                                               style: GoogleFonts.pressStart2p(

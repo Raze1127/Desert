@@ -284,6 +284,21 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
                     actionId: 1,
                     margin: const EdgeInsets.all(60),
                   ),
+                  JoystickAction(
+                    size: 50,
+                    actionId: 2,
+                    margin: const EdgeInsets.only(bottom: 150, right: 80)
+                  ),
+                  JoystickAction(
+                    size: 50,
+                    actionId: 3,
+                    margin: const EdgeInsets.all(140),
+                  ),
+                  JoystickAction(
+                    size: 50,
+                    actionId: 4,
+                    margin: const EdgeInsets.only(bottom: 150, right: 20)
+                  ),
                 ],
               ),
               cameraConfig: CameraConfig(moveOnlyMapArea: true, zoom: 0.75),

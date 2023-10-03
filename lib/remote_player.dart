@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -177,6 +178,12 @@ class RemotePlayer extends RotationEnemy with ObjectCollision, UseBarLife {
 
     DatabaseReference angleRef =
         FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/life');
+    DatabaseReference shieldRef =
+    FirebaseDatabase.instance.ref('Games/$gameId/Players/$id/shield');
+    var shield = (shieldRef.get()).toString();
+    if(shield == 'true'){
+      addLife(200.0);
+    }
     angleRef.onValue.listen((DatabaseEvent event) {
       final data = event.snapshot.value as num?;
 
