@@ -135,12 +135,15 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
       actionAttack();
     }
     if (event.id == 2 ) {
+      print('АПТЕЧКА');
       reveal();
     }
     if (event.id == 3 ) {
+      print('РАКЕТА');
       rocket();
     }
     if (event.id == 4 ) {
+      print('Щит');
       shield();
     }
     super.joystickAction(event);
@@ -148,7 +151,7 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
   void reveal(){
     addLife(200.0);
   }
-
+  var shield1 = false;
   void rocket(){
     if (immortal == false && dead == false && canShoot == true) {
       Vector2 centerOffset = Vector2.zero();
@@ -180,7 +183,7 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
       }
       simpleAttackRangeByAngle(
         angle: angle,
-        size: Vector2(15, 10),
+        size: Vector2(25, 15),
         centerOffset: centerOffset,
         marginFromOrigin: 28,
         speed: 200,
@@ -192,7 +195,7 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
             Sounds.explosion();
           }
         },
-        animation: Sprite.load('bullet.png').toAnimation(),
+        animation: Sprite.load('abilities/rocket.png').toAnimation(),
         damage: 200,
         id: id,
         attackFrom: AttackFromEnum.PLAYER_OR_ALLY,
@@ -208,29 +211,26 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
   }
 
 
-  void shield(){
-    bool isRunning = false;
-    isRunning = true;
 
-    // Get the current time
-    final startTime = DateTime.now();
-    ref.child("Games/$gameId/Players/$id/shield").set(true);
-    // Run the code inside a loop
-    while (isRunning) {
-      // Calculate the elapsed time
+
+  void shield() async {
+    if(shield1 == false) {
+      final startTime = DateTime.now();
+      ref.child("Games/$gameId/Players/$id/shield").set(true);
+      shield1 = true;
+      // Получите текущее время и вычислите прошедшее время
       final currentTime = DateTime.now();
       final elapsedTime = currentTime.difference(startTime);
-
-      // Check if 5 seconds have passed
-      if (elapsedTime.inSeconds >= 5) {
-        // Stop the code execution after 5 seconds
+      // Проверьте, если прошло 5 секунд (или заданное вами время)
+      await Future.delayed(const Duration(seconds: 5), () {
         ref.child("Games/$gameId/Players/$id/shield").set(false);
-        isRunning = false;
-      }
-
-      addLife(200.0);
+        shield1 = false;
+      });
+    }else{
+      print('Щит еще не готов');
     }
   }
+
 
 
 
@@ -366,6 +366,17 @@ class MyPlayer extends RotationPlayer with ObjectCollision, UseBarLife {
   @override
   void update(double dt) {
     if (immortal == true) {
+      addLife(200.0);
+    }
+    if(shield1 == true){
+      gameRef.add(
+        AnimatedFollowerObject(
+          animation: Sprite.load('abilities/shield_game.png').toAnimation(),
+          target: this,
+          positionFromTarget: Vector2(-5, -26), size: Vector2(85,  85),
+        ),
+      );
+
       addLife(200.0);
     }
 

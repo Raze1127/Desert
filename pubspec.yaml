@@ -121,10 +121,10 @@ flutter:
     - assets/audio/explosion.wav
     - assets/audio/sound_bg.mp3
     - assets/images/player/explosion_fire.png
-    - assets/images/abillities/APTECHKA.png
-    - assets/images/abillities/Rocket.png
-    - assets/images/abillities/Shield_game.png
-    - assets/images/abillities/Shield_inventory.png
+    - assets/images/abilities/aptechka.png
+    - assets/images/abilities/rocket.png
+    - assets/images/abilities/Shield.png
+    - assets/images/abilities/shield_game.png
 
 
 

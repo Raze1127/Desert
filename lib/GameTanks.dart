@@ -254,9 +254,10 @@ class _SimpleExampleGameState extends State<SimpleExampleGame> {
             var id = snapshot.data![2] as int;
             var gamecode = snapshot.data![4] as String;
             var box =  Hive.boxExists('Settings');
-            // ignore: unused_local_variable
+            // ignore: unused_local_variable, prefer_typing_uninitialized_variables
             var sound;
-            var joystick;
+            bool joystick;
+
             if(box == true){
               sound = Hive.box('Settings').get('sound', defaultValue: true);
               joystick = !Hive.box('Settings').get('joystick', defaultValue: true);

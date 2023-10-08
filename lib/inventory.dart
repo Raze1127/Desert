@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hive/hive.dart';
 
 import 'ad_helper.dart';
 
@@ -78,6 +79,48 @@ class _inventoryState extends State<inventory> {
       return 0;
     } else {
       return int.parse(skin);
+    }
+  }
+
+  Future<int> rocket() async {
+    final ref = FirebaseDatabase.instance.ref();
+    final User? user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
+    final abil =
+    (await ref.child('Users/$uid/rocket').get()).value.toString();
+
+    if (abil == "null") {
+      return 0;
+    } else {
+      return int.parse(abil);
+    }
+  }
+
+  Future<int> shield() async {
+    final ref = FirebaseDatabase.instance.ref();
+    final User? user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
+    final abil =
+    (await ref.child('Users/$uid/shield').get()).value.toString();
+
+    if (abil == "null") {
+      return 0;
+    } else {
+      return int.parse(abil);
+    }
+  }
+
+  Future<int> aid() async {
+    final ref = FirebaseDatabase.instance.ref();
+    final User? user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
+    final abil =
+    (await ref.child('Users/$uid/aid').get()).value.toString();
+
+    if (abil == "null") {
+      return 0;
+    } else {
+      return int.parse(abil);
     }
   }
 
@@ -245,7 +288,7 @@ class _inventoryState extends State<inventory> {
   RewardedAd? _rewardedAd;
 
   // TODO: Implement _loadRewardedAd()
-  void _loadRewardedAd() {
+  void _loadRewardedAd(lol) {
     RewardedAd.load(
       adUnitId: AdHelper.rewardedAdUnitId,
       request: const AdRequest(),
@@ -257,94 +300,117 @@ class _inventoryState extends State<inventory> {
                 ad.dispose();
                 _rewardedAd = null;
                 setState(() async {
-                  var prize = Random().nextInt(9);
-                  var prizes = await wonPrizes();
+                  if (lol == 0) {
+                    var prize = Random().nextInt(9);
+                    var prizes = await wonPrizes();
 
-                  if (prize == 0) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    if (prizes == "") {
-                      ref.child('Users/$uid/wonPrizes').set("5");
-                    } else {
-                      ref.child('Users/$uid/wonPrizes').set("$prizes//5");
+                    if (prize == 0) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      if (prizes == "") {
+                        ref.child('Users/$uid/wonPrizes').set("5");
+                      } else {
+                        ref.child('Users/$uid/wonPrizes').set("$prizes//5");
+                      }
                     }
-                  }
-                  if (prize == 1) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 225);
-                  }
-                  if (prize == 2) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 75);
-                  }
-                  if (prize == 3) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 450);
-                  }
-                  if (prize == 4) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 350);
-                  }
-                  if (prize == 5) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 250);
-                  }
-                  if (prize == 6) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 200);
-                  }
-                  if (prize == 7) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 50);
-                  }
-                  if (prize == 8) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 300);
-                  }
-                  if (prize == 9) {
-                    final ref = FirebaseDatabase.instance.ref();
-                    final User? user = FirebaseAuth.instance.currentUser;
-                    final uid = user?.uid;
-                    ref
-                        .child('Users/$uid/wonPrizesXP')
-                        .set((await prizeXP()) + 100);
-                  }
+                    if (prize == 1) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 225);
+                    }
+                    if (prize == 2) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 75);
+                    }
+                    if (prize == 3) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 450);
+                    }
+                    if (prize == 4) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 350);
+                    }
+                    if (prize == 5) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 250);
+                    }
+                    if (prize == 6) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 200);
+                    }
+                    if (prize == 7) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 50);
+                    }
+                    if (prize == 8) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 300);
+                    }
+                    if (prize == 9) {
+                      final ref = FirebaseDatabase.instance.ref();
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final uid = user?.uid;
+                      ref
+                          .child('Users/$uid/wonPrizesXP')
+                          .set((await prizeXP()) + 100);
+                    }
 
-                  //(prize);
-                  controller.add(prize);
+                    //(prize);
+                    controller.add(prize);
+                  }
+                  if (lol == 1) {
+                    final ref = FirebaseDatabase.instance.ref();
+                    final User? user = FirebaseAuth.instance.currentUser;
+                    final uid = user?.uid;
+                    ref.child('Users/$uid/shield').set(1);
+
+                  }
+                  if (lol == 2) {
+                    final ref = FirebaseDatabase.instance.ref();
+                    final User? user = FirebaseAuth.instance.currentUser;
+                    final uid = user?.uid;
+                    ref.child('Users/$uid/aid').set(1);
+
+                  }
+                  if (lol == 3) {
+                    final ref = FirebaseDatabase.instance.ref();
+                    final User? user = FirebaseAuth.instance.currentUser;
+                    final uid = user?.uid;
+                    ref.child('Users/$uid/rocket').set(1);
+
+                  }
                   Future.delayed(const Duration(seconds: 4), () {
                     controllerConfet.play();
                   });
@@ -374,6 +440,8 @@ class _inventoryState extends State<inventory> {
     );
   }
 
+
+
   final controllerConfet = ConfettiController();
   int shieldCount = 0;
   int healthCount = 0;
@@ -382,7 +450,8 @@ class _inventoryState extends State<inventory> {
   @override
   void initState() {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      _loadRewardedAd();
+      _loadRewardedAd(0);
+
     }
     super.initState();
   }
@@ -395,6 +464,8 @@ class _inventoryState extends State<inventory> {
 
   @override
   Widget build(BuildContext context) {
+
+
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Stack(
@@ -405,7 +476,7 @@ class _inventoryState extends State<inventory> {
             backgroundColor: const Color(0xffE0E3E7),
             body: FutureBuilder(
                 future:
-                    Future.wait([GetADTanks(), skinSelected(), wonPrizes()]),
+                    Future.wait([GetADTanks(), skinSelected(), wonPrizes(), aid(), shield(), rocket()]),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
                     return Container(
@@ -736,7 +807,7 @@ class _inventoryState extends State<inventory> {
                               onPressed: () {
                                 if (defaultTargetPlatform ==
                                     TargetPlatform.android) {
-                                  _loadRewardedAd();
+                                  _loadRewardedAd(0);
                                   _rewardedAd?.show(
                                       onUserEarnedReward: (AdWithoutView ad,
                                           RewardItem rewardItem) {});
@@ -1029,7 +1100,7 @@ class _inventoryState extends State<inventory> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            padding: const EdgeInsets.only(top: 10, bottom: 10),
                             child: Text("Abilities:",
                                 style: GoogleFonts.pressStart2p(
                                     textStyle: const TextStyle(
@@ -1066,13 +1137,15 @@ class _inventoryState extends State<inventory> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         Image.asset(
-                                          'assets/images/abilities/shield.png',
-                                          height: 30,
-                                          width: 30,
+                                          'assets/images/abilities/Shield.png',
+                                          height: 100,
+                                          width: 100,
                                         ),
-                                        Text('$shieldCount/1'),
+
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.blueGrey[900],
@@ -1083,13 +1156,11 @@ class _inventoryState extends State<inventory> {
                                           onPressed: () {
                                             if (defaultTargetPlatform ==
                                                 TargetPlatform.android) {
-                                              _loadRewardedAd();
-                                              _rewardedAd?.show(
-                                                  onUserEarnedReward: (AdWithoutView ad,
-                                                      RewardItem rewardItem) {});
+                                              _loadRewardedAd(1);
+                                              _rewardedAd?.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {  });
                                             }
                                           },
-                                          child: Text("1",
+                                          child: Text('${snapshot.data![4]}/1',
                                               style: GoogleFonts.pressStart2p(
                                                   textStyle: const TextStyle(
                                                     shadows: [
@@ -1119,11 +1190,11 @@ class _inventoryState extends State<inventory> {
                                     Column(
                                       children: [
                                         Image.asset(
-                                          'assets/images/abilities/health.png',
-                                          height: 30,
-                                          width: 30,
+                                          'assets/images/abilities/aptechka.png',
+                                          height: 100,
+                                          width: 100,
                                         ),
-                                        Text('$healthCount/1'),
+
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.blueGrey[900],
@@ -1134,13 +1205,13 @@ class _inventoryState extends State<inventory> {
                                           onPressed: () {
                                             if (defaultTargetPlatform ==
                                                 TargetPlatform.android) {
-                                              _loadRewardedAd();
+                                              _loadRewardedAd(2);
                                               _rewardedAd?.show(
                                                   onUserEarnedReward: (AdWithoutView ad,
                                                       RewardItem rewardItem) {});
                                             }
                                           },
-                                          child: Text("1",
+                                          child: Text('${snapshot.data![3]}/1',
                                               style: GoogleFonts.pressStart2p(
                                                   textStyle: const TextStyle(
                                                     shadows: [
@@ -1171,9 +1242,9 @@ class _inventoryState extends State<inventory> {
                                       children: [
                                         Image.asset(
                                           'assets/images/abilities/rocket.png',
-                                          height: 30,
-                                          width: 30,),
-                                        Text('$rocketCount/1'),
+                                          height: 100,
+                                          width: 100,),
+
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -1184,10 +1255,16 @@ class _inventoryState extends State<inventory> {
                                                     BorderRadius.circular(10)),
                                           ),
                                           onPressed: () {
-
+                                            if (defaultTargetPlatform ==
+                                                TargetPlatform.android) {
+                                              _loadRewardedAd(3);
+                                              _rewardedAd?.show(
+                                                  onUserEarnedReward: (AdWithoutView ad,
+                                                      RewardItem rewardItem) {});
+                                            }
 
                                           },
-                                          child: Text("1",
+                                          child: Text('${snapshot.data![5]}/1',
                                               style: GoogleFonts.pressStart2p(
                                                   textStyle: const TextStyle(
                                                 shadows: [
